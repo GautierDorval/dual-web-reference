@@ -1,0 +1,50 @@
+# TEMPLATE, NOT ACTIVE. Kept outside .github/workflows on purpose.
+# Activation requires an explicit owner decision naming this file, a private runner
+# environment for the authenticated read, and a first proven run. Until then the
+# project states: "Periodic update planned; manual preparation."
+#
+# What it would do: check source availability, prepare a candidate and a delta
+# report, and record one of: new_data, unchanged, source_unavailable,
+# validation_failed, awaiting_review. It never publishes, never moves the window,
+# never advances the data date on an unchanged run, and never writes zeros for a
+# failed source. GitHub schedules can be delayed or skipped: no time is promised.
+#
+# The authenticated read (acquire-readonly) must run in the private environment
+# (self-hosted or private repository), never in this public repository's CI.
+name: weekly-preparation
+
+on:
+  schedule:
+    - cron: "17 13 * * 1"   # Monday 13:17 UTC (target, not a guarantee)
+  workflow_dispatch:
+    inputs:
+      window_start:
+        description: "Window start (YYYY-MM-DD, anchored on the 15th)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: [self-hosted, private-acquisition]   # placeholder: private environment only
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+      - name: Dry run of the bounded read (prints the reviewed SELECT queries)
+        run: python -I scripts/dwr.py acquire-readonly
+      # The execute step, the private root and the client credentials are configured
+      # only in the private environment after an explicit GO. Bounded retries: 3,
+      # idempotent; a late run keeps the configured window.
+      - name: Offline recomputation and checks
+        run: |
+          python -I scripts/dwr.py analyze
+          python -I scripts/dwr.py render
+          python -I scripts/dwr.py verify
+          python -I scripts/dwr.py prepare-edition
+          python -I scripts/dwr.py status

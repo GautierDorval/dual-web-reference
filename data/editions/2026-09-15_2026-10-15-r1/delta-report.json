@@ -1,0 +1,7 @@
+{
+  "compared_with": null,
+  "edition_id": "2026-09-15_2026-10-15-r1",
+  "rule": "two editions are compared only when windows, definitions, coverage, registries, classifications and scope rules allow it; causes of change are classified (late observations, classifier correction, scope change, transformation correction, privacy revision) and none is presented as growth",
+  "schema_version": "dwr-delta/1.0.0",
+  "status": "no_previous_edition"
+}

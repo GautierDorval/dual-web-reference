@@ -1,0 +1,45 @@
+{
+  "schema_version": "dwr-calendar/1.0.0",
+  "timezone": "UTC",
+  "edition_type": "monthly_reference",
+  "monthly_anchor_day": 15,
+  "first_window": {
+    "start_inclusive": "2026-09-15",
+    "end_exclusive": "2026-10-15"
+  },
+  "consolidation_delay_hours": 48,
+  "weekly_review": {
+    "weekday": "monday",
+    "time_utc": "13:17",
+    "activation_status": "template_not_activated",
+    "template": "config/workflow-templates/weekly-preparation.yml.example"
+  },
+  "monthly_preparation": {
+    "activation_status": "template_not_activated",
+    "template": "config/workflow-templates/monthly-edition.yml.example"
+  },
+  "rolling_window": {
+    "type": "rolling_30d",
+    "days": 30,
+    "status": "not_produced_in_first_edition",
+    "rule": "Rolling windows overlap and are never added together."
+  },
+  "freshness_thresholds": {
+    "weekly_review_overdue_after_days": 10,
+    "monthly_edition_overdue_after_days_past_consolidation": 21,
+    "nature": "operating rule, not a contractual guarantee"
+  },
+  "operation_states": [
+    "new_data",
+    "unchanged",
+    "source_unavailable",
+    "validation_failed",
+    "awaiting_review",
+    "published"
+  ],
+  "retry_policy": {
+    "max_attempts": 3,
+    "idempotent": true,
+    "window_never_moves_on_retry": true
+  }
+}

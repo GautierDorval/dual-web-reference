@@ -1,0 +1,6 @@
+{
+  "latest_published_edition": null,
+  "reason": "no edition has been reviewed and published yet",
+  "rule": "points only to a reviewed public edition; never to a draft or to the last successful run",
+  "schema_version": "dwr-latest/1.0.0"
+}

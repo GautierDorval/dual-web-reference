@@ -1,0 +1,113 @@
+# Reproduction
+
+[English](../en/reproduction.md) · [Accueil du dépôt](../../README.fr.md)
+
+Cette page présente les commandes de la chaîne de calcul, ce que chacune lit et écrit, celles qui fonctionnent hors ligne, et ce qu’un lecteur public peut refaire ou non. Les étapes elles-mêmes sont décrites dans [méthode](methode.md).
+
+## Environnement
+
+- Bibliothèque standard de Python seulement, aucun paquet à installer. Python 3.12 ou plus récent est requis ; la chaîne a été développée et testée seulement avec Python 3.14.6 (les versions antérieures ne sont pas testées), et `.python-version` comme la CI utilisent Python 3.14.
+- Point d’entrée : `python -I scripts/dwr.py <commande> [options]`. Le mode isolé (`-I`) ignore les variables d’environnement `PYTHON*` et le répertoire site de l’utilisateur.
+- Windows : `pwsh .\scripts\dwr.ps1 <commande> [options]` lance le même point d’entrée avec le `python` trouvé dans le chemin d’exécution, en mode isolé, avec une sortie UTF-8, et renvoie son code de sortie.
+- CI Linux : `.github/workflows/ci.yml` s’exécute sur `ubuntu-24.04` avec des permissions en lecture seule, des actions épinglées par identifiant de commit complet, aucun secret et aucun accès aux sources privées. Elle lance les tests unitaires (jeux de données synthétiques), `analyze`, `render`, `build-site` et `verify`, puis échoue si la régénération a modifié un fichier versionné (`git diff --exit-code`). Elle ne contacte jamais les sites mesurés.
+- Tests unitaires seuls : `python -I -m unittest discover -s tests -t . -v`.
+
+## Commandes
+
+| Commande | Lit | Écrit | Réseau |
+|---|---|---|---|
+| `import-existing --package <dossier>` | paquet d’export : manifeste, archives, tables de marges, chiffres de référence | reçu d’import et marges privés ; rapport de rapprochement privé | aucun |
+| `acquire-readonly` | fenêtre de l’édition | rien : affiche les requêtes prévues et leur SHA-256 (dry-run) | aucun |
+| `acquire-readonly --execute --confirm-scope <début>..<fin>` | paramètres d’acquisition privés | résultats bruts et journal d’acquisition privés | lit la base du producteur au moyen de son client |
+| `normalize` | l’unique import privé, l’archive privée à son commit épinglé, les acquisitions acceptées | `normalized.json` privé : lignes conjointes contrôlées contre les exports, chronologie des déploiements | aucun (lecture d’un dépôt local) |
+| `qualify` | `normalized.json`, registre et règles de périmètre, règles d’attribution, instantanés privés des sources, `config/cases.json` | `qualified.json` privé | aucun |
+| `project-public` | fichiers de travail privés ; refuse de s’exécuter sans acquisition conjointe acceptée | `data/editions/<edition>/` : tables, `reconciliation.json`, `case-checks.json`, `catalog.json` | aucun |
+| `analyze` | tables publiques de l’édition | `metrics.json` | aucun |
+| `render` | tables publiques, `metrics.json`, configuration | `figures/<edition>/` (SVG et CSV), `figures.json`, pages de cas, blocs générés du README et des pages de documentation, `data/index.json`, `data/latest.json`, `data/status.json`, `schemas/` | aucun |
+| `verify` | chaque fichier de l’arbre de travail ; les valeurs privées si `DWR_PRIVATE_ROOT` est défini | rien (rapport sur la sortie standard) | aucun |
+| `publication-gate --ref <branche>` | chaque objet Git atteignable depuis la branche ; valeurs privées de la racine privée | rien (rapport sur la sortie standard, code de sortie 1 au moindre constat) | aucun (lecture du dépôt local) |
+| `build-site` | fichiers publics | `site/dist/` (reconstruit de zéro, jamais déployé) | aucun |
+| `prepare-edition` | fichiers et figures de l’édition | `delta-report.json`, `SHA256SUMS.txt` | aucun, ne publie rien |
+| `status` | `data/status.json`, calendrier | rien (sortie standard) | aucun |
+
+Chaque commande accepte `--edition <id>` ; par défaut, c’est la candidate désignée dans `config/editions.json`. Les résultats s’affichent en JSON. Un échec affiche `FAIL <code>: <détail>` sur la sortie d’erreur et se termine avec le code 2 ; `verify` se termine avec le code 1 si un contrôle échoue, et un contrôle qui plante compte comme un échec. `acquire-readonly` refuse une fenêtre qui n’est pas close et toute valeur de `--confirm-scope` autre que la fenêtre exacte. Son mode par défaut reste le dry-run ; pour cette édition, il a été exécuté une seule fois, avec `--execute` et la valeur exacte `--confirm-scope 2026-09-15..2026-10-15`, dans l’environnement privé, jamais dans la CI.
+
+Les étapes publiques (`analyze`, `render`, `verify`, `build-site`, `prepare-edition`, `status`) fonctionnent hors ligne et ne contactent jamais les sites mesurés. `verify` contrôle qu’aucun module de la chaîne autre que `acquire.py` n’importe de code réseau.
+
+## La racine privée
+
+Les étapes privées exigent `DWR_PRIVATE_ROOT` (ou `--private-root`) : un dossier existant, situé hors de la racine du dépôt. Une valeur absente, un dossier inexistant ou un dossier à l’intérieur du dépôt arrête l’étape (`private_root_missing`, `private_root_unavailable`, `private_root_inside_public_repository`). Ce dossier contient le verrou interne, les imports, les acquisitions, les fichiers de travail et les instantanés des sources ; il n’est jamais versionné. Les étapes publiques n’en ont pas besoin. `verify` examine chaque fichier de l’arbre de travail, figures PNG et site construit compris, avec la même fonction que la porte de publication décrite plus bas ; lorsque la racine privée est définie, il cherche aussi les valeurs privées qui y sont conservées, et sans elle ce contrôle est signalé sous `skipped`, jamais comme réussi. Les exemples des tests sont synthétiques.
+
+## Porte de publication
+
+Avant toute publication, `python -I scripts/dwr.py publication-gate --ref public-candidate` (une étape privée) lit les objets Git atteignables depuis la branche à publier : chaque commit (son en-tête sans les lignes structurelles `tree` et `parent`, et son message entier), le nom de chaque entrée de chaque arbre, arbres compris, et chaque fichier en octets bruts, fichiers binaires compris ; aucun chemin n’est exclu. Elle exige un seul commit racine et des types de fichiers admis. Un PNG doit se composer d’un IHDR unique de 13 octets, de blocs IDAT et d’un IEND unique et vide, sans rien après lui, avec des données d’image de la taille exacte annoncée. Les valeurs privées sont comparées sans égard à la casse, et les identifiants hexadécimaux sont détectés dans les deux casses ; un fichier JSON est aussi contrôlé après décodage de ses chaînes, et le texte après décodage des échappements en pourcentage. Les chemins locaux sont comparés aux racines locales réelles de la machine qui exécute la porte (dossier personnel en forme longue et courte, espace privé), après unification de la casse et des séparateurs ; les marqueurs génériques des chemins d’autres machines (dossiers utilisateur Windows, `/home/<nom>/`, `/Users/<nom>/`, dossier synchronisé, données d’application) sont une protection d’appoint, pas une garantie. Un identifiant de 40 caractères n’est admis que comme épinglage d’action listé dans `config/publication-gate.json` et écrit exactement `propriétaire/dépôt@<commit>` ; un test exige que chaque épinglage des workflows figure dans cette liste. Un constat nomme une catégorie et un chemin, et un chemin qui contient une valeur privée ou un identifiant est remplacé par sa position dans la liste. La porte protège contre l’inclusion par erreur de pièces privées ; elle n’est pas une preuve contre un contenu fabriqué pour la contourner. L’historique de la branche de travail n’est pas publiable ; seule une branche qui passe la porte l’est.
+
+<!-- dwr:begin publication-gate -->
+| Catégorie | Ce que la porte détecte | Contre-exemples testés |
+|---|---|---|
+| `history_not_single_root` | la branche compte plus d’un commit, ou un commit avec un parent | un second commit |
+| `unsupported_entry` | un lien symbolique ou un sous-module dans un arbre | un lien symbolique; une entrée de sous-module |
+| `file_type_not_admitted` | un fichier dont le type n’est pas dans la liste admise | un fichier exécutable |
+| `text_not_utf8` | un fichier texte qui n’est pas en UTF-8 valide | un octet Latin-1 dans un Markdown |
+| `private_term` | un nom de dépôt privé, un nom de ressource privée ou un libellé privé, quelle que soit la casse | dans un fichier; en majuscules dans un fichier; dans un nom de fichier; dans le nom d’un arbre vide; dans le message du commit; dans un bloc texte d’un PNG; écrit en échappements Unicode JSON; des échappements Unicode JSON dans un fichier qui commence par une marque d’ordre des octets; encodé en pourcentage dans une URL |
+| `private_identifier` | un identifiant de compte ou de base de données de la configuration d’acquisition, quelle que soit la casse | dans un fichier de test; en majuscules; dans un nom de fichier, jamais réaffiché dans le rapport |
+| `private_commit` | un identifiant de commit complet du verrou interne, quelle que soit la casse | dans un fichier CSV; en majuscules |
+| `private_commit_prefix` | les sept premiers caractères (ou plus) d’un identifiant de commit du verrou interne | huit caractères dans un Markdown; sept caractères en tête d’une ligne de journal; sept caractères dans un lien `/commit/` |
+| `local_root` | une racine locale de la machine qui exécute la porte (dossier personnel en forme longue ou courte, espace privé), quelle que soit la casse et quels que soient les séparateurs, y compris dans des chaînes JSON et des échappements en pourcentage | le dossier personnel en minuscules, comme l’écrit `ntpath.normcase`; le dossier personnel en majuscules; le dossier personnel avec des barres obliques; le dossier personnel sérialisé par `common.canonical_json`; la forme `/c/…` d’un shell de type Unix; le nom court 8.3 du dossier personnel; le chemin de l’espace privé sans le préfixe du dossier personnel; le dossier personnel encodé en pourcentage dans une URL |
+| `local_path` | un marqueur générique de chemin local sur n’importe quelle machine, protection d’appoint (dossier utilisateur Windows, `/home/<nom>/`, `/Users/<nom>/`, dossier utilisateur d’un shell de type Unix, dossier synchronisé, données d’application), quelle que soit la casse | un dossier utilisateur dans un Markdown; un dossier utilisateur sérialisé en JSON (séparateurs doublés); un dossier utilisateur écrit avec des barres obliques; un dossier utilisateur en minuscules; un dossier `/home/<nom>/`; un dossier `/Users/<nom>/` |
+| `ip_address` | une adresse IPv4 | dans un Markdown; dans un nom de fichier |
+| `user_agent` | une chaîne user agent de navigateur | dans un Markdown |
+| `identifier_32` | un identifiant hexadécimal de 32 caractères, dans l’une ou l’autre casse | en minuscules dans du code; en majuscules dans du code; dans un nom de fichier |
+| `identifier_40` | un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action listé dans `config/publication-gate.json` et écrit exactement `propriétaire/dépôt@<commit>` | dans un commentaire d’un modèle de workflow; la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@`; un épinglage absent de la liste, sur une étape `uses:`; un épinglage absent de la liste, dans le bloc scalaire d’une étape `run:`; une ligne `tree` dans le message du commit |
+| `short_commit` | une référence courte de commit (`commit` suivi de 7 à 12 caractères hexadécimaux) | dans un Markdown |
+| `png_chunk_not_admitted` | un bloc PNG autre que IHDR, IDAT et IEND | un bloc texte; un bloc de palette |
+| `png_malformed` | un PNG dont la structure diffère d’un IHDR unique de 13 octets, de blocs IDAT et d’un IEND unique et vide, ou dont les données d’image diffèrent de la taille annoncée | des données après IEND; un IEND non vide; un second IHDR; des données d’image en trop; un fichier tronqué; une somme de contrôle fausse; des dimensions au-delà de 16 384 pixels |
+
+Chacun des 57 contre-exemples ci-dessus est placé par un test par mutation dans `tests/test_publication_gate.py`, qui exige l’échec de la porte dans cette catégorie ; un autre test exige que ce tableau et les mutations se correspondent un à un. Une variante non listée n’est pas revendiquée. Non couvert : les pixels d’un PNG, qui rendent un SVG contrôlé comme texte mais ne sont pas lus eux-mêmes comme du texte, et un contenu fabriqué exprès pour contourner la porte.
+<!-- dwr:end publication-gate -->
+
+## Solution de repli en PNG
+
+`node scripts/render_png.mjs <edition-id>` convertit les figures SVG en PNG avec Playwright (Chromium), en jeu de couleurs clair et à l’échelle 2, dans `figures/<edition>/png/`. `DWR_PLAYWRIGHT_DIR` peut désigner le dossier où Playwright est installé. Les octets PNG ne sont pas reproductibles à l’identique d’un moteur à l’autre : les fichiers SVG sont les figures de référence, et les PNG sont exclus de `SHA256SUMS.txt`.
+
+## Déterminisme
+
+Les mêmes intrants donnent des octets identiques pour chaque sortie CSV, JSON et SVG :
+
+- le JSON est canonique : UTF-8, clés triées, indentation de deux espaces, saut de ligne final ;
+- les CSV ont un ordre de colonnes fixe, un ordre de lignes fixe et des fins de ligne LF ; les décimales suivent un format fixe ;
+- le générateur SVG n’utilise ni aléa, ni horodatage, ni script, ni référence externe, et seulement la pile de polices du système ;
+- `generated_at` est fixé pour chaque candidate dans `config/editions.json`, de sorte qu’une reconstruction ne le modifie pas.
+
+`verify` recalcule `metrics.json`, refait en mémoire le rendu d’une figure, de la table de données de chaque figure (à partir de sa variante large anglaise), des pages de cas et des blocs générés, et les compare octet par octet aux fichiers versionnés. Les fichiers de travail privés portent des horodatages et ne font pas partie de cette comparaison.
+
+## Fichiers d’empreintes
+
+- `catalog.json` liste la taille et le SHA-256 de chaque table, de `reconciliation.json` et de `case-checks.json`. Il ne se liste pas lui-même, pas plus que `metrics.json` et `figures.json`, dérivés après lui, ni `SHA256SUMS.txt`.
+- `figures.json` liste le SHA-256 de chaque fichier SVG, de chaque table de données et de chaque table d’intrants de chaque figure.
+- `SHA256SUMS.txt`, écrit par `prepare-edition` dans le dossier de l’édition, compte une ligne `<sha256>  <chemin depuis la racine du dépôt>` pour chaque fichier du dossier de l’édition et de `figures/<edition>/`. Il ne s’inclut jamais lui-même, et les fichiers PNG en sont exclus. Depuis la racine du dépôt, `sha256sum -c data/editions/<edition>/SHA256SUMS.txt` le vérifie sous Linux ; sous Windows, `Get-FileHash -Algorithm SHA256` donne les mêmes empreintes.
+
+Une empreinte concordante montre que les fichiers sont ceux qui ont été revus ; elle ne montre pas que les observations sont vraies, et aucune signature n’intervient. Une revue approuve une empreinte ; toute modification ultérieure annule cette approbation.
+
+## Conventions CSV
+
+UTF-8 sans indicateur d’ordre des octets, fins de ligne LF, virgule comme séparateur, ligne d’en-tête, guillemets selon la RFC 4180 au besoin, point décimal, dates ISO 8601, booléens écrits `true` et `false`, et cellule vide signifiant null, jamais zéro. Les types de colonnes, les clés primaires et le minimum de 0 pour les comptes figurent dans les [schémas](../../schemas/).
+
+Une variante adaptée aux tableurs (`*.spreadsheet.csv`) est définie pour les copies destinées à être ouvertes dans un tableur : toute cellule commençant par `=`, `+`, `-`, `@`, une tabulation ou un retour chariot est précédée d’une apostrophe, afin de ne jamais être lue comme une formule. Les CSV canoniques conservent les valeurs exactes et sont ceux à utiliser pour tout calcul.
+
+## Ce qu’un lecteur public peut refaire ou non
+
+Avec ce seul dépôt, un lecteur peut recalculer chaque chiffre et chaque figure publiés à partir des tables publiques (`analyze`, `render`, `verify`, tous hors ligne, sans racine privée), vérifier les empreintes, retrouver le fichier et la ligne de chaque relation dans `links.csv`, et vérifier que les tables quotidiennes, la table par famille et les tables de l’édition concordent entre elles.
+
+Il ne peut pas relancer la collecte, la classification du producteur, l’extraction depuis la base du producteur, la lecture de l’archive ni les instantanés du graphe : ils dépendent de dépôts privés et du collecteur privé. Vérifier une empreinte et refaire une agrégation, ce n’est pas refaire la collecte.
+
+## Citer une édition
+
+Citer l’identifiant de l’édition avec le SHA-256 de son `catalog.json` :
+
+```text
+Dual Web Reference, édition 2026-09-15_2026-10-15-r1 (du 15 septembre au 14 octobre 2026 inclusivement, en UTC),
+catalog.json SHA-256 <64 caractères hexadécimaux>, consulté le <date>.
+```
+
+L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. L’édition courante est une candidate, non revue et non publiée : son empreinte peut encore changer, et seule une édition publiée devrait être citée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).

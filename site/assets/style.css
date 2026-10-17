@@ -1,0 +1,95 @@
+/* Dual Web Reference: static presentation. System fonts only; no external resource. */
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb;
+  --surface: #ffffff;
+  --ink: #0b0b0b;
+  --ink2: #52514e;
+  --muted: #6f6e69;
+  --line: #e1e0d9;
+  --accent: #1c5cab;
+  --band: #f3efe2;
+  --code: #f1f0ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19;
+    --surface: #222220;
+    --ink: #f0efec;
+    --ink2: #c3c2b7;
+    --muted: #a3a29b;
+    --line: #34332f;
+    --accent: #86b6ef;
+    --band: #2a2720;
+    --code: #2b2a27;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19;
+  --surface: #222220;
+  --ink: #f0efec;
+  --ink2: #c3c2b7;
+  --muted: #a3a29b;
+  --line: #34332f;
+  --accent: #86b6ef;
+  --band: #2a2720;
+  --code: #2b2a27;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Liberation Sans", Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--accent); }
+header.site { border-bottom: 1px solid var(--line); background: var(--surface); }
+header.site .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding-top: 12px; padding-bottom: 8px; }
+.brand { font-weight: 650; color: var(--ink); text-decoration: none; }
+nav { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+nav a { color: var(--ink2); text-decoration: none; }
+nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.lang { margin-left: auto; }
+.banner { margin: 0 auto; padding-bottom: 10px; color: var(--muted); font-size: 14px; }
+main { padding-top: 8px; padding-bottom: 32px; }
+h1 { font-size: 28px; line-height: 1.2; margin: 24px 0 12px; }
+h2 { font-size: 21px; margin: 32px 0 10px; }
+h3 { font-size: 18px; margin: 24px 0 8px; }
+code { background: var(--code); padding: 1px 4px; border-radius: 4px; font-size: 0.92em; }
+pre { background: var(--code); padding: 12px; overflow-x: auto; border-radius: 6px; }
+pre code { padding: 0; background: none; }
+blockquote { margin: 16px 0; padding: 8px 14px; border-left: 3px solid var(--line); background: var(--band); color: var(--ink2); }
+.table-wrap { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--band); font-weight: 600; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* body breaks anywhere; inside a scrollable table that collapses text columns to one letter, so cells break between words only. */
+.table-wrap td { overflow-wrap: break-word; }
+.table-wrap td:not(.num) { min-width: 8.5em; }
+.table-wrap td code { overflow-wrap: anywhere; }
+button.sort { font: inherit; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; text-align: left; }
+button.sort::after { content: ""; }
+th[aria-sort="ascending"] button.sort::after { content: " \2191"; }
+th[aria-sort="descending"] button.sort::after { content: " \2193"; }
+figure { margin: 16px 0; }
+figure img { display: block; max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+figcaption { color: var(--ink2); font-size: 14px; margin-top: 6px; }
+details { margin: 8px 0; }
+summary { cursor: pointer; color: var(--accent); }
+form.filters { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; margin: 8px 0; }
+form.filters label { display: flex; flex-direction: column; font-size: 14px; color: var(--ink2); gap: 2px; }
+form.filters select { font: inherit; font-size: 14px; padding: 4px 6px; max-width: 240px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; }
+form.filters output { font-size: 14px; color: var(--muted); }
+footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; padding-top: 12px; padding-bottom: 24px; }
+.landing { padding-top: 40px; }
+@media (max-width: 640px) {
+  h1 { font-size: 23px; }
+  h2 { font-size: 19px; }
+  .lang { margin-left: 0; }
+}

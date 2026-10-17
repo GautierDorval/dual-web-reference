@@ -1,0 +1,67 @@
+{
+  "schema_version": "dwr-scope-rules/1.0.0",
+  "rules_id": "scope-rules/1.0.0",
+  "registry_file": "config/scope-registry.csv",
+  "unit_note": "A resource is a site-path pair. Mirrors, languages and formats are separate resources; a family view may group them without presenting them as independent documents.",
+  "classes": {
+    "core_governance": {
+      "main_population": true,
+      "definition_en": "The content explicitly states identity, context, scope, sources, claims, relations, policy, priorities or interpretation limits.",
+      "definition_fr": "Le contenu énonce explicitement une identité, un contexte, un périmètre, des sources, des affirmations, des relations, une politique, des priorités ou des limites d’interprétation."
+    },
+    "discovery_index": {
+      "main_population": true,
+      "definition_en": "The primary function is to orient toward other governance resources (for example llms.txt or an index that enumerates documents).",
+      "definition_fr": "La fonction principale est d’orienter vers d’autres ressources de gouvernance (par exemple llms.txt ou un index qui énumère des documents)."
+    },
+    "supporting_documentation": {
+      "main_population": false,
+      "definition_en": "Explanatory, method, protocol or reference material related to the layer that does not itself state identity, policy or orientation.",
+      "definition_fr": "Documentation explicative, de méthode, de protocole ou de référence liée à la couche, sans énoncer elle-même d’identité, de politique ou d’orientation."
+    },
+    "operational_descriptor": {
+      "main_population": false,
+      "definition_en": "A static file that describes a service, endpoint, runtime, MCP server, API or tool. Requests to it are document requests, never calls to that service.",
+      "definition_fr": "Fichier statique qui décrit un service, un point d’accès, un runtime, un serveur MCP, une API ou un outil. Les requêtes vers lui sont des requêtes de document, jamais des appels à ce service."
+    },
+    "control_resource": {
+      "main_population": false,
+      "definition_en": "A crawler-control file such as robots.txt, reported separately.",
+      "definition_fr": "Fichier de contrôle des robots, comme robots.txt, présenté séparément."
+    },
+    "technical_resource": {
+      "main_population": false,
+      "definition_en": "A technical resource such as a sitemap, security.txt or a version file. Its presence in a registry does not make it a governance file.",
+      "definition_fr": "Ressource technique comme un sitemap, security.txt ou un fichier de version. Sa présence dans un registre n’en fait pas un fichier de gouvernance."
+    },
+    "undeclared_bucket": {
+      "main_population": false,
+      "definition_en": "The collector bucket /.well-known/__undeclared__, which aggregates requests to undeclared well-known names. It is not a document.",
+      "definition_fr": "Le compartiment /.well-known/__undeclared__ du collecteur, qui regroupe les requêtes vers des noms well-known non déclarés. Ce n’est pas un document."
+    },
+    "unresolved_scope": {
+      "main_population": false,
+      "definition_en": "The content was not found in the examined snapshot or its function is ambiguous.",
+      "definition_fr": "Le contenu est introuvable dans l’instantané examiné ou sa fonction est ambiguë."
+    }
+  },
+  "rules": [
+    {"rule_id": "R01", "applies": "path == '/robots.txt'", "assigns": "control_resource", "precedence": 1},
+    {"rule_id": "R02", "applies": "path == '/.well-known/__undeclared__' or producer_category == 'well-known-probe'", "assigns": "undeclared_bucket", "precedence": 2},
+    {"rule_id": "R03", "applies": "sitemap XML, security.txt, version or build file (path pattern); or a technical file such as a measurement configuration identified by content review", "assigns": "technical_resource", "precedence": 3, "wording_clarified_on": "2026-10-16", "clarification": "the content-review case was applied when the registry was built; no class changed"},
+    {"rule_id": "R04", "applies": "content reviewed in the source snapshot; the registry row cites the evidence", "assigns": "one of core_governance, discovery_index, supporting_documentation, operational_descriptor", "precedence": 4},
+    {"rule_id": "R05", "applies": "content not found in the snapshot, or function ambiguous after review", "assigns": "unresolved_scope", "precedence": 5}
+  ],
+  "llms_txt": {
+    "path": "/llms.txt",
+    "isolated": true,
+    "note": "llms.txt belongs to the main population and is always reported separately; the remaining resources are never excluded because llms.txt is isolated."
+  },
+  "historical_report_scope": {
+    "id": "historical-report-scope",
+    "definition": "All paths except /robots.txt, /.well-known/__undeclared__ and producer category well-known-probe, as in the initial internal report.",
+    "used_for": "reconciliation only"
+  },
+  "missing_registry_entry": "fail",
+  "historical_version_status_default": "unknown"
+}

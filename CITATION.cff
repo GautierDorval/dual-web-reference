@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: >-
+  Cite a specific edition: give its identifier (for example 2026-09-15_2026-10-15-r1)
+  and the SHA-256 of its data/editions/<edition>/catalog.json. An edition is a
+  dated description of recorded accesses, not a timeless result.
+title: "Dual Web Reference: governance files, relations and recorded accesses on three sites"
+type: dataset
+authors:
+  - family-names: Dorval
+    given-names: Gautier
+version: "2026-09-15_2026-10-15-r1 (candidate, unpublished)"
+keywords:
+  - governance files
+  - llms.txt
+  - documentary layer
+  - HTTP access logs
+license:
+  - CC-BY-4.0
+  - MIT

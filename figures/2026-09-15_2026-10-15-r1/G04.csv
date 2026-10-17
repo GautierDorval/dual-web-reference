@@ -1,0 +1,16 @@
+panel,site_id,pairs_with_rows,pairs_with_provider_ai_get200,bucket,pairs
+A,gautierdorval.com,113,43,,
+A,pagup.com,61,41,,
+A,better-robots.com,95,90,,
+B,gautierdorval.com,,,1,31
+B,pagup.com,,,1,31
+B,better-robots.com,,,1,71
+B,gautierdorval.com,,,2-3,10
+B,pagup.com,,,2-3,10
+B,better-robots.com,,,2-3,18
+B,gautierdorval.com,,,4-7,2
+B,pagup.com,,,4-7,0
+B,better-robots.com,,,4-7,1
+B,gautierdorval.com,,,8+,0
+B,pagup.com,,,8+,0
+B,better-robots.com,,,8+,0

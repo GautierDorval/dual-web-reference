@@ -1,0 +1,37 @@
+{
+  "schema_version": "dwr-producer-classifier/1.0.0",
+  "classifier_version": "2026-08-24.1",
+  "nature": "Transcription of the closed actor rule table of the private collector, classifier version 2026-08-24.1, used to name actor families in exports that carry only the actor name. Roles and tiers are those recorded by the producer.",
+  "provider_origin_eligible_note": "Only rules with an official registry can reach provider_origin_verified_actor: OAI-SearchBot, GPTBot, ChatGPT-User, PerplexityBot, Perplexity-User, Googlebot, Applebot.",
+  "rules": [
+    {"actor_name": "OAI-SearchBot", "actor_family": "openai", "actor_role": "ai_search", "official_registry": true},
+    {"actor_name": "GPTBot", "actor_family": "openai", "actor_role": "ai_training", "official_registry": true},
+    {"actor_name": "ChatGPT-User", "actor_family": "openai", "actor_role": "user_initiated_fetch", "official_registry": true},
+    {"actor_name": "ClaudeBot", "actor_family": "anthropic", "actor_role": "ai_training", "official_registry": false},
+    {"actor_name": "Claude-User", "actor_family": "anthropic", "actor_role": "user_initiated_fetch", "official_registry": false},
+    {"actor_name": "Claude-SearchBot", "actor_family": "anthropic", "actor_role": "ai_search", "official_registry": false},
+    {"actor_name": "PerplexityBot", "actor_family": "perplexity", "actor_role": "ai_search", "official_registry": true},
+    {"actor_name": "Perplexity-User", "actor_family": "perplexity", "actor_role": "user_initiated_fetch", "official_registry": true},
+    {"actor_name": "Googlebot", "actor_family": "google", "actor_role": "search_indexing", "official_registry": true},
+    {"actor_name": "GoogleOther", "actor_family": "google", "actor_role": "search_indexing", "official_registry": false},
+    {"actor_name": "Bingbot", "actor_family": "microsoft", "actor_role": "search_indexing", "official_registry": false},
+    {"actor_name": "MicrosoftPreview", "actor_family": "microsoft", "actor_role": "search_indexing", "official_registry": false},
+    {"actor_name": "Applebot", "actor_family": "apple", "actor_role": "search_indexing", "official_registry": true},
+    {"actor_name": "Meta-ExternalAgent", "actor_family": "meta", "actor_role": "ai_training", "official_registry": false},
+    {"actor_name": "FacebookBot", "actor_family": "meta", "actor_role": "generic_automation", "official_registry": false},
+    {"actor_name": "CCBot", "actor_family": "common-crawl", "actor_role": "ai_training", "official_registry": false},
+    {"actor_name": "Amazonbot", "actor_family": "amazon", "actor_role": "generic_automation", "official_registry": false},
+    {"actor_name": "AhrefsBot", "actor_family": "ahrefs", "actor_role": "seo_tool", "official_registry": false},
+    {"actor_name": "SemrushBot", "actor_family": "semrush", "actor_role": "seo_tool", "official_registry": false},
+    {"actor_name": "Screaming Frog SEO Spider", "actor_family": "screaming-frog", "actor_role": "seo_tool", "official_registry": false},
+    {"actor_name": "Cohere", "actor_family": "cohere", "actor_role": "generic_automation", "official_registry": false},
+    {"actor_name": "YouBot", "actor_family": "you.com", "actor_role": "ai_search", "official_registry": false},
+    {"actor_name": "Bytespider", "actor_family": "bytespider", "actor_role": "ai_training", "official_registry": false}
+  ],
+  "unattributed_names": {
+    "unknown": "unknown",
+    "cloudflare-verified-bot": "unknown",
+    "generic-automation": "generic-automation",
+    "synthetic-probe": "synthetic"
+  }
+}

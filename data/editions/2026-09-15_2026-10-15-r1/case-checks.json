@@ -1,0 +1,349 @@
+{
+  "all_verified": true,
+  "checks": [
+    {
+      "kind": "excerpt",
+      "path": "/identity.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "bdfe23e8df73da859db18ab5e661f847db58fe171cd7be23f9bd52c14822cac1",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/entity-graph.jsonld",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "b200673a3db19917f7177be499f909495b06f12a07e90ab28c26c64a93c264e0",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/claims.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "9717167ddfe865dbbc44d6ed0d843f51753b4c579f5ed4689e8de7db4ea5b258",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/canon.md",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "4ebca1dc27ba77d10f24db8d2ba931bc96f8c99ced4b0c5e5ed327756e732ece",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/.well-known/eac-registry.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "0678baf3a2b5e3b644ef15bec2c27288a2cfe90ec1010b0020b2ee517de821a5",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/non-goals.md",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "31032b815771b78f780c3083b1e1d9ce8664ea6a22f212fe39f2f679cf5c1d79",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/authority-precedence.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "b98021ca1047ec3ae33896a6c970b3bb34f7db43afd3c77015001c30968393de",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/site-context.md",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "2ca814d6bc14aaf51acbe30641193e91813e6e7b6d0089d5ea2b8535e118c358",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/llms.txt",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": "f27a14915705f4afdc3059cb7dd86b5c0e8dccd41a0a266745e17b6947ebd0bc",
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/en/entity/ -> /.well-known/ai-governance.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/en/entity/ -> /ai-manifest.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/en/entity/ -> /canon.md",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/en/entity/ -> /llms.txt",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ai-manifest.json -> /identity.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ai-manifest.json -> /non-goals.md",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/.well-known/ai-governance.json -> /claims.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/.well-known/ai-governance.json -> /authority-precedence.json",
+      "site_id": "gautierdorval.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/dualweb-index.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "122f435cac29aadc514e146901d88dc2f7dcb435a610d93fe3de7a1edbc344eb",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/identity.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "217dab4377850240944d73fe324c31afc98df9391bde43b3d991bb92ade08920",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/canon.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "c1036621b711160caf5fd3d7bb48c6194f8044874bcdf3e1c878891b03bc1a4f",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/site-context.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "4a03271f63b20cca8ef3cacde678572ea321116b4be9c20066e0ab8c8a929ea7",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/services-non-publics.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "bcb57dfa4999be2302856f0572331a172160cb7bab3a350ba3c6109dbf4122f3",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/governance_scope.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "0404b45cfadf736a03a045c3994d7d1e1c2869cbbcb82613506192a698fd535a",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/source-precedence.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "57f03ee3f6084b59543664ece25e61fb7a1d6c44759ab1385b126c8bfad36b50",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/claims.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "1348e96aad80ab5d69f1314c2ed3e253af43c72cf6a5b3cd461f293407ad34ea",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/negative-definitions.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": "80b79c09ea751e787dba3ecff78c6fc81a01cd9bab3f23c82c8ec54e1dd788ed",
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ -> /ai-usage-policy/",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ai-usage-policy/ -> /dualweb-index.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ai-usage-policy/ -> /identity.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/dualweb-index.md -> /site-context.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/dualweb-index.md -> /services-non-publics.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/dualweb-index.md -> /governance_scope.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/dualweb-index.md -> /canon.md",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/identity.json -> /source-precedence.json",
+      "site_id": "pagup.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/plugin-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "10205226f9fdc0cc1cd1512b6b6999d338259a36af18c78fdc2afbc3f0e78323",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/plugin-scope.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "5f555eabaab9290b9e9d17101e1dcb3d19b8ee4c580e4f0ba9693859937936f3",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/limitations-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "90b610763dee066883eff570aa9f7a085a4d5053eaa7f3b743a5c1b465c71d80",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/robots-txt-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "711d30604cece7d258109a2e57c20d9b52f967a7cd144deb9add9c1e7843916c",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/robots.txt",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "08b98097cab46afe2ce2070579108017c7a14bbebcc4a12152cdb6f9ee632364",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/ai-usage-policy.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "e151e7e0e541f97197c9adff474acd641288f26f5a7bb2fdf1fad478a60b3b39",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/.well-known/anti-plausibility.json",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "4287394aeaa9408a1b5168630b9c70a747b633000002e8a3a0002ad0aba3ab7c",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/.well-known/ai-governance.json",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "b5ade18785eb92ead380a5bc8325f613b20989d15cee8b36b8138e16f849ebac",
+      "verified": true
+    },
+    {
+      "kind": "excerpt",
+      "path": "/llms.txt",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": "5ad796b38275f644618928c7c911703e613d7be20f37b1b3ac14efedd5504775",
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/ -> /governance/ai-usage-policy",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/governance/ai-usage-policy -> /plugin-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/governance/ai-usage-policy -> /plugin-scope.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/governance/ai-usage-policy -> /robots-txt-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/governance/ai-usage-policy -> /limitations-context.md",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    },
+    {
+      "kind": "path_step",
+      "path": "/governance/ai-usage-policy -> /robots.txt",
+      "site_id": "better-robots.com",
+      "snapshot_file_sha256": null,
+      "verified": true
+    }
+  ],
+  "nature": "excerpts verified verbatim (whitespace-normalized) in the private source snapshot; path steps verified as relations of the snapshot graph"
+}

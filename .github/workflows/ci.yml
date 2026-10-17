@@ -1,0 +1,43 @@
+# Offline checks only. This workflow never reads private sources, holds no secret,
+# never contacts the measured sites and publishes nothing. Contributor code runs
+# with read-only permissions and no credentials.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+      - name: Unit tests (synthetic fixtures)
+        run: python -I -m unittest discover -s tests -t . -v
+      - name: Recompute metrics from the public tables
+        run: python -I scripts/dwr.py analyze
+      - name: Regenerate figures, case pages and generated blocks
+        run: python -I scripts/dwr.py render
+      - name: Build the static presentation
+        run: python -I scripts/dwr.py build-site
+      - name: Replay all offline checks
+        run: python -I scripts/dwr.py verify
+      - name: Fail if regeneration changed any committed file
+        run: git diff --exit-code

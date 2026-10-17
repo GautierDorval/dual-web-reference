@@ -1,0 +1,153 @@
+{
+  "daily_all_match_archive_aggregate": true,
+  "historical_by_site_provider_origin_ai_get200": {
+    "better-robots.com": 202,
+    "gautierdorval.com": 94,
+    "pagup.com": 76
+  },
+  "historical_figures": {
+    "all_match": true,
+    "lines": [
+      {
+        "computed": 24815,
+        "expected": 24815,
+        "key": "all_collector_requests",
+        "status": "match"
+      },
+      {
+        "computed": 14126,
+        "expected": 14126,
+        "key": "governance_get200",
+        "status": "match"
+      },
+      {
+        "computed": 19587,
+        "expected": 19587,
+        "key": "governance_requests",
+        "status": "match"
+      },
+      {
+        "computed": 386,
+        "expected": 386,
+        "key": "governance_site_path_pairs",
+        "status": "match"
+      },
+      {
+        "computed": 933,
+        "expected": 933,
+        "key": "heterogeneous_provider_plus_network_ai_get200",
+        "status": "match"
+      },
+      {
+        "computed": 12476,
+        "expected": 12476,
+        "key": "stored_cloudflare_unattributed_get200",
+        "status": "match"
+      },
+      {
+        "computed": 88.32,
+        "expected": 88.32,
+        "key": "stored_cloudflare_unattributed_percent_of_get200",
+        "status": "match"
+      },
+      {
+        "computed": 561,
+        "expected": 561,
+        "key": "stored_network_claimed_ai_get200",
+        "status": "match"
+      },
+      {
+        "computed": 372,
+        "expected": 372,
+        "key": "stored_provider_origin_ai_get200",
+        "status": "match"
+      },
+      {
+        "computed": 6,
+        "expected": 6,
+        "key": "stored_provider_origin_ai_llms_get200",
+        "status": "match"
+      },
+      {
+        "computed": 366,
+        "expected": 366,
+        "key": "stored_provider_origin_ai_other_get200",
+        "status": "match"
+      },
+      {
+        "computed": 98.39,
+        "expected": 98.39,
+        "key": "stored_provider_origin_ai_other_percent",
+        "status": "match"
+      },
+      {
+        "computed": 257,
+        "expected": 257,
+        "key": "stored_provider_origin_ai_other_site_path_pairs",
+        "status": "match"
+      },
+      {
+        "computed": 44,
+        "expected": 44,
+        "key": "stored_provider_origin_ai_search_get200",
+        "status": "match"
+      },
+      {
+        "computed": 259,
+        "expected": 259,
+        "key": "stored_provider_origin_ai_site_path_pairs",
+        "status": "match"
+      },
+      {
+        "computed": 302,
+        "expected": 302,
+        "key": "stored_provider_origin_ai_training_get200",
+        "status": "match"
+      },
+      {
+        "computed": 346,
+        "expected": 346,
+        "key": "stored_provider_origin_excluding_user_fetch_get200",
+        "status": "match"
+      },
+      {
+        "computed": 26,
+        "expected": 26,
+        "key": "stored_provider_origin_user_fetch_get200",
+        "status": "match"
+      }
+    ]
+  },
+  "joint_aggregate_vs_exports": {
+    "all_consistent": true,
+    "checks": [
+      {
+        "check": "per_path_marginals",
+        "compared": 390,
+        "mismatches": 0
+      },
+      {
+        "check": "per_actor_group_marginals",
+        "compared": 46,
+        "mismatches": 0
+      },
+      {
+        "check": "per_day_site_totals",
+        "compared": 90,
+        "mismatches": 0
+      },
+      {
+        "check": "per_site_method_status",
+        "compared": 10,
+        "mismatches": 0
+      },
+      {
+        "check": "deduced_method_status_split_confirmed",
+        "compared": 869,
+        "mismatches": 0
+      }
+    ],
+    "nature": "two readings of the same producer table; consistency, not independent validation"
+  },
+  "nature": "offline reproduction of arithmetic on the same exports; not an independent audit"
+}

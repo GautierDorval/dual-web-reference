@@ -1,0 +1,22 @@
+{
+  "schema_version": "dwr-editions/1.0.0",
+  "candidate": "2026-09-15_2026-10-15-r1",
+  "editions": [
+    {
+      "edition_id": "2026-09-15_2026-10-15-r1",
+      "edition_type": "monthly_reference",
+      "period_start_inclusive": "2026-09-15",
+      "period_end_exclusive": "2026-10-15",
+      "revision": 1,
+      "status": "candidate_not_reviewed",
+      "published_at": null,
+      "revised_at": null,
+      "generated_at": "2026-10-16",
+      "generated_at_rule": "date of preparation of this candidate; fixed so that a rebuild of the same inputs gives the same bytes",
+      "supersedes": null,
+      "superseded_by": null,
+      "source_mode": "joint_acquisition",
+      "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status."
+    }
+  ]
+}

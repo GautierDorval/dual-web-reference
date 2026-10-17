@@ -1,0 +1,31 @@
+{
+  "schema_version": "dwr-sites/1.0.0",
+  "ecosystem_note_en": "The three sites belong to the same author's ecosystem. They are three applications of one approach, not three independent replications.",
+  "ecosystem_note_fr": "Les trois sites appartiennent à l’écosystème d’un même auteur. Ce sont trois applications d’une même démarche, pas trois réplications indépendantes.",
+  "sites": [
+    {
+      "site_id": "gautierdorval.com",
+      "domain": "gautierdorval.com",
+      "order": 1,
+      "kind_en": "person",
+      "kind_fr": "personne",
+      "case_dir": "cases/gautierdorval.com"
+    },
+    {
+      "site_id": "pagup.com",
+      "domain": "pagup.com",
+      "order": 2,
+      "kind_en": "organization",
+      "kind_fr": "organisation",
+      "case_dir": "cases/pagup.com"
+    },
+    {
+      "site_id": "better-robots.com",
+      "domain": "better-robots.com",
+      "order": 3,
+      "kind_en": "product",
+      "kind_fr": "produit",
+      "case_dir": "cases/better-robots.com"
+    }
+  ]
+}

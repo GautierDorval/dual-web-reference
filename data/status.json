@@ -1,0 +1,31 @@
+{
+  "automation": {
+    "label_en": "Periodic update planned; manual preparation.",
+    "label_fr": "Actualisation périodique prévue ; préparation manuelle.",
+    "manual_dispatch_workflow": "prepared_in_repository_not_pushed",
+    "monthly_edition": "template_not_activated",
+    "weekly_preparation": "template_not_activated"
+  },
+  "candidate_edition": "2026-09-15_2026-10-15-r1",
+  "candidate_state": "awaiting_review",
+  "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
+  "last_review": {
+    "date": "2026-10-16",
+    "kind": "manual_preparation_first_edition",
+    "state": "awaiting_review"
+  },
+  "latest_available_data_date": "2026-10-14",
+  "latest_published_edition": null,
+  "next_review_target": {
+    "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
+    "guarantee": "none: planned target; manual preparation until automation is authorized and proven",
+    "next_monthly_window": {
+      "days": 31,
+      "end_exclusive": "2026-11-15",
+      "start_inclusive": "2026-10-15"
+    },
+    "weekly_review": "2026-10-19T13:17:00Z"
+  },
+  "realtime": false,
+  "schema_version": "dwr-status/1.0.0"
+}

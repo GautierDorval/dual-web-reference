@@ -1,0 +1,18 @@
+{
+  "editions": [
+    {
+      "catalog": "data/editions/2026-09-15_2026-10-15-r1/catalog.json",
+      "edition_id": "2026-09-15_2026-10-15-r1",
+      "edition_type": "monthly_reference",
+      "period_end_exclusive": "2026-10-15",
+      "period_start_inclusive": "2026-09-15",
+      "published_at": null,
+      "revised_at": null,
+      "revision": 1,
+      "status": "candidate_not_reviewed",
+      "superseded_by": null,
+      "supersedes": null
+    }
+  ],
+  "schema_version": "dwr-index/1.0.0"
+}

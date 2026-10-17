@@ -1,0 +1,16 @@
+[project]
+name = "dual-web-reference"
+version = "0.1.0"
+description = "Governance files of three sites, their roles, relations and recorded HTTP accesses, with dated editions."
+requires-python = ">=3.12"
+dependencies = []
+readme = "README.md"
+license = "MIT"
+
+[project.optional-dependencies]
+# Optional PNG fallback only (scripts/render_png.mjs uses Node and Playwright, outside Python).
+
+[tool.dwr]
+# Canonical outputs (CSV, JSON, SVG, HTML) use the Python standard library only.
+# Developed with CPython 3.14.6 on Windows 11; CI uses CPython 3.14 on ubuntu-24.04.
+entry_point = "scripts/dwr.py"

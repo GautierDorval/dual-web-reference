@@ -1,0 +1,20 @@
+{
+  "schema_version": "dwr-operations/1.0.0",
+  "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
+  "automation": {
+    "weekly_preparation": "template_not_activated",
+    "monthly_edition": "template_not_activated",
+    "manual_dispatch_workflow": "prepared_in_repository_not_pushed",
+    "label_en": "Periodic update planned; manual preparation.",
+    "label_fr": "Actualisation périodique prévue ; préparation manuelle."
+  },
+  "reviews": [
+    {
+      "date": "2026-10-16",
+      "kind": "manual_preparation_first_edition",
+      "state": "awaiting_review",
+      "edition_id": "2026-09-15_2026-10-15-r1",
+      "note": "First candidate prepared from the exports of the internal report; not reviewed, not published."
+    }
+  ]
+}

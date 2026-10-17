@@ -1,0 +1,7 @@
+panel,actor_role,get200
+A,ai_training,200
+A,ai_search,30
+A,user_initiated_fetch,15
+B,ai_training,302
+B,ai_search,44
+B,user_initiated_fetch,26
