@@ -5,8 +5,10 @@ header lines apart, the rest of the header and the whole message), every entry n
 every tree, trees included, and every blob as raw bytes, binary files included. No path
 is excluded. Each file must be of an admitted type; a PNG must have exactly the
 structure IHDR, IDAT..., IEND with an empty IEND and image data of exactly the size its
-header announces. A 40-character identifier is admitted only as an action pin listed in
-config/publication-gate.json, written owner/repository@<commit>. JSON files are also
+header announces. A 40-character identifier is admitted only as an action pin or as the
+published root listed in config/publication-gate.json, written owner/repository@<commit>.
+The history must run linearly from that published root; before the first publication,
+when no root is named, it must be a single commit. JSON files are also
 checked after decoding their strings, and text after decoding percent escapes. Local
 paths are checked against the actual local roots of the machine that runs the gate
 (home folder in long and short form, private workspace), after folding case and
@@ -39,9 +41,12 @@ from .common import DwrError, load_json
 
 # (category, what is detected EN, FR, ((counterexample id, EN, FR), ...))
 COVERAGE = (
-    ("history_not_single_root", "the branch has more than one commit, or a commit with a parent",
-     "la branche compte plus d’un commit, ou un commit avec un parent",
-     (("second_commit", "a second commit", "un second commit"),)),
+    ("history_not_from_published_root",
+     "a history that does not run linearly from the published root named in `config/publication-gate.json` (more than one commit while no root is named, another root, or a merge commit, which any second root requires)",
+     "un historique qui ne part pas linéairement de la racine publiée nommée dans `config/publication-gate.json` (plus d’un commit tant qu’aucune racine n’est nommée, une autre racine, ou un commit de fusion, qu’exige toute seconde racine)",
+     (("second_commit_without_root", "a second commit while no root is named", "un second commit alors qu’aucune racine n’est nommée"),
+      ("other_root", "a root other than the named one", "une racine autre que celle qui est nommée"),
+      ("merge_commit", "a merge commit after the named root", "un commit de fusion après la racine nommée"))),
     ("unsupported_entry", "a symbolic link or a submodule in a tree", "un lien symbolique ou un sous-module dans un arbre",
      (("symlink", "a symbolic link", "un lien symbolique"), ("submodule", "a submodule entry", "une entrée de sous-module"))),
     ("file_type_not_admitted", "a file whose type is not in the admitted list",
@@ -103,8 +108,8 @@ COVERAGE = (
      (("lowercase", "in lower case in code", "en minuscules dans du code"),
       ("uppercase", "in upper case in code", "en majuscules dans du code"),
       ("in_path", "in a file name", "dans un nom de fichier"))),
-    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
-     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action listé dans `config/publication-gate.json` et écrit exactement `propriétaire/dépôt@<commit>`",
+    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin or the published root listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
+     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>`",
      (("workflow_comment", "in a comment of a workflow template", "dans un commentaire d’un modèle de workflow"),
       ("pin_value_repeated_bare", "an admitted pin value repeated without its `owner/repository@` prefix",
        "la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@`"),
@@ -264,11 +269,19 @@ def png_findings(data: bytes) -> list[str]:
     return sorted(found)
 
 
-def admitted_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
-    """owner/repository@<commit> values listed in config/publication-gate.json (public action commits)."""
+def action_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
+    """owner/repository@<commit> values of the public action commits listed in config/publication-gate.json."""
     if not config.is_file():
         return frozenset()
     return frozenset(load_json(config)["admitted_action_pins"])
+
+
+def admitted_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
+    """The action pins and the published root (owner/repository@<commit>) listed in config/publication-gate.json."""
+    if not config.is_file():
+        return frozenset()
+    root = load_json(config).get("published_root")
+    return action_pins(config) | ({root} if root else set())
 
 
 def pattern_findings(path: str, text: str, pins: frozenset[str] | None = None) -> list[str]:
@@ -408,14 +421,42 @@ def _read_objects(repo: Path, shas: list[str]) -> dict[str, bytes]:
     return objects
 
 
-def check_ref(repo: Path, ref: str, secrets: Secrets, *, require_single_root: bool = True,
-              pins: frozenset[str] | None = None) -> dict:
+def published_root(repo: Path, commit: str) -> str | None:
+    """The published root named in config/publication-gate.json of the commit to publish. None only when the file is
+    established as absent from that commit or names no root (before the first publication, the history must then be a
+    single commit); a listing or reading error, or an entry that is not a file, stops the gate."""
+    listing = _git(repo, "ls-tree", "-z", commit, "--", "config/publication-gate.json")
+    if not listing:
+        return None
+    mode, kind, obj = listing.split(b"\t", 1)[0].decode().split()
+    if kind != "blob" or mode in ("120000", "160000"):
+        raise DwrError("publication_gate_config_unreadable", "not a regular file")
+    data = _read_objects(repo, [obj])[obj]
+    try:
+        value = json.loads(data.decode("utf-8").lstrip("\ufeff")).get("published_root")
+    except (ValueError, AttributeError) as error:
+        raise DwrError("publication_gate_config_unreadable", type(error).__name__) from error
+    if value is None:
+        return None
+    match = PIN.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        raise DwrError("published_root_malformed", "expected owner/repository@<commit>")
+    return match.group("sha").lower()
+
+
+def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | None = None) -> dict:
     commit = _git(repo, "rev-parse", "--verify", f"{ref}^{{commit}}").decode().strip()
     lines = _git(repo, "rev-list", "--parents", commit).decode().split("\n")
     history = [line.split() for line in lines if line.strip()]
     raw = []
-    if require_single_root and (len(history) != 1 or len(history[0]) != 1):
-        raw.append(("history_not_single_root", None))
+    root = published_root(repo, commit)
+    roots = [line[0] for line in history if len(line) == 1]
+    if root is None:
+        from_root = len(history) == 1 and len(history[0]) == 1
+    else:
+        from_root = all(len(line) <= 2 for line in history) and roots == [root]
+    if not from_root:
+        raw.append(("history_not_from_published_root", None))
     for sha, content in _read_objects(repo, [h[0] for h in history]).items():
         raw += [(category, f"commit {sha[:12]}") for category in commit_findings(content, secrets)]
     entries = {}

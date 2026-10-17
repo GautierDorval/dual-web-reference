@@ -106,9 +106,12 @@
     "A non-protected automated stratum (a named software agent whose stored tier is provider-origin or network-verified, in a role other than user_initiated_fetch) whose edition cells cover a single path makes its daily row path-level for that software agent. No protected stratum is involved.",
     "A documentary family that contains a single path on all sites makes a cell of daily-family-summary.csv path-level for automated provider-origin crawlers only. No protected stratum is involved."
   ],
-  "owner_decisions_pending": [
-    "Confirm that named software-agent families (for example GPTBot) may be published as actor names at edition level."
-  ],
+  "owner_decisions_pending": [],
+  "actor_names_at_edition_level": {
+    "decision": "approved",
+    "date": "2026-10-17",
+    "scope": "Named software-agent families (for example GPTBot) are published as actor names at edition level only; day-level outputs never carry an actor name."
+  },
   "daily_protected_group": {
     "label": "protected_strata",
     "any": "ANY",

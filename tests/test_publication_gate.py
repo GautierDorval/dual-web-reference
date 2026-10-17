@@ -14,12 +14,13 @@ import subprocess
 import tempfile
 import unittest
 import zlib
+from unittest import mock
 from pathlib import Path
 from urllib.parse import quote
 
 from tests import __init__  # noqa: F401
 from dwr import gate, verify
-from dwr.common import REPO_ROOT, canonical_json
+from dwr.common import REPO_ROOT, canonical_json, load_json
 
 TERM = "example-" + "private-repo"
 IDENTIFIER = "fedcba9876543210" * 2
@@ -97,7 +98,9 @@ def mutation(files=None, action=None, message="Candidate edition"):
 
 # (category, counterexample) -> function(base files) -> mutation
 MUTATIONS = {
-    ("history_not_single_root", "second_commit"): lambda f: mutation(f, "second_commit"),
+    ("history_not_from_published_root", "second_commit_without_root"): lambda f: mutation(f, "second_commit"),
+    ("history_not_from_published_root", "other_root"): lambda f: mutation(f, "other_root"),
+    ("history_not_from_published_root", "merge_commit"): lambda f: mutation(f, "named_root_then_merge"),
     ("unsupported_entry", "symlink"): lambda f: mutation(f, "symlink"),
     ("unsupported_entry", "submodule"): lambda f: mutation(f, "submodule"),
     ("file_type_not_admitted", "executable"): lambda f: mutation(add(f, "tool.exe", b"MZ\x00\x01")),
@@ -208,6 +211,22 @@ class PublicationGateTests(unittest.TestCase):
             (directory / "data" / "more.csv").write_bytes(b"x\n1\n")
             git("add", "-A")
             git("commit", "-q", "-m", "Second commit")
+        if action in ("named_root", "other_root", "named_root_then_merge"):
+            first = git("rev-parse", "HEAD").decode().strip()
+            named = OTHER_40 if action == "other_root" else first
+            config = json.dumps({"published_root": f"example/repo@{named}"})
+            (directory / "config").mkdir(exist_ok=True)
+            (directory / "config" / "publication-gate.json").write_text(config, encoding="utf-8")
+            git("add", "-A")
+            git("commit", "-q", "-m", "Next edition")
+        if action == "named_root_then_merge":
+            branch = git("rev-parse", "--abbrev-ref", "HEAD").decode().strip()
+            git("checkout", "-q", "-b", "side", first)
+            (directory / "side.md").write_bytes(b"side\n")
+            git("add", "side.md")
+            git("commit", "-q", "-m", "Side branch")
+            git("checkout", "-q", branch)
+            git("merge", "-q", "--no-ff", "--no-edit", "side")
         if action == "leak_then_remove":
             (directory / "docs" / "c.md").unlink()
             git("add", "-A")
@@ -252,8 +271,48 @@ class PublicationGateTests(unittest.TestCase):
     def test_a_leak_removed_later_is_still_caught_in_history(self):
         case = MUTATIONS[("local_path", "in_markdown")](base_files())
         found = {f["category"] for f in gate.check_ref(self.repo(case["files"], "leak_then_remove"), "HEAD", SECRETS,
-                                                       require_single_root=False, pins=PINS)["findings"]}
+                                                       pins=PINS)["findings"]}
         self.assertIn("local_path", found)
+
+    def test_linear_history_from_the_named_root_passes(self):
+        directory = self.repo(base_files(), "named_root")
+        first = subprocess.run(["git", "rev-list", "--max-parents=0", "HEAD"], cwd=directory, capture_output=True,
+                               check=True).stdout.decode().strip()
+        report = gate.check_ref(directory, "HEAD", SECRETS, pins=PINS | {f"example/repo@{first}"})
+        self.assertTrue(report["passed"], report["findings"])
+        self.assertEqual(report["commits"], 2)
+
+    def test_history_counterexamples_raise_only_the_history_category(self):
+        for action in ("second_commit", "other_root", "named_root_then_merge"):
+            directory = self.repo(base_files(), action)
+            config = directory / "config" / "publication-gate.json"
+            named = json.loads(config.read_text(encoding="utf-8"))["published_root"] if config.is_file() else None
+            with self.subTest(action=action):
+                report = gate.check_ref(directory, "HEAD", SECRETS, pins=PINS | ({named} if named else set()))
+                self.assertEqual({f["category"] for f in report["findings"]}, {"history_not_from_published_root"})
+
+    def test_an_unreadable_configuration_stops_the_gate(self):
+        directory = self.repo(base_files())
+        real = gate._git
+
+        def failing(repo, *args, data=None):
+            if any("publication-gate.json" in arg for arg in args):
+                raise gate.DwrError("git_failed", "simulated read failure")
+            return real(repo, *args, data=data)
+
+        with mock.patch.object(gate, "_git", failing):
+            with self.assertRaises(gate.DwrError):
+                gate.check_ref(directory, "HEAD", SECRETS, pins=PINS)
+
+    def test_a_configuration_that_is_not_a_file_stops_the_gate(self):
+        files = add(base_files(), "config/publication-gate.json/inner.json", "{}")
+        with self.assertRaises(gate.DwrError):
+            gate.check_ref(self.repo(files), "HEAD", SECRETS, pins=PINS)
+
+    def test_a_malformed_published_root_stops_the_gate(self):
+        files = add(base_files(), "config/publication-gate.json", json.dumps({"published_root": "not-a-pin"}))
+        with self.assertRaises(gate.DwrError):
+            gate.check_ref(self.repo(files), "HEAD", SECRETS, pins=PINS)
 
 
 class CleanupTests(unittest.TestCase):
@@ -308,7 +367,9 @@ class GateSourceTests(unittest.TestCase):
         pins = {f"{m.group('pair')}@{m.group('sha')}" for path in files
                 for m in gate.PIN.finditer(path.read_text(encoding="utf-8"))}
         self.assertTrue(pins)
-        self.assertEqual(pins, set(gate.admitted_pins()))
+        self.assertEqual(pins, set(gate.action_pins()))
+        self.assertEqual(set(gate.admitted_pins()) - set(gate.action_pins()),
+                         {load_json(gate.PIN_CONFIG)["published_root"]})
 
     def test_png_of_the_edition_have_the_admitted_structure(self):
         pngs = sorted((REPO_ROOT / "figures").rglob("*.png"))

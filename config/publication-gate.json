@@ -1,8 +1,9 @@
 {
-  "schema_version": "dwr-publication-gate/1.0.0",
-  "purpose": "Public commits that pin the GitHub actions of the workflows. A 40-character identifier is admitted by the publication gate only in the exact form owner/repository@<commit> listed here.",
+  "schema_version": "dwr-publication-gate/1.1.0",
+  "purpose": "Public commits that pin the GitHub actions of the workflows, and the published root of this repository. A 40-character identifier is admitted by the publication gate only in the exact form owner/repository@<commit> listed here; the published history must run linearly from published_root.",
   "admitted_action_pins": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
-  ]
+  ],
+  "published_root": "GautierDorval/dual-web-reference@ca41bd6770a14a5ed719aed4d08b2fac80106b2a"
 }

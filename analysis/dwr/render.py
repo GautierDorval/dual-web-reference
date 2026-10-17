@@ -284,7 +284,7 @@ def gate_coverage(lang: str) -> str:
     """Generated from gate.COVERAGE, which the mutation tests check one to one."""
     head = t(lang, "| Category | What the gate detects | Counterexamples tested |\n|---|---|---|",
              "| Catégorie | Ce que la porte détecte | Contre-exemples testés |\n|---|---|---|")
-    rows = [f"| `{category}` | {t(lang, en, fr)} | " + "; ".join(t(lang, v_en, v_fr) for _, v_en, v_fr in variants) + " |"
+    rows = [f"| `{category}` | {t(lang, en, fr)} | " + t(lang, "; ", "\u202f; ").join(t(lang, v_en, v_fr) for _, v_en, v_fr in variants) + " |"
             for category, en, fr, variants in gate.COVERAGE]
     tested = sum(len(variants) for *_, variants in gate.COVERAGE)
     note = t(lang,

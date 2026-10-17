@@ -60,9 +60,9 @@ Un contrôle de croisement exécuté sur l’édition candidate, avant toute pub
 ## Décisions du propriétaire
 
 - Validée le 2026-10-17 : cette politique, modification et cas résiduels acceptés compris.
-- En attente : confirmer que des familles nommées d’agents logiciels (par exemple `GPTBot`) peuvent être publiées comme noms d’acteurs au niveau de l’édition.
+- Validé le 2026-10-17 : les familles nommées d’agents logiciels (par exemple `GPTBot`) sont publiées comme noms d’acteurs au niveau de l’édition seulement ; les sorties quotidiennes ne portent jamais de nom d’acteur.
 
-Tant que ce point n’est pas confirmé, l’édition reste une candidate non publiée ([mises à jour](mises-a-jour.md)).
+L’édition reste une candidate non publiée jusqu’à sa publication ([mises à jour](mises-a-jour.md)).
 
 ## Le trafic inconnu n’est jamais imputé
 

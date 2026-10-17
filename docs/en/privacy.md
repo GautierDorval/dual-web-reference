@@ -60,9 +60,9 @@ A crossing check run on the candidate edition, before any publication, found thr
 ## Owner decisions
 
 - Validated on 2026-10-17: this policy, including its amendment and its accepted residual cases.
-- Pending: confirm that named software-agent families (for example `GPTBot`) may be published as actor names at edition level.
+- Validated on 2026-10-17: named software-agent families (for example `GPTBot`) are published as actor names at edition level only; day-level outputs never carry an actor name.
 
-Until that point is confirmed, the edition remains an unpublished candidate ([updates](updates.md)).
+The edition remains an unpublished candidate until its publication ([updates](updates.md)).
 
 ## Unknown traffic is never imputed
 
