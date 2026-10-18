@@ -66,28 +66,28 @@
     },
     {
       "kind": "path_step",
-      "path": "/en/entity/ -> /.well-known/ai-governance.json",
+      "path": "/en/ai-use-policy/ -> /.well-known/ai-governance.json",
       "site_id": "gautierdorval.com",
       "snapshot_file_sha256": null,
       "verified": true
     },
     {
       "kind": "path_step",
-      "path": "/en/entity/ -> /ai-manifest.json",
+      "path": "/en/ai-use-policy/ -> /ai-manifest.json",
       "site_id": "gautierdorval.com",
       "snapshot_file_sha256": null,
       "verified": true
     },
     {
       "kind": "path_step",
-      "path": "/en/entity/ -> /canon.md",
+      "path": "/en/ai-use-policy/ -> /canon.md",
       "site_id": "gautierdorval.com",
       "snapshot_file_sha256": null,
       "verified": true
     },
     {
       "kind": "path_step",
-      "path": "/en/entity/ -> /llms.txt",
+      "path": "/en/ai-use-policy/ -> /llms.txt",
       "site_id": "gautierdorval.com",
       "snapshot_file_sha256": null,
       "verified": true

@@ -14,16 +14,16 @@ Quand on demande à un système « Qui est Gautier Dorval ? », quel fichi
 
 ## Page de départ
 
-`/en/entity/` (équivalent `/entite/`). identity.json désigne cette page comme page d’entité canonique, et le nœud Person de entity-graph.jsonld y renvoie.
+`/en/ai-use-policy/` (équivalent `/ai-usage-policy/`). La politique d’usage de l’IA est la page de départ de ce cas. Elle relie /.well-known/ai-governance.json, le point d’entrée machine canonique, et les fichiers de gouvernance utilisés ci-dessous. La page d’entité demeure une référence pour l’identité.
 
 ## Parcours documentaire disponible
 
 Chaque étape est une référence écrite dans un fichier de l’instantané source, vérifiée dans [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). Elle montre ce qu’un lecteur peut suivre ; ce n’est pas un parcours de robot observé.
 
-- `/en/entity/` → `/.well-known/ai-governance.json`
-- `/en/entity/` → `/ai-manifest.json`
-- `/en/entity/` → `/canon.md`
-- `/en/entity/` → `/llms.txt`
+- `/en/ai-use-policy/` → `/.well-known/ai-governance.json`
+- `/en/ai-use-policy/` → `/ai-manifest.json`
+- `/en/ai-use-policy/` → `/canon.md`
+- `/en/ai-use-policy/` → `/llms.txt`
 - `/ai-manifest.json` → `/identity.json`
 - `/ai-manifest.json` → `/non-goals.md`
 - `/.well-known/ai-governance.json` → `/claims.json`

@@ -4,6 +4,11 @@ Editions (data) and code are versioned separately. An edition identifier names i
 
 ## Unreleased
 
+### Candidate documentation correction (2026-10-18)
+
+- Use `/en/ai-use-policy/` (French counterpart `/ai-usage-policy/`) as the gautierdorval.com case starting page. The replacement path steps already exist in the unchanged source snapshot graph; the entity page remains an identity reference. Regenerate the bilingual case pages, overview and documentary graph from the same edition data.
+- Describe the existing manual offline CI accurately, and date the classifier-correction discussion to the historical preparation. No observation, count, historical label, source snapshot, edition window or publication status changes.
+
 ### Edition 2026-09-15_2026-10-15-r1 (candidate, not reviewed, not published)
 
 - First monthly reference window: September 15 to October 14, 2026 inclusive, UTC (exclusive end 2026-10-15T00:00:00Z, 30 days).

@@ -50,7 +50,7 @@ Reference editions use consecutive monthly windows in UTC, from the 15th (includ
 
 ## Weekly preparation and manual dispatch
 
-The calendar plans a weekly review on Monday at 13:17 UTC and a monthly edition. Both are templates with `activation_status = template_not_activated`, kept outside the automatic workflow folder. A manual `workflow_dispatch` workflow is prepared in the repository but not pushed.
+The calendar plans a weekly review on Monday at 13:17 UTC and a monthly edition. Both are templates with `activation_status = template_not_activated`, kept outside the automatic workflow folder. The offline CI workflow also accepts manual `workflow_dispatch` runs. It checks the existing public projection; it neither acquires new data nor publishes an edition.
 
 What the preparation does: check that sources are available, prepare a candidate edition and a difference report, and record the operation state. What it never does: publish automatically, publish private data or an unreviewed candidate, or run the authenticated private acquisition. That acquisition runs only in the private environment, never in a public CI job; public jobs have no access to the producer database or to private sources.
 

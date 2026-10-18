@@ -4,7 +4,7 @@
   "automation": {
     "weekly_preparation": "template_not_activated",
     "monthly_edition": "template_not_activated",
-    "manual_dispatch_workflow": "prepared_in_repository_not_pushed",
+    "manual_dispatch_workflow": "offline_ci_available_on_manual_dispatch",
     "label_en": "Periodic update planned; manual preparation.",
     "label_fr": "Actualisation périodique prévue ; préparation manuelle."
   },

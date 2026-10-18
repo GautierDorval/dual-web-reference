@@ -14,16 +14,16 @@ When a system is asked “Who is Gautier Dorval?”, which published file is mea
 
 ## Starting page
 
-`/en/entity/` (counterpart `/entite/`). identity.json names this page as the canonical entity page, and the Person node of entity-graph.jsonld points to it.
+`/en/ai-use-policy/` (counterpart `/ai-usage-policy/`). The AI use policy is the starting page for this case. It links /.well-known/ai-governance.json, the canonical machine entrypoint, and the governance files used below. The entity page remains a reference for identity.
 
 ## Available documentary path
 
 Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). It shows what a reader can follow; it is not an observed robot path.
 
-- `/en/entity/` → `/.well-known/ai-governance.json`
-- `/en/entity/` → `/ai-manifest.json`
-- `/en/entity/` → `/canon.md`
-- `/en/entity/` → `/llms.txt`
+- `/en/ai-use-policy/` → `/.well-known/ai-governance.json`
+- `/en/ai-use-policy/` → `/ai-manifest.json`
+- `/en/ai-use-policy/` → `/canon.md`
+- `/en/ai-use-policy/` → `/llms.txt`
 - `/ai-manifest.json` → `/identity.json`
 - `/ai-manifest.json` → `/non-goals.md`
 - `/.well-known/ai-governance.json` → `/claims.json`

@@ -353,7 +353,7 @@
         },
         {
           "path": "data/editions/2026-09-15_2026-10-15-r1/catalog.json",
-          "sha256": "a844a1540d53f3314288810419ba671b1ee258a5817a021df505ad70059c2a7c"
+          "sha256": "68e8b43b84752aca2034852a9e53e9d8cbb173480a2645fef3169dac9a8efc16"
         }
       ],
       "png": {
@@ -411,25 +411,25 @@
       "alt_fr": "Diagramme nœuds-liens de 12 documents de gautierdorval.com et des 25 références écrites entre eux dans l’instantané source.",
       "data_table": {
         "path": "figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.csv",
-        "sha256": "d9d4f059969b827c713ea5fa65b69f46e6045bd14404b71740fb6844d8b42cda"
+        "sha256": "39b48c5657be4baa5cb5e834eabb0f6f980d2aa4b8e3ba2a6e07af5822210729"
       },
       "figure_id": "G09-gautierdorval.com",
       "files": {
         "G09-gautierdorval.com.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.en.compact.svg",
-          "sha256": "b82938e184bc57400752e2cd2dcdcc5e340b9c0c8095458d31df251cfa000d60"
+          "sha256": "7ab1e3e134dfc0ed0f421969cbac88b3572b81f870c36af3fc2ae5d328caaf24"
         },
         "G09-gautierdorval.com.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.en.svg",
-          "sha256": "722dff598a0b9c19beb5f144335917097ee459f099b5177aadb6c3335631057a"
+          "sha256": "3ab00a6f247552dd56b7202d014e56762b1c8d2bf4622343fda77d4a0ba7d66d"
         },
         "G09-gautierdorval.com.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.fr.compact.svg",
-          "sha256": "8b80da4edb2dfd80093d51ebf05a18bf54dd849d64519faa735aa0520cae4d3a"
+          "sha256": "8db50b8ffcb90d698d79c664730074396e1bf7007ef4c21c5c862cd3b1032193"
         },
         "G09-gautierdorval.com.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.fr.svg",
-          "sha256": "fe8676ad90a8a50c8e6c91288914393cd4ee8d9df22fcc921305784c00fa6389"
+          "sha256": "eb05b6371f82c64a3efa1c47ecd69abb754a0d161f16a3f9ad634e5994fab83a"
         }
       },
       "inputs": [

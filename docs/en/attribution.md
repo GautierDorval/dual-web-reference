@@ -72,9 +72,9 @@ Cloudflare documentation consulted on 2026-10-16:
 - [Verified bots](https://developers.cloudflare.com/bots/concepts/bot/verified-bots/) (last updated 2026-10-08) lists 17 legacy category strings: Academic Research, Accessibility, Advertising & Marketing, Aggregator, AI Assistant, AI Crawler, AI Search, Archiver, Feed Fetcher, Monitoring & Analytics, Page Preview, Search Engine Crawler, Search Engine Optimization, Security, Social Media Marketing, Webhooks, Other. A category describes a type and a purpose, never the operator.
 - [Workers Request](https://developers.cloudflare.com/workers/runtime-apis/request/) (last updated 2026-07-02) does not list `verifiedBotCategory` among the properties of `request.cf`, and the type package `@cloudflare/workers-types` 5.20261016.1 does not declare it.
 
-## A corrective candidate, prepared separately
+## Correction prepared after the measurement window
 
-A corrective candidate is prepared locally in a separate branch of the producer; it is not pushed and not deployed. The rule is closed: a strict boolean `true` verifies; an explicit `false` or a malformed value fails closed, even next to a category; otherwise only an exact match with one of the 17 legacy categories, pinned on 2026-10-16, verifies, and an unknown value never improves attribution. It would carry a new classifier version, 2026-10-16.1, and would leave historical labels untouched. It changes no number of this edition.
+At the data extraction on 2026-10-16, a corrective candidate had been prepared locally in a separate branch of the producer; it had not yet been pushed or deployed. The rule is closed: a strict boolean `true` verifies; an explicit `false` or a malformed value fails closed, even next to a category; otherwise only an exact match with one of the 17 legacy categories, pinned on 2026-10-16, verifies, and an unknown value never improves attribution. The proposed classifier version was 2026-10-16.1, with historical labels left untouched. This paragraph records the preparation state on 2026-10-16, not the current deployment state. Any later deployment and its collection follow-up belong to a subsequent measurement epoch; no number or historical label of this edition changes.
 
 ## Provenance, sensitivity and unknown traffic
 

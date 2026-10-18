@@ -14,10 +14,10 @@ source_path,target_path,relation_type
 /canon.md,/.well-known/eac-registry.json,plain_url_mention
 /canon.md,/authority-precedence.json,plain_url_mention
 /canon.md,/claims.json,plain_url_mention
-/en/entity/,/.well-known/ai-governance.json,html_anchor
-/en/entity/,/ai-manifest.json,html_anchor
-/en/entity/,/canon.md,html_anchor
-/en/entity/,/llms.txt,html_anchor
+/en/ai-use-policy/,/.well-known/ai-governance.json,html_anchor
+/en/ai-use-policy/,/ai-manifest.json,html_anchor
+/en/ai-use-policy/,/canon.md,html_anchor
+/en/ai-use-policy/,/llms.txt,html_anchor
 /llms.txt,/.well-known/eac-registry.json,plain_url_mention
 /llms.txt,/authority-precedence.json,plain_url_mention
 /llms.txt,/claims.json,plain_url_mention

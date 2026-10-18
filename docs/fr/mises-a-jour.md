@@ -50,7 +50,7 @@ Les éditions de référence utilisent des fenêtres mensuelles consécutives en
 
 ## Préparation hebdomadaire et déclenchement manuel
 
-Le calendrier prévoit une revue hebdomadaire le lundi à 13 h 17 UTC et une édition mensuelle. Les deux sont des modèles marqués `activation_status = template_not_activated`, conservés hors du dossier des workflows automatiques. Un workflow manuel `workflow_dispatch` est préparé dans le dépôt, mais il n’est pas poussé.
+Le calendrier prévoit une revue hebdomadaire le lundi à 13 h 17 UTC et une édition mensuelle. Les deux sont des modèles marqués `activation_status = template_not_activated`, conservés hors du dossier des workflows automatiques. Le workflow de CI hors ligne accepte aussi les exécutions manuelles `workflow_dispatch`. Il vérifie la projection publique existante ; il ne collecte aucune nouvelle donnée et ne publie aucune édition.
 
 Ce que fait la préparation : vérifier la disponibilité des sources, préparer une édition candidate et un rapport de différences, et consigner l’état de l’opération. Ce qu’elle ne fait jamais : publier automatiquement, publier des données privées ou une candidate non revue, ou exécuter l’acquisition privée authentifiée. Celle-ci ne s’exécute que dans l’environnement privé, jamais dans une CI publique ; les jobs publics n’ont accès ni à la base du producteur ni aux sources privées.
 

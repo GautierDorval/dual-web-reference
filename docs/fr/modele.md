@@ -36,7 +36,7 @@ Les trois sites mesurés appartiennent à l’écosystème d’un même auteur 
 <!-- dwr:begin cases -->
 | Site | Angle | Page de départ | Ressources | GET 200 IA à origine fournisseur sur ces ressources |
 |---|---|---|---:|---:|
-| [gautierdorval.com](../../cases/gautierdorval.com/README.fr.md) | Identité d’une personne, et distinction entre définitions, affirmations, sources, limites et contenus ordinaires du site. | `/en/entity/` | 9 | 10 |
+| [gautierdorval.com](../../cases/gautierdorval.com/README.fr.md) | Identité d’une personne, et distinction entre définitions, affirmations, sources, limites et contenus ordinaires du site. | `/en/ai-use-policy/` | 9 | 10 |
 | [pagup.com](../../cases/pagup.com/README.fr.md) | Contexte d’une organisation, périmètre de son offre, références et limites documentaires. | `/ai-usage-policy/` | 9 | 13 |
 | [better-robots.com](../../cases/better-robots.com/README.fr.md) | Contexte d’un produit, capacités déclarées, limites, et différence entre la publication d’une règle et le comportement effectif d’un robot. | `/governance/ai-usage-policy` | 9 | 15 |
 

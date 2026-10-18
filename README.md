@@ -61,7 +61,7 @@ All figures (G01 to G10), with their data tables and text alternatives, are list
 <!-- dwr:begin cases -->
 | Site | Angle | Starting page | Resources | Provider-origin AI GET 200 on these resources |
 |---|---|---|---:|---:|
-| [gautierdorval.com](cases/gautierdorval.com/README.md) | Identity of a person, and the distinction between definitions, claims, sources, limits and ordinary site content. | `/en/entity/` | 9 | 10 |
+| [gautierdorval.com](cases/gautierdorval.com/README.md) | Identity of a person, and the distinction between definitions, claims, sources, limits and ordinary site content. | `/en/ai-use-policy/` | 9 | 10 |
 | [pagup.com](cases/pagup.com/README.md) | Context of an organization, scope of its offer, references and documentary limits. | `/ai-usage-policy/` | 9 | 13 |
 | [better-robots.com](cases/better-robots.com/README.md) | Context of a product, declared capabilities, limits, and the difference between publishing a rule and how a robot actually behaves. | `/governance/ai-usage-policy` | 9 | 15 |
 
