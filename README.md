@@ -5,7 +5,7 @@
 This repository studies governance files, their documentary relations and recorded HTTP accesses.
 
 <!-- dwr:begin edition-state -->
-local candidate; reference not approved; no independent scientific review documented.
+Edition r2: local candidate; reference not approved; no independent scientific review documented. r1 remains public and byte-frozen.
 <!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->

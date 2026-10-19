@@ -3,7 +3,7 @@
 [Français](../fr/mises-a-jour.md) · [Repository home](../../README.md)
 
 <!-- dwr:begin edition-state -->
-local candidate; reference not approved; no independent scientific review documented.
+Edition r2: local candidate; reference not approved; no independent scientific review documented. r1 remains public and byte-frozen.
 <!-- dwr:end edition-state -->
 
 A public repository, passing tests, a technical review and a scientific review are different facts.
@@ -60,3 +60,7 @@ The receipt authenticates inputs and outputs. An identical retry returns `unchan
 The Monday 13:17 UTC weekly review and monthly preparation are **inactive templates**, not a service guarantee. Manual offline CI validates existing public files; it does not collect data. [status.json](../../data/status.json) distinguishes code readiness, synthetic execution, real-source availability, planning and approval. Public events in [operations.json](../../config/operations.json) use dates or evidence bounds; a publication annotation does not prove causality.
 
 Catalog schema 2 excludes availability, approval, scientific-review state, publication dates, the superseded-by pointer and planning targets. These mutable facts are read from the edition registry and operational configuration. Updating them and regenerating the presentation does not alter the approved payload digest. The historical r1 catalog keeps its original schema and bytes.
+
+Approval requires matching technical, editorial and distribution decisions in review_status and in the content-bound receipt. The editions page displays effective approval after receipt validation, readable declared decisions and approved_release_at only while that approval is valid. data/status.json derives the candidate state from the same rule; the last successful approval review supersedes the earlier preparation record in its current summary.
+
+The generated edition index separates declared_reference_release_status from the effective reference_release_status after receipt validation.

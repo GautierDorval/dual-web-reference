@@ -10,6 +10,7 @@ Editions (data) and code are versioned separately. An edition identifier names i
 - Add conditional 174/269 coverage, explicit 6/3 and 239/266 averages, named-agent and provider-family shares, 17/262 failed-origin context and 185/230 concentration. Definitions remain in the central metrics calculator; main 245/174/6/239 and scope 245/356/372 are unchanged.
 - G01 to G10 retained. G03 now separates names, families and roles; its previous historical-role panel remains available in metrics. G08 reads actual coverage/version fields; G10 shows one observed window without treating r2 as growth. All SVG variants are checked. Compact figures use a 288 px layout that fits a 320 px viewport, with complete titles and legends; data tables remain scrollable.
 - Add manual private `prepare-next`, synthetic two-epoch rehearsal, preserved mixed/unavailable states and idempotent receipts. Preparation also rejects inconsistent archive/daily marginals and runs schema and public reconciliation checks. Planning remains inactive. No new real acquisition or remote operation.
+- Keep edition rows, approval dates and operation summaries consistent with validated receipts, including invalidation; check agreement of declared review decisions and receipt decisions. Restore the r1 public/frozen context and French status spacing.
 - Improve FR/EN entry pages, cases and navigation; measured resources remain copyable text by owner decision. Add the approved private security contact, concise public contribution templates and a schema-validated CFF.
 
 ## Historical preparation notes

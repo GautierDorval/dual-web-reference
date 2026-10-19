@@ -41,5 +41,6 @@
     "real_next_window": "not_available"
   },
   "realtime": false,
+  "reference_approval_state": "not_approved",
   "schema_version": "dwr-status/1.0.0"
 }

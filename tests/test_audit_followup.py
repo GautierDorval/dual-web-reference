@@ -10,7 +10,7 @@ from unittest.mock import patch
 from tests import __init__
 from tests import test_corrective_controls as controls
 from tests.test_next_edition import prepare_inputs
-from dwr import common, disclosure, edition_rules, frozen, maintenance, pipeline, render, site_build, verify
+from dwr import typo, common, disclosure, edition_rules, frozen, maintenance, pipeline, render, site_build, verify
 from dwr.common import REPO_ROOT, DwrError, load_json, write_json, read_csv
 
 R1='2026-09-15_2026-10-15-r1'
@@ -37,6 +37,17 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertEqual(before,edition_rules.payload_manifest(R2,root)['digest'])
                 self.assertTrue(edition_rules.approved(entry))
                 self.assertEqual(load_json(root/'data/latest.json')['latest_published_edition'],R2)
+                state=load_json(root/'data/status.json')
+                self.assertEqual(state['candidate_state'],'approved_reference')
+                self.assertEqual(next(e for e in load_json(root/'data/index.json')['editions'] if e['edition_id']==R2)['reference_release_status'],'approved')
+                self.assertEqual(state['last_review']['state'],'approved')
+                self.assertEqual(state['last_review']['date'],entry['approval_receipt']['reviewed_at'])
+                html=(root/'site/dist/en/editions.html').read_text(encoding='utf-8')
+                self.assertIn('2026-11-20',html)
+                self.assertIn('Technical: approved',html)
+                self.assertNotIn('&#x27;technical&#x27;',html)
+                self.assertNotIn('published_at',html)
+
                 box=render.dates_box(render.Edition(R2),'en')
                 self.assertIn('publicly accessible; reference approved',box)
                 self.assertIn('publicly accessible; reference approved',(root/'README.md').read_text(encoding='utf-8'))
@@ -52,6 +63,15 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertNotIn('next_review_target',catalog['dates'])
                 png=root/f'figures/{R2}/png/G02.en.png';png.write_bytes(png.read_bytes()+b'changed')
                 self.assertFalse(edition_rules.approved(entry))
+                render.cmd(R2);site_build.cmd(R2)
+                self.assertIn('approval invalid',edition_rules.status_label(entry,'en'))
+                self.assertIn('reference approval invalid',(root/'README.md').read_text(encoding='utf-8'))
+                self.assertEqual(load_json(root/'data/status.json')['candidate_state'],'approval_invalid')
+                self.assertEqual(next(e for e in load_json(root/'data/index.json')['editions'] if e['edition_id']==R2)['reference_release_status'],'approval_invalid')
+                html=(root/'site/dist/en/editions.html').read_text(encoding='utf-8')
+                self.assertIn('approval invalid',html)
+                self.assertNotIn('2026-11-20',html)
+                self.assertIsNone(load_json(root/'data/latest.json')['latest_published_edition'])
 
     def test_latest_order_without_superseding_relationship_and_receipt_bounds(self):
         digest='a'*64;fixture=controls.ReviewTests()
@@ -139,3 +159,69 @@ class AuditFollowupTests(unittest.TestCase):
                 with ctx:result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
                 self.assertEqual(result['outcome'],'validation_failed')
                 self.assertEqual(result['reason'],'prepared_projection_schema_or_reconciliation_failed')
+
+    def test_generated_date_order_and_conflicting_review_decisions_are_refused(self):
+        entry=controls.ReviewTests().approved(R2,'a'*64)
+        self.assertTrue(edition_rules.approved(entry,lambda _:'a'*64))
+        entry['generated_at']='2026-11-21'
+        self.assertFalse(edition_rules.approved(entry,lambda _:'a'*64))
+        entry.pop('generated_at')
+        for review in (None, {}, {'technical':'approved','editorial':'awaiting_review','distribution':'approved'}):
+            entry['review_status']=review
+            self.assertFalse(edition_rules.approved(entry,lambda _:'a'*64))
+
+    def test_catalog_stripping_removes_planning_and_verify_rejects_mutable_fields(self):
+        specimen={'dates':{'published_at':None,'next_review_target':{}},'status':'candidate_not_reviewed','files':[{'status':'candidate','rows':1}]}
+        stripped=edition_rules.strip_operational_state(specimen)
+        self.assertNotIn('published_at',stripped['dates'])
+        self.assertNotIn('next_review_target',stripped['dates'])
+        self.assertNotIn('status',stripped)
+        self.assertNotIn('status',stripped['files'][0])
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);copy_candidate(root);path=root/'data/editions'/R2/'catalog.json';original=load_json(path)
+            with patch.object(verify,'REPO_ROOT',root):
+                for key in ('availability_status','status','next_review_target'):
+                    bad=copy.deepcopy(original)
+                    if key=='next_review_target':bad['dates'][key]={}
+                    else:bad[key]='candidate'
+                    write_json(path,bad);report=verify.Report();verify.check_catalog(report,path.parent)
+                    state=next(c for c in report.checks if c['check']=='observation_dates_valid_and_operational_state_external')
+                    self.assertFalse(state['passed'],key)
+
+    def test_french_status_names_the_edition_keeps_r1_context_and_required_spacing(self):
+        edition=render.Edition(R2)
+        label=edition_rules.status_label(edition.entry,'fr')
+        self.assertIn('locale ; référence',label)
+        self.assertEqual(typo.punctuation_violations(label),0)
+        self.assertEqual(typo.punctuation_violations('candidate locale; référence'),1)
+        self.assertEqual(typo.punctuation_violations('`locale; code` https://example.invalid/a; « citation; exacte » &amp;'),0)
+        for name in ('README.fr.md','README.md'):
+            text=(REPO_ROOT/name).read_text(encoding='utf-8')
+            self.assertIn('r2',text[:650]);self.assertIn('r1',text[:650])
+        text=render.case_rows(edition,'fr')
+        self.assertIn('(EN ; FR : `/ai-usage-policy/`)',text)
+
+    def test_visible_source_metadata_is_required_even_when_invisible_title_keeps_it(self):
+        import re
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);copy_candidate(root)
+            path=root/'figures'/R2/'G09-gautierdorval.com.fr.compact.svg'
+            original=path.read_text(encoding='utf-8')
+            altered,count=re.subn(r'<text\b[^>]*>[^<]*data/editions/[^<]*</text>', '', original)
+            self.assertGreater(count,0)
+            self.assertIn('<desc',altered)
+            path.write_text(altered,encoding='utf-8')
+            with patch.object(verify,'REPO_ROOT',root),patch.object(render,'REPO_ROOT',root):
+                report=verify.Report();verify.check_rendering(report,R2)
+            result=next(c for c in report.checks if c['check']=='figures_carry_dates_edition_source_and_alt')
+            self.assertFalse(result['passed'])
+
+    def test_private_preparation_reconciles_resource_active_days_with_joint_source(self):
+        with tempfile.TemporaryDirectory() as temp:
+            private=Path(temp);eid=prepare_inputs(private);path=private/'working'/eid/'qualified.json';source=load_json(path)
+            resource=next(r for r in source['resources'] if r.get('counts'))
+            resource['counts']['days']+=1
+            write_json(path,source)
+            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            self.assertEqual(result['outcome'],'validation_failed')
+            self.assertEqual(result['reason'],'qualified_counts_differ_from_joint')

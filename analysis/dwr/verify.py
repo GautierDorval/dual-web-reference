@@ -330,6 +330,8 @@ def check_french(report):
     unstable = [str(p.relative_to(REPO_ROOT)) for p in files
                 if typo.fr(p.read_text(encoding="utf-8")) != p.read_text(encoding="utf-8")]
     report.add("french_typography_applied", not unstable, ", ".join(unstable))
+    unspaced = [str(p.relative_to(REPO_ROOT)) for p in files if typo.punctuation_violations(p.read_text(encoding="utf-8"))]
+    report.add("french_punctuation_has_required_spacing", not unspaced, ", ".join(unspaced))
     escaped = [str(p.relative_to(REPO_ROOT)) for p in files if re.search(r"\\u00[ce][0-9a-f]", p.read_text(encoding="utf-8"))]
     report.add("french_accents_not_escaped", not escaped, ", ".join(escaped))
 

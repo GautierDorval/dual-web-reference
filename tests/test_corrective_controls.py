@@ -96,6 +96,7 @@ class ReviewTests(unittest.TestCase):
     def approved(self, edition_id, digest):
         return {"edition_id": edition_id, "period_end_exclusive": edition_rules.parse_edition_id(edition_id)[1],
                 "availability_status": "publicly_accessible", "reference_release_status": "approved", "approved_release_at": "2026-11-20",
+                "review_status": {k: "approved" for k in ("technical", "editorial", "distribution")},
                 "approval_receipt": {"edition_id": edition_id, "scope": "edition_payload_and_figures", "content_digest": digest,
                                      "reviewer": "synthetic-reviewer", "reviewed_at": "2026-11-20", "evidence": ["synthetic-test"],
                                      "decisions": {k: "approved" for k in ("technical", "editorial", "distribution")}}}

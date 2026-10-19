@@ -43,3 +43,10 @@ FORBIDDEN_DASHES = ("–", "—")
 def dash_violations(text: str) -> int:
     stripped = PROTECTED.sub("", text)
     return sum(stripped.count(dash) for dash in FORBIDDEN_DASHES)
+
+
+def punctuation_violations(text: str) -> int:
+    """Missing French spacing in prose; code, URLs, entities and quotations stay literal."""
+    stripped = PROTECTED.sub("", text)
+    stripped = re.sub(r'«[^»]*»|“[^”]*”|"[^"\n]*"|&(?:#[xX]?[0-9a-fA-F]+|[a-zA-Z]+);', "", stripped)
+    return len(re.findall(r"(?<=[\w)»])[;!?](?=\s|$)", stripped))

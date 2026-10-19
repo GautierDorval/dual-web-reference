@@ -309,7 +309,7 @@ def gate_coverage(lang: str) -> str:
 def blocks_for(edition: Edition, lang: str, prefix: str) -> dict:
     return {
         "dates": lambda: dates_box(edition, lang),
-        "edition-state": lambda: edition_rules.status_label(edition.entry, lang) + ".",
+        "edition-state": lambda: t(lang, "Edition r", "Édition r") + str(edition.entry["revision"]) + t(lang, ": ", " : ") + edition_rules.status_label(edition.entry, lang) + ". " + t(lang, "r1 remains public and byte-frozen.", "r1 demeure publique et figée."),
         "headline": lambda: headline(edition, lang, prefix),
         "figures-main": lambda: figures_block(edition, lang, prefix=prefix),
         "figures-all": lambda: figures_block(edition, lang, ids=("G01", "G02", "G03", "G04", "G05", "G06", "G07", "G08", "G10"), prefix=prefix),
@@ -501,6 +501,8 @@ def render_index(edition: Edition) -> None:
          "revision": e["revision"], "published_at": e["published_at"], "revised_at": e["revised_at"],
          "supersedes": e["supersedes"], "superseded_by": e["superseded_by"],
          **{k: e.get(k) for k in ("availability_status", "review_status", "reference_release_status", "scientific_review_status", "public_availability_evidence", "approved_release_at")},
+         "declared_reference_release_status": e.get("reference_release_status"),
+         "reference_release_status": edition_rules.reference_state(e),
          "catalog": f"data/editions/{e['edition_id']}/catalog.json"} for e in editions]}
     write_json(REPO_ROOT / "data" / "index.json", index)
     from .edition_rules import latest_pointer
@@ -510,7 +512,12 @@ def render_index(edition: Edition) -> None:
         "rule": "shared latest_pointer selects an externally approved public payload with a matching receipt; never a candidate or a successful run",
         "reason": None if latest else "no publicly accessible edition has a matching approved reference receipt"})
     operations = load_json(REPO_ROOT / "config" / "operations.json")
-    last = operations["reviews"][-1]
+    last = next(row for row in reversed(operations["reviews"]) if row["edition_id"] == edition.id)
+    effective = edition_rules.reference_state(edition.entry)
+    current_state = {"approved": "approved_reference", "approval_invalid": "approval_invalid"}.get(effective, last["state"])
+    review_record = {"date": last["date"], "kind": last["kind"], "state": last["state"]}
+    if effective == "approved":
+        review_record = {"date": edition.entry["approval_receipt"]["reviewed_at"], "kind": "reference_approval", "state": "approved"}
     from .dates import window_from_strings, next_monthly_window
     from datetime import datetime, timezone, timedelta
     calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
@@ -528,8 +535,9 @@ def render_index(edition: Edition) -> None:
         "preparation": operations.get("preparation"),
         "latest_published_edition": latest,
         "candidate_edition": edition.id,
-        "candidate_state": last["state"],
-        "last_review": {"date": last["date"], "kind": last["kind"], "state": last["state"]},
+        "candidate_state": current_state,
+        "reference_approval_state": effective,
+        "last_review": review_record,
         "latest_available_data_date": edition.catalog["dates"]["latest_available_data_date"],
         "next_review_target": target,
         "freshness_rule": "the date of data never advances on an unchanged run or a failed source",

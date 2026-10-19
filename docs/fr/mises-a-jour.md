@@ -3,7 +3,7 @@
 [English](../en/updates.md) · [Accueil du dépôt](../../README.fr.md)
 
 <!-- dwr:begin edition-state -->
-candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée.
+Édition r2 : candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 demeure publique et figée.
 <!-- dwr:end edition-state -->
 
 Un dépôt public, des tests réussis, une revue technique et une revue scientifique sont des faits distincts.
@@ -18,7 +18,7 @@ Le `catalog.json` r1 demeure identique octet par octet, y compris ses champs his
 | Date ou état | Valeur |
 |---|---|
 | Édition | `2026-09-15_2026-10-15-r2` |
-| Statut | candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée |
+| Statut | candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée |
 | Disponibilité | `local_candidate` |
 | Approbation de référence | `not_approved` |
 | Période mesurée | du 15 septembre au 14 octobre 2026 inclusivement, en UTC |
@@ -60,3 +60,7 @@ Le reçu authentifie les intrants et sorties. Une reprise identique donne `uncha
 La revue hebdomadaire du lundi à 13 h 17 UTC et la préparation mensuelle sont des **gabarits inactifs**, sans garantie de service. La CI manuelle hors ligne valide les fichiers publics existants sans recueillir de données. [status.json](../../data/status.json) distingue code prêt, essai synthétique, disponibilité réelle, planification et approbation. Les événements publics dans [operations.json](../../config/operations.json) portent des dates ou bornes étayées ; leur annotation ne prouve aucune causalité.
 
 Le catalogue de schéma 2 exclut disponibilité, approbation, état de revue scientifique, dates de publication, pointeur de remplacement et cibles de planification. Ces faits mutables viennent du registre des éditions et de la configuration opérationnelle. Les modifier puis régénérer la présentation ne change pas l’empreinte du contenu approuvé. Le catalogue historique r1 conserve son schéma et ses octets d’origine.
+
+L’approbation exige des décisions technique, éditoriale et de diffusion concordantes dans review_status et dans le reçu lié au contenu. La page des éditions affiche l’approbation effective après validation du reçu, les décisions déclarées en texte lisible et approved_release_at seulement pendant la validité de cette approbation. data/status.json déduit l’état de la candidate de la même règle ; sa synthèse courante reprend la dernière revue d’approbation valide plutôt que la préparation antérieure.
+
+L’index généré sépare declared_reference_release_status de reference_release_status, l’état effectif après validation du reçu.

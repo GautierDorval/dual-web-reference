@@ -5,7 +5,7 @@
 Ce dépôt étudie les fichiers de gouvernance, leurs relations documentaires et leurs accès HTTP enregistrés.
 
 <!-- dwr:begin edition-state -->
-candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée.
+Édition r2 : candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 demeure publique et figée.
 <!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
@@ -75,7 +75,7 @@ Trois sites d’un seul écosystème ne sont pas trois réplications indépendan
 | Date ou état | Valeur |
 |---|---|
 | Édition | `2026-09-15_2026-10-15-r2` |
-| Statut | candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée |
+| Statut | candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée |
 | Disponibilité | `local_candidate` |
 | Approbation de référence | `not_approved` |
 | Période mesurée | du 15 septembre au 14 octobre 2026 inclusivement, en UTC |

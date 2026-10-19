@@ -16,7 +16,7 @@ import posixpath
 import shutil
 from pathlib import Path
 
-from . import mdlite, typo
+from . import mdlite, typo, edition_rules
 from .common import REPO_ROOT, SITE_IDS, load_json, read_csv, write_text
 from .i18n import number, t
 
@@ -252,18 +252,33 @@ def editions_page(edition_id: str, lang: str) -> None:
     index = load_json(REPO_ROOT / "data" / "index.json")
     latest = load_json(REPO_ROOT / "data" / "latest.json")
     status = load_json(REPO_ROOT / "data" / "status.json")
-    rows = [{"edition": e["edition_id"], "type": e["edition_type"], "status": e["availability_status"], "reference": e["reference_release_status"], "review": e["review_status"],
-             "start": e["period_start_inclusive"], "end": e["period_end_exclusive"], "revision": e["revision"],
-             "published": e["published_at"] or "null", "revised": e["revised_at"] or "null"} for e in index["editions"]]
+    entries = load_json(REPO_ROOT / "config/editions.json")["editions"]
+    reference_labels = {"approved": ("approved", "approuvée"), "approval_invalid": ("approval invalid", "approbation invalide"),
+                        "not_approved": ("not approved", "non approuvée")}
+    availability = {"publicly_accessible": ("publicly accessible", "accessible publiquement"),
+                    "local_candidate": ("local candidate", "candidate locale"), "private_candidate": ("private candidate", "candidate privée")}
+    review_states = {"approved": ("approved", "approuvée"), "awaiting_review": ("awaiting review", "en attente de revue"),
+                     "approval_invalid": ("approval invalid", "approbation invalide")}
+    latest_label = latest["latest_published_edition"] or t(lang, "none", "aucune")
+    review_state = review_states.get(status["last_review"]["state"], ("see registry", "voir le registre"))[lang == "fr"]
+    rows = []
+    for e in entries:
+        effective = edition_rules.reference_state(e)
+        rows.append({"edition": e["edition_id"], "type": t(lang, "Monthly reference", "Référence mensuelle") if e["edition_type"] == "monthly_reference" else e["edition_type"],
+                     "status": availability.get(e["availability_status"], ("unknown", "inconnue"))[lang == "fr"],
+                     "reference": reference_labels[effective][lang == "fr"], "review": edition_rules.review_label(e, lang),
+                     "start": e["period_start_inclusive"], "end": e["period_end_exclusive"], "revision": e["revision"],
+                     "published": e["approved_release_at"] if effective == "approved" else t(lang, "not approved", "non approuvée"),
+                     "revised": e["revised_at"] or "null"})
     columns = [("edition", t(lang, "Edition", "Édition"), False), ("type", "Type", False), ("status", t(lang, "Status", "Statut"), False),
-               ("reference", t(lang, "Reference", "Référence"), False), ("review", t(lang, "Review", "Revue"), False),
-               ("start", "period_start_inclusive", False), ("end", "period_end_exclusive", False), ("revision", "Revision", True),
-               ("published", "published_at", False), ("revised", "revised_at", False)]
+               ("reference", t(lang, "Reference", "Référence"), False), ("review", t(lang, "Declared review decisions", "Décisions de revue déclarées"), False),
+               ("start", t(lang, "Start included (UTC)", "Début inclus (UTC)"), False), ("end", t(lang, "End excluded (UTC)", "Fin exclue (UTC)"), False), ("revision", t(lang, "Revision", "Révision"), True),
+               ("published", t(lang, "Approval date", "Date d’approbation"), False), ("revised", t(lang, "Revised on", "Révisée le"), False)]
     body = (f"<h1>{esc(t(lang, 'Editions', 'Éditions'))}</h1>"
-            f"<p>{esc(t(lang, 'Latest approved reference: ', 'Dernière référence approuvée : '))}<code>{esc(latest['latest_published_edition'] or 'null')}</code> "
-            f"({esc(latest['reason'] or '')})</p>"
+            f"<p>{esc(t(lang, 'Latest approved reference: ', 'Dernière référence approuvée : '))}<code>{esc(latest_label)}</code> "
+            f"</p>"
             f"<p>{esc(status['automation']['label_' + lang])} "
-            f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(status['last_review']['state'])}). "
+            f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(review_state)}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
             + table_html(columns, rows, table_id="editions")
             + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a privacy revision; its current state appears above. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision de confidentialité ; son état courant figure ci-dessus. Aucune tendance entre périodes n’est calculée.'))}</p>")

@@ -84,6 +84,9 @@ def approved(entry: dict, digest_of=None) -> bool:
             not receipt.get("evidence") or not receipt.get("reviewed_at") or
             any(receipt.get("decisions", {}).get(k) != "approved" for k in ("technical", "editorial", "distribution"))):
         return False
+    review = entry.get("review_status")
+    if not isinstance(review, dict) or any(review.get(k) != receipt["decisions"][k] for k in ("technical", "editorial", "distribution")):
+        return False
     if not isinstance(receipt.get("reviewer"), str) or not receipt["reviewer"].strip():
         return False
     evidence = receipt.get("evidence")
@@ -233,4 +236,23 @@ def status_label(entry, lang, *, scientific=True):
     parts = [label, reference[fr]]
     if scientific:
         parts.append(("no independent scientific review documented", "aucune évaluation scientifique indépendante documentée")[fr] if entry.get("scientific_review_status") in ("no_independent_scientific_review_documented", "not_independently_scientifically_reviewed") else ("scientific review: see edition registry", "revue scientifique : voir le registre des éditions")[fr])
-    return "; ".join(parts)
+    return (" ; " if fr else "; ").join(parts)
+
+
+def reference_state(entry):
+    """Current effective state, never an unchecked declaration from the registry."""
+    if approved(entry):
+        return "approved"
+    return "approval_invalid" if entry.get("reference_release_status") == "approved" else "not_approved"
+
+
+def review_label(entry, lang):
+    """Readable declared review decisions; effective approval is shown separately."""
+    labels = (("technical", "Technical", "Technique"), ("editorial", "Editorial", "Éditoriale"),
+              ("distribution", "Distribution", "Diffusion"))
+    states = {"approved": ("approved", "approuvée"), "corrections_in_progress": ("corrections in progress", "corrections en cours"),
+              "awaiting_review": ("awaiting review", "en attente"), "not_approved": ("not approved", "non approuvée")}
+    review = entry.get("review_status") or {}
+    return (" ; " if lang == "fr" else "; ").join(
+        (fr if lang == "fr" else en) + (" : " if lang == "fr" else ": ") +
+        states.get(review.get(key), ("not documented", "non documentée"))[lang == "fr"] for key, en, fr in labels)
