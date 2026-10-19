@@ -37,6 +37,8 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertEqual(before,edition_rules.payload_manifest(R2,root)['digest'])
                 self.assertTrue(edition_rules.approved(entry))
                 self.assertEqual(load_json(root/'data/latest.json')['latest_published_edition'],R2)
+                report=verify.Report();verify.check_maintenance(report)
+                self.assertTrue(next(c for c in report.checks if c['check']=='declared_approvals_have_valid_receipts')['passed'])
                 state=load_json(root/'data/status.json')
                 self.assertEqual(state['candidate_state'],'approved_reference')
                 self.assertEqual(next(e for e in load_json(root/'data/index.json')['editions'] if e['edition_id']==R2)['reference_release_status'],'approved')
@@ -72,6 +74,8 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertIn('approval invalid',html)
                 self.assertNotIn('2026-11-20',html)
                 self.assertIsNone(load_json(root/'data/latest.json')['latest_published_edition'])
+                report=verify.Report();verify.check_maintenance(report)
+                self.assertFalse(next(c for c in report.checks if c['check']=='declared_approvals_have_valid_receipts')['passed'])
 
     def test_latest_order_without_superseding_relationship_and_receipt_bounds(self):
         digest='a'*64;fixture=controls.ReviewTests()
@@ -225,3 +229,40 @@ class AuditFollowupTests(unittest.TestCase):
             result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result['outcome'],'validation_failed')
             self.assertEqual(result['reason'],'qualified_counts_differ_from_joint')
+
+    def test_verify_refuses_declared_approval_without_a_valid_receipt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);copy_candidate(root)
+            with patch.object(common,'REPO_ROOT',root),patch.object(verify,'REPO_ROOT',root):
+                config=load_json(root/'config/editions.json')
+                entry=next(e for e in config['editions'] if e['edition_id']==R2)
+                report=verify.Report();verify.check_maintenance(report)
+                self.assertTrue(next(c for c in report.checks if c['check']=='declared_approvals_have_valid_receipts')['passed'])
+                entry['reference_release_status']='approved'
+                for receipt in (None, {}, [], {'decisions':'approved'}):
+                    entry['approval_receipt']=receipt
+                    write_json(root/'config/editions.json',config)
+                    report=verify.Report();verify.check_maintenance(report)
+                    self.assertFalse(next(c for c in report.checks if c['check']=='declared_approvals_have_valid_receipts')['passed'])
+                    self.assertTrue(next(c for c in report.checks if c['check']=='latest_points_only_to_reviewed_publication')['passed'])
+
+    def test_punctuation_checks_quote_code_and_inline_boundaries(self):
+        for text in ('a;b', 'a!b', 'a?b', '« citation; exacte »;', '“literal; text”; next',
+                     '`a;b`; suite', 'mot</em>;suite'):
+            with self.subTest(text=text):self.assertEqual(typo.punctuation_violations(text),1)
+        for text in ('« citation; exacte » ; suite', '`a;b` ; suite', '&amp;',
+                     'https://example.invalid/a;b', 'a ; b ! c ?', '"literal; text"'):
+            with self.subTest(text=text):self.assertEqual(typo.punctuation_violations(text),0)
+        self.assertEqual(typo.html_punctuation_violations('<p>mot<em>visible</em>;suite</p>'),1)
+        self.assertEqual(typo.html_punctuation_violations('<p>&laquo; citation; exacte &raquo;;suite</p>'),1)
+        self.assertEqual(typo.html_punctuation_violations('<pre>a;b</pre><script>a;b</script><style>a;b</style><p><code>a;b</code> ; suite &amp; fin</p>'),0)
+
+    def test_verify_checks_rendered_french_prose(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);page=root/'site/dist/fr/index.html';page.parent.mkdir(parents=True)
+            with patch.object(verify,'REPO_ROOT',root):
+                for text,expected in (('<p>mot<em>visible</em>;suite</p>',False),
+                                      ('<p>mot<em>visible</em> ; suite</p>',True)):
+                    page.write_text(text,encoding='utf-8')
+                    report=verify.Report();verify.check_site(report)
+                    self.assertEqual(next(c for c in report.checks if c['check']=='french_site_punctuation_has_required_spacing')['passed'],expected)

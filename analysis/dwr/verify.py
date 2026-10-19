@@ -360,7 +360,9 @@ def check_privacy(report, private_lock: Path | None):
 def check_maintenance(report):
     latest = load_json(REPO_ROOT / "data" / "latest.json")
     editions = load_json(REPO_ROOT / "config" / "editions.json")["editions"]
-    from .edition_rules import latest_pointer
+    from .edition_rules import approved, latest_pointer
+    report.add("declared_approvals_have_valid_receipts",
+               all(e.get("reference_release_status") != "approved" or approved(e) for e in editions))
     report.add("latest_points_only_to_reviewed_publication", latest["latest_published_edition"] == latest_pointer(editions))
     status = load_json(REPO_ROOT / "data" / "status.json")
     report.add("status_not_realtime_and_automation_inactive",
@@ -402,9 +404,11 @@ def check_site(report):
     if not dist.is_dir():
         report.add("site_built", False, "run build-site first")
         return
-    broken, external = [], []
+    broken, external, unspaced = [], [], []
     for page in dist.rglob("*.html"):
         text = page.read_text(encoding="utf-8")
+        if page.relative_to(dist).parts[0] == "fr" and typo.html_punctuation_violations(text):
+            unspaced.append(page.relative_to(dist).as_posix())
         for match in re.findall(r'<script[^>]+src="([^"]+)"|<link[^>]+href="([^"]+)"', text):
             target = match[0] or match[1]
             if target.startswith(("http://", "https://", "//")):
@@ -414,6 +418,7 @@ def check_site(report):
                 continue
             if not (page.parent / href).resolve().exists():
                 broken.append(f"{page.relative_to(dist)} -> {href}")
+    report.add("french_site_punctuation_has_required_spacing", not unspaced, "; ".join(unspaced))
     report.add("site_has_no_external_resources", not external, "; ".join(external[:5]))
     report.add("site_internal_links_resolve", not broken, "; ".join(broken[:8]))
 

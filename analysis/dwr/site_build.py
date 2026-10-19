@@ -119,7 +119,7 @@ def markdown_page(source_rel: str, page: str, lang: str, counterpart: str | None
     write_text(DIST / page, layout(page, lang, title, body, counterpart, edition_id))
 
 
-def table_html(columns, rows, *, table_id, filters=()) -> str:
+def table_html(columns, rows, *, table_id, filters=(), label=None) -> str:
     head = "".join(f'<th scope="col" data-key="{esc(key)}"><button type="button" class="sort" disabled>{esc(label)}</button></th>'
                    for key, label, _ in columns)
     body = []
@@ -128,7 +128,7 @@ def table_html(columns, rows, *, table_id, filters=()) -> str:
         cells = "".join(f'<td class="{"num" if numeric else ""}" data-value="{esc(row.get(key, ""))}">{esc(row.get(key + "__display", row.get(key, "")))}</td>'
                         for key, _, numeric in columns)
         body.append(f"<tr{attrs}>{cells}</tr>")
-    return (f'<div class="table-wrap" tabindex="0" role="region" aria-label="{esc(table_id)}"><table id="{esc(table_id)}" class="data"><thead><tr>{head}</tr></thead>'
+    return (f'<div class="table-wrap" tabindex="0" role="region" aria-label="{esc(label or table_id)}"><table id="{esc(table_id)}" class="data"><thead><tr>{head}</tr></thead>'
             f'<tbody>{"".join(body)}</tbody></table></div>')
 
 
@@ -269,18 +269,18 @@ def editions_page(edition_id: str, lang: str) -> None:
                      "reference": reference_labels[effective][lang == "fr"], "review": edition_rules.review_label(e, lang),
                      "start": e["period_start_inclusive"], "end": e["period_end_exclusive"], "revision": e["revision"],
                      "published": e["approved_release_at"] if effective == "approved" else t(lang, "not approved", "non approuvée"),
-                     "revised": e["revised_at"] or "null"})
+                     "revised": e["revised_at"] or t(lang, "not recorded", "non consignée")})
     columns = [("edition", t(lang, "Edition", "Édition"), False), ("type", "Type", False), ("status", t(lang, "Status", "Statut"), False),
                ("reference", t(lang, "Reference", "Référence"), False), ("review", t(lang, "Declared review decisions", "Décisions de revue déclarées"), False),
                ("start", t(lang, "Start included (UTC)", "Début inclus (UTC)"), False), ("end", t(lang, "End excluded (UTC)", "Fin exclue (UTC)"), False), ("revision", t(lang, "Revision", "Révision"), True),
                ("published", t(lang, "Approval date", "Date d’approbation"), False), ("revised", t(lang, "Revised on", "Révisée le"), False)]
     body = (f"<h1>{esc(t(lang, 'Editions', 'Éditions'))}</h1>"
-            f"<p>{esc(t(lang, 'Latest approved reference: ', 'Dernière référence approuvée : '))}<code>{esc(latest_label)}</code> "
+            f"<p>{esc(t(lang, 'Latest approved reference: ', 'Dernière référence approuvée : '))}<code>{esc(latest_label)}</code>"
             f"</p>"
             f"<p>{esc(status['automation']['label_' + lang])} "
             f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(review_state)}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
-            + table_html(columns, rows, table_id="editions")
+            + table_html(columns, rows, table_id="editions", label=t(lang, "Editions", "Éditions"))
             + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a privacy revision; its current state appears above. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision de confidentialité ; son état courant figure ci-dessus. Aucune tendance entre périodes n’est calculée.'))}</p>")
     if lang == "fr":
         body = typo.fr(body)
