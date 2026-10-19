@@ -1,9 +1,15 @@
 # Contributing
 
-Contributions to the method, the code and the documentation are welcome once the repository is public.
+This is a public repository. Contributions can address data errors, documentary corrections or reproducibility problems. Identify the edition and code revision, expected and observed behavior, minimal reproduction and supporting sources. Use the short issue templates; sensitive reports go through [SECURITY.md](SECURITY.md).
 
-- Run `python -I -m unittest discover -s tests -t .` and `python -I scripts/dwr.py verify` before proposing a change. Both are offline.
-- Never type a measured number in a document: use a generated block (`<!-- dwr:begin KEY -->` / `<!-- dwr:end KEY -->`) filled by `render`.
-- Do not change a filter, a rule or a test to reach a desired number. A change of scope, attribution or privacy rule needs a new rules version and, for a published edition, a new revision with its delta.
-- English pages use Canadian English; French pages use Canadian French and keep the same meaning and structure as their English counterpart.
-- Contributions run in CI without secrets and with read-only permissions. A contribution can never trigger an acquisition or a publication.
+Never include credentials, IP addresses, raw request logs, private source names or conversation histories in a public report. Synthetic fixtures should use artificial values. Do not visit measured sites as part of an automated test.
+
+Run the offline commands in [reproduction](docs/en/reproduction.md), including tests, analysis, rendering, build and verification. A successful public run verifies the distributed arithmetic and artifacts; it cannot recreate private collection evidence.
+
+- Compute measured values centrally in `analysis/dwr/metrics.py`; use generated document blocks.
+- Preserve frozen editions. Corrections require an identifiable revision and an explained delta; changing scope to improve a result is not acceptable.
+- Keep French and English facts, populations, limitations and navigation equivalent.
+- Contributor CI uses no private secrets, cannot acquire data and cannot publish.
+- Propose a completed, reviewable change. An automated or AI-assisted review is not independent scientific peer review.
+
+Gautier Dorval is responsible for the proposal and publication decisions. AI assistance is used in programming, analysis and technical review, including this correction. These tools are not scientific validators or additional authors of the underlying observations.

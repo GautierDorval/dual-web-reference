@@ -1,5 +1,5 @@
 """Licences and citation: every tracked file maps to exactly one row of NOTICE.md, the legal code is the official text,
-and CITATION.cff is the file validated with cffconvert 2.0.0 against CFF 1.2.0 on 2026-10-17 (pinned by digest)."""
+and CITATION.cff is the file validated with cffconvert 2.0.0 against CFF 1.2.0 on 2026-10-19 (pinned by digest)."""
 import fnmatch
 import hashlib
 import re
@@ -12,8 +12,8 @@ from dwr.common import REPO_ROOT
 
 # SHA-256 of https://creativecommons.org/licenses/by/4.0/legalcode.txt, retrieved on 2026-10-17.
 CC_BY_4_SHA256 = "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
-# SHA-256 of CITATION.cff as validated with cffconvert 2.0.0 (schema 1.2.0) on 2026-10-17.
-CITATION_SHA256 = "305df6f67e09a44373df440547426cfad611faa2e62a0b3788d551bcb1e684e1"
+# SHA-256 of CITATION.cff as validated with cffconvert 2.0.0 (schema 1.2.0) on 2026-10-19.
+CITATION_SHA256 = "248fafdf0c8bc7be87d4e0b23b94da92fc2b9af3b41d16f01abd831e9ac217c8"
 
 
 def licence_rows() -> dict:
@@ -51,7 +51,7 @@ class LicenceTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("git") and (REPO_ROOT / ".git").exists(), "needs the Git checkout")
     def test_every_tracked_file_has_exactly_one_licence_row(self):
         rows = licence_rows()
-        listed = subprocess.run(["git", "ls-files", "-z"], cwd=REPO_ROOT, capture_output=True, check=True).stdout
+        listed = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=REPO_ROOT, capture_output=True, check=True).stdout
         problems = []
         for path in filter(None, listed.decode("utf-8").split("\0")):
             parts = [part for part, patterns in rows.items() if any(matches(path, p) for p in patterns)]

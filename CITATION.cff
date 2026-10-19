@@ -2,13 +2,18 @@ cff-version: 1.2.0
 message: >-
   Cite a specific edition: give its identifier (for example 2026-09-15_2026-10-15-r1)
   and the SHA-256 of its data/editions/<edition>/catalog.json. An edition is a
-  dated description of recorded accesses, not a timeless result.
+  dated description of recorded accesses, not a timeless result. r1 is publicly
+  accessible and frozen; r2 is a distinct local correction candidate. No independent
+  scientific review is documented. Cite the exact code commit for software and the
+  edition identifier plus content manifest for data; no DOI is assigned.
 title: "Dual Web Reference: governance files, relations and recorded accesses on three sites"
 type: dataset
 authors:
   - family-names: Dorval
     given-names: Gautier
-version: "2026-09-15_2026-10-15-r1 (candidate, unpublished)"
+version: "2026-09-15_2026-10-15-r2 (local candidate; reference not approved)"
+repository-code: "https://github.com/GautierDorval/dual-web-reference"
+url: "https://github.com/GautierDorval/dual-web-reference"
 keywords:
   - governance files
   - llms.txt
