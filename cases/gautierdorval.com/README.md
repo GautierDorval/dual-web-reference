@@ -2,7 +2,7 @@
 
 [Français](README.fr.md) · [Repository home](../../README.md)
 
-> Edition `2026-09-15_2026-10-15-r2` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-14` · local candidate; reference not approved
+> Edition `2026-09-15_2026-10-15-r2` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-14` · publicly accessible; reference not approved
 
 **43 documentary URLs; 62 provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.
 

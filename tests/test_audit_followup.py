@@ -195,7 +195,7 @@ class AuditFollowupTests(unittest.TestCase):
     def test_french_status_names_the_edition_keeps_r1_context_and_required_spacing(self):
         edition=render.Edition(R2)
         label=edition_rules.status_label(edition.entry,'fr')
-        self.assertIn('locale ; référence',label)
+        self.assertIn('accessible publiquement ; référence non approuvée',label)
         self.assertEqual(typo.punctuation_violations(label),0)
         self.assertEqual(typo.punctuation_violations('candidate locale; référence'),1)
         self.assertEqual(typo.punctuation_violations('`locale; code` https://example.invalid/a; « citation; exacte » &amp;'),0)

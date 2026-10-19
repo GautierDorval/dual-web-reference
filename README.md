@@ -5,7 +5,7 @@
 This repository studies governance files, their documentary relations and recorded HTTP accesses.
 
 <!-- dwr:begin edition-state -->
-Edition r2: local candidate; reference not approved; no independent scientific review documented. r1 remains public and byte-frozen.
+Edition r2: publicly accessible; reference not approved; no independent scientific review documented. r1 remains public and byte-frozen.
 <!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
@@ -75,8 +75,8 @@ Three sites in one ecosystem are not three independent replications. Coverage is
 | Date or state | Value |
 |---|---|
 | Edition | `2026-09-15_2026-10-15-r2` |
-| Status | local candidate; reference not approved; no independent scientific review documented |
-| Availability | `local_candidate` |
+| Status | publicly accessible; reference not approved; no independent scientific review documented |
+| Availability | `publicly_accessible` |
 | Reference approval | `not_approved` |
 | Measured period | September 15 to October 14, 2026 inclusive, UTC |
 | period_start_inclusive | `2026-09-15` |

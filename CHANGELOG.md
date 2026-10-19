@@ -2,6 +2,12 @@
 
 Editions (data) and code are versioned separately. An edition identifier names its window and revision; a correction creates a new revision and never rewrites the previous one.
 
+## Public review branch preparation (2026-10-19)
+
+- Mark r2 accessible on the public review branch, with technical, editorial and distribution decisions awaiting review. No approval receipt or scientific validation is added; `latest` remains empty. Availability is separate from integration into `main` and reference approval.
+- Inventory the incoming correction history as well as the previously public states. Both edition payloads, catalog anchors and manifests remain unchanged from correction commit `9e561749`. The r2 disclosure report records its original preparation assessment; the live verification reassesses the expanded inventory.
+- Reproduction starts from the published tables. The local revision transformer continues to refuse a public or approved target. Offline CI covers Python 3.12, 3.13 and 3.14.
+
 ## Local correction candidate (2026-10-19)
 
 - r1 remains byte-frozen at public commit `1b99aaad`; its original `SHA256SUMS.txt` SHA-256 is `afce61a2fcadb083ab6be516fc1b5dbea060c1be408432500f8fd5ebe78311fe`. r2 has a distinct manifest and a typed privacy-revision delta. Original observations, source graph and scope classes are preserved.

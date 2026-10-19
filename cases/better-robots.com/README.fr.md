@@ -2,7 +2,7 @@
 
 [English](README.md) · [Accueil du dépôt](../../README.fr.md)
 
-> Édition `2026-09-15_2026-10-15-r2` · du 15 septembre au 14 octobre 2026 inclusivement, en UTC · instantané du graphe `2026-10-06` · candidate locale ; référence non approuvée
+> Édition `2026-09-15_2026-10-15-r2` · du 15 septembre au 14 octobre 2026 inclusivement, en UTC · instantané du graphe `2026-10-06` · accessible publiquement ; référence non approuvée
 
 **90 URL documentaires ; 122 GET 200 IA à origine fournisseur sur ce site.** Couverture partielle ; un des trois cas du même écosystème d’auteur, pas une réplication indépendante.
 

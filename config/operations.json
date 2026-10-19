@@ -12,7 +12,43 @@
     "private_reporting": "info@pagup.com",
     "remote_operations": "not_authorized_by_local_correction"
   },
+  "events": [
+    {
+      "causal_effect": "not_established",
+      "earliest": "2026-10-18T23:45:37.9798885Z",
+      "kind": "repository_public_visibility",
+      "latest": "2026-10-18T23:45:40.7151037Z",
+      "source": "existing mutation and anonymous readback receipts",
+      "time_precision": "bounded"
+    },
+    {
+      "date": "2026-10-19",
+      "edition_id": "2026-09-15_2026-10-15-r2",
+      "kind": "local_privacy_revision",
+      "published": false
+    }
+  ],
   "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
+  "preparation": {
+    "code_ready": true,
+    "command": "prepare-next",
+    "manual_synthetic_rehearsal": "passed",
+    "planning_activated": false,
+    "public_promotion": "not_implemented_by_preparation",
+    "real_next_window": "not_available"
+  },
+  "publication_preparation": {
+    "cadence_enabled": false,
+    "date": "2026-10-19",
+    "note": "Separate authorization after the local correction. Sharing for review does not approve a reference release.",
+    "owner_authorized": [
+      "public_review_branch",
+      "draft_pull_request",
+      "offline_ci"
+    ],
+    "pages_enabled": false,
+    "reference_approval": false
+  },
   "reviews": [
     {
       "date": "2026-10-16",
@@ -25,33 +61,16 @@
       "date": "2026-10-19",
       "edition_id": "2026-09-15_2026-10-15-r2",
       "kind": "local_correction_and_synthetic_preparation",
-      "state": "awaiting_review",
-      "note": "Local privacy revision; synthetic next-window preparation tested. No reference approval or scientific review implied."
-    }
-  ],
-  "schema_version": "dwr-operations/1.0.0",
-  "preparation": {
-    "code_ready": true,
-    "manual_synthetic_rehearsal": "passed",
-    "real_next_window": "not_available",
-    "planning_activated": false,
-    "command": "prepare-next",
-    "public_promotion": "not_implemented_by_preparation"
-  },
-  "events": [
-    {
-      "kind": "repository_public_visibility",
-      "time_precision": "bounded",
-      "earliest": "2026-10-18T23:45:37.9798885Z",
-      "latest": "2026-10-18T23:45:40.7151037Z",
-      "source": "existing mutation and anonymous readback receipts",
-      "causal_effect": "not_established"
+      "note": "Local privacy revision; synthetic next-window preparation tested. No reference approval or scientific review implied.",
+      "state": "awaiting_review"
     },
     {
-      "kind": "local_privacy_revision",
       "date": "2026-10-19",
       "edition_id": "2026-09-15_2026-10-15-r2",
-      "published": false
+      "kind": "public_branch_review_preparation",
+      "note": "Correction prepared for a public review branch and draft pull request; no new observations, reference approval or scientific review.",
+      "state": "awaiting_review"
     }
-  ]
+  ],
+  "schema_version": "dwr-operations/1.0.0"
 }

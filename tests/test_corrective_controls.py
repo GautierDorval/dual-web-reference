@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from tests import __init__
-from dwr import disclosure, edition_rules, frozen, measurement, metrics, verify
+from dwr import disclosure, edition_rules, frozen, measurement, metrics, revisions, verify
 from dwr.common import REPO_ROOT, DwrError, load_json, write_text
 
 R1 = "2026-09-15_2026-10-15-r1"
@@ -90,6 +90,12 @@ class CombinedDisclosureTests(unittest.TestCase):
         self.assertTrue(result["allowed"])
         with self.assertRaises(DwrError):
             frozen.refuse_write(R1)
+
+    def test_public_r2_refuses_revision_without_changing_payload(self):
+        before = edition_rules.payload_manifest(R2)
+        with self.assertRaisesRegex(DwrError, "revision_target_not_local_unapproved"):
+            revisions.prepare(R2)
+        self.assertEqual(edition_rules.payload_manifest(R2), before)
 
 
 class ReviewTests(unittest.TestCase):

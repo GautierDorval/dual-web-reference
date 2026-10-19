@@ -11,7 +11,7 @@
   "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
   "last_review": {
     "date": "2026-10-19",
-    "kind": "local_correction_and_synthetic_preparation",
+    "kind": "public_branch_review_preparation",
     "state": "awaiting_review"
   },
   "latest_available_data_date": "2026-10-14",

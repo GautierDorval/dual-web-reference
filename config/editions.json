@@ -39,7 +39,7 @@
     {
       "approval_receipt": null,
       "approved_release_at": null,
-      "availability_status": "local_candidate",
+      "availability_status": "publicly_accessible",
       "delta_types": [
         "presentation",
         "metadata",
@@ -55,14 +55,17 @@
       "observations_changed": false,
       "period_end_exclusive": "2026-10-15",
       "period_start_inclusive": "2026-09-15",
-      "public_availability_evidence": null,
+      "public_availability_evidence": {
+        "evidence": "Availability describes the public review branch containing this registry. The first successful push and anonymous readback are recorded separately; no commit date is presented as a publication time.",
+        "precision": "exact_time_not_recorded_in_payload"
+      },
       "published_at": null,
       "reference_release_status": "not_approved",
       "review_status": {
-        "distribution": "corrections_in_progress",
-        "editorial": "corrections_in_progress",
+        "distribution": "awaiting_review",
+        "editorial": "awaiting_review",
         "evidence": [],
-        "technical": "corrections_in_progress"
+        "technical": "awaiting_review"
       },
       "revised_at": "2026-10-19",
       "revision": 2,
