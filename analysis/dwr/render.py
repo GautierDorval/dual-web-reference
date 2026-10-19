@@ -15,7 +15,7 @@ from pathlib import Path
 
 from . import figures as F
 from . import gate
-from . import typo
+from . import typo, edition_rules
 from .common import REPO_ROOT, SITE_IDS, canonical_json, load_json, read_csv, sha256_bytes, write_json, write_text
 from .i18n import cap, number, percent, t
 
@@ -118,7 +118,7 @@ def render_figures(edition: Edition, target=None) -> dict:
     document = {"schema_version": "dwr-figures/1.0.0", "edition_id": edition.id,
                 "rendering": {"engine": "analysis/dwr/svg.py (standard library, deterministic)",
                               "fonts": "system font stack only; no font is redistributed",
-                              "layouts": "wide 960 px and compact 420 px; English and French"},
+                              "layouts": "wide 960 px and compact 288 px; English and French"},
                 "figures": registry}
     write_json(edition.dir / "figures.json", document)
     return document
@@ -135,11 +135,10 @@ def _between(text, start, end):
 
 def dates_box(edition: Edition, lang: str) -> str:
     d = edition.catalog["dates"]
-    status = edition.catalog["status"]
+    status = edition_rules.status_label(edition.entry, lang)
     rows = [
         (t(lang, "Edition", "Édition"), code(edition.id)),
-        (t(lang, "Status", "Statut"), t(lang, "local candidate; reference not approved; no independent scientific review documented", "candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée")
-         if status == "candidate_not_reviewed" else status),
+        (t(lang, "Status", "Statut"), status),
         (t(lang, "Availability", "Disponibilité"), code(edition.entry["availability_status"])),
         (t(lang, "Reference approval", "Approbation de référence"), code(edition.entry["reference_release_status"])),
         (t(lang, "Measured period", "Période mesurée"), edition.catalog["labels"][f"period_{lang}"]),
@@ -150,11 +149,9 @@ def dates_box(edition: Edition, lang: str) -> str:
         ("source_snapshot_at", code(d["source_snapshot_at"])),
         ("graph_snapshot_at", ", ".join(f"{site} {code(value)}" for site, value in d["graph_snapshot_at"].items())),
         ("generated_at", code(d["generated_at"])),
-        ("published_at", code(d.get("published_at") or "null") + t(lang, " (legacy approval field, not public availability)", " (champ hérité d’approbation, pas de disponibilité publique)")),
+        ("approved_release_at", code(edition.entry.get("approved_release_at") or "null")),
         ("revised_at", code(d.get("revised_at") or "null")),
         ("latest_available_data_date", code(d["latest_available_data_date"])),
-        ("next_review_target", t(lang, f"weekly review {code(d['next_review_target']['weekly_review'])}, not guaranteed",
-                                 f"revue hebdomadaire {code(d['next_review_target']['weekly_review'])}, non garantie")),
         (t(lang, "Updates", "Mises à jour"), t(lang, "periodic update planned; manual preparation (automation not activated)",
                                                "actualisation périodique prévue ; préparation manuelle (automatisation non activée)")),
     ]
@@ -221,7 +218,7 @@ def case_rows(edition: Edition, lang: str, prefix="") -> str:
                     if r["path"] != "/robots.txt")
         readme = "README.md" if lang == "en" else "README.fr.md"
         rows.append(f"| [{case['site_id']}]({prefix}cases/{case['slug']}/{readme}) | {md_escape(case[f'angle_{lang}'])} | "
-                    f"{code(case['start_page']['path'])} | {len(case['resources'])} | {number(total, lang)} |")
+                    f"{code(case['start_page']['path'])}" + (f" (EN ; FR : {code(case['start_page']['counterpart'])})" if lang == "fr" and case["site_id"] == "gautierdorval.com" else "") + f" | {len(case['resources'])} | {number(total, lang)} |")
     note = t(lang, "The three sites belong to one author's ecosystem: three applications of one approach, not three independent replications. robots.txt is excluded from the last column.",
              "Les trois sites appartiennent à l’écosystème d’un même auteur : trois applications d’une même démarche, pas trois réplications indépendantes. robots.txt est exclu de la dernière colonne.")
     return head + "\n" + "\n".join(rows) + "\n\n" + note
@@ -312,6 +309,7 @@ def gate_coverage(lang: str) -> str:
 def blocks_for(edition: Edition, lang: str, prefix: str) -> dict:
     return {
         "dates": lambda: dates_box(edition, lang),
+        "edition-state": lambda: edition_rules.status_label(edition.entry, lang) + ".",
         "headline": lambda: headline(edition, lang, prefix),
         "figures-main": lambda: figures_block(edition, lang, prefix=prefix),
         "figures-all": lambda: figures_block(edition, lang, ids=("G01", "G02", "G03", "G04", "G05", "G06", "G07", "G08", "G10"), prefix=prefix),
@@ -396,8 +394,8 @@ def case_page(edition, case, lang, resources, summary, checks, provider) -> str:
         t(lang, f"[Français]({other}) · [Repository home]({p}README.md)", f"[English]({other}) · [Accueil du dépôt]({p}README.fr.md)"),
         "",
         f"> {t(lang, 'Edition', 'Édition')} {code(edition.id)} · {edition.catalog['labels'][f'period_{lang}']} · "
-        + t(lang, f"graph snapshot {code(d['graph_snapshot_at'][site])} · local candidate; reference not approved",
-            f"instantané du graphe {code(d['graph_snapshot_at'][site])} · candidate locale ; référence non approuvée"),
+        + t(lang, f"graph snapshot {code(d['graph_snapshot_at'][site])} · ",
+            f"instantané du graphe {code(d['graph_snapshot_at'][site])} · ") + edition_rules.status_label(edition.entry, lang, scientific=False),
         "",
         t(lang, f"**{number(edition.m('main.site.' + site + '.site_path_pairs'), lang)} documentary URLs; {number(edition.m('main.site.' + site + '.get200'), lang)} provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.",
                 f"**{number(edition.m('main.site.' + site + '.site_path_pairs'), lang)} URL documentaires ; {number(edition.m('main.site.' + site + '.get200'), lang)} GET 200 IA à origine fournisseur sur ce site.** Couverture partielle ; un des trois cas du même écosystème d’auteur, pas une réplication indépendante."),
@@ -513,6 +511,16 @@ def render_index(edition: Edition) -> None:
         "reason": None if latest else "no publicly accessible edition has a matching approved reference receipt"})
     operations = load_json(REPO_ROOT / "config" / "operations.json")
     last = operations["reviews"][-1]
+    from .dates import window_from_strings, next_monthly_window
+    from datetime import datetime, timezone, timedelta
+    calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
+    window = next_monthly_window(window_from_strings(edition.entry["period_start_inclusive"], edition.entry["period_end_exclusive"]), calendar["monthly_anchor_day"])
+    ready = datetime.combine(window.end_exclusive, datetime.min.time(), tzinfo=timezone.utc) + timedelta(hours=calendar["consolidation_delay_hours"])
+    target = {"weekly_review": None, "weekly_review_template": calendar["weekly_review"],
+              "next_monthly_window": {"start_inclusive":window.start.isoformat(),"end_exclusive":window.end_exclusive.isoformat(),"days":window.days},
+              "earliest_monthly_preparation":ready.isoformat().replace("+00:00","Z"),
+              "guarantee":"none; inactive planning template"}
+
     write_json(REPO_ROOT / "data" / "status.json", {
         "schema_version": "dwr-status/1.0.0",
         "realtime": False,
@@ -523,7 +531,7 @@ def render_index(edition: Edition) -> None:
         "candidate_state": last["state"],
         "last_review": {"date": last["date"], "kind": last["kind"], "state": last["state"]},
         "latest_available_data_date": edition.catalog["dates"]["latest_available_data_date"],
-        "next_review_target": edition.catalog["dates"]["next_review_target"],
+        "next_review_target": target,
         "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
     })
 

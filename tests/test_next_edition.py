@@ -63,6 +63,11 @@ class ManualPreparationTests(unittest.TestCase):
             self.assertEqual(len(report["days"]["2026-10-18"]["epochs"]),2)
             self.assertEqual(report["days"]["2026-10-19"]["coverage_status"],"observation_unavailable")
             self.assertFalse(report["days"]["2026-10-19"]["attribution_comparable"])
+            from dwr.common import read_csv
+            unavailable=[r for r in read_csv(target/"payload/daily-family-summary.csv") if r["date_utc"]=="2026-10-19"]
+            self.assertTrue(unavailable)
+            self.assertTrue(all(r["request_count"]=="" and r["observation_status"]=="observation_unavailable" for r in unavailable))
+
             self.assertEqual(len(list((target/"figures").glob("*.svg"))),48)
             second=maintenance.prepare(private,datetime(2026,11,18,tzinfo=timezone.utc))
             self.assertEqual(second["outcome"],"unchanged",second)

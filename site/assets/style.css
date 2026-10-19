@@ -101,7 +101,7 @@ footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px
 .skip { position: absolute; top: -8rem; left: 1rem; padding: .75rem; z-index: 10; background: var(--surface); }
 .skip:focus { top: .5rem; }
 @media (max-width: 640px) {
-  .plot-wrap img { min-width: 420px; width: 420px; max-width: none; }
+  .plot-wrap img { min-width: 0; width: 100%; max-width: 420px; }
   nav a, .lang { min-height: 32px; display: inline-flex; align-items: center; }
   h1 { overflow-wrap: normal; word-break: normal; }
 }

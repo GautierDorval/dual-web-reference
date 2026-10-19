@@ -18,13 +18,19 @@
   "latest_published_edition": null,
   "next_review_target": {
     "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
-    "guarantee": "none: planned target; manual preparation until automation is authorized and proven",
+    "guarantee": "none; inactive planning template",
     "next_monthly_window": {
       "days": 31,
       "end_exclusive": "2026-11-15",
       "start_inclusive": "2026-10-15"
     },
-    "weekly_review": "2026-10-19T13:17:00Z"
+    "weekly_review": null,
+    "weekly_review_template": {
+      "activation_status": "template_not_activated",
+      "template": "config/workflow-templates/weekly-preparation.yml.example",
+      "time_utc": "13:17",
+      "weekday": "monday"
+    }
   },
   "preparation": {
     "code_ready": true,

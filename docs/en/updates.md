@@ -2,13 +2,17 @@
 
 [Français](../fr/mises-a-jour.md) · [Repository home](../../README.md)
 
-**r1 is publicly accessible and frozen; r2 is a local privacy correction candidate. Neither is an approved reference release. No independent scientific review is documented.** A public repository, passing tests, a technical review and a scientific review are different facts.
+<!-- dwr:begin edition-state -->
+local candidate; reference not approved; no independent scientific review documented.
+<!-- dwr:end edition-state -->
+
+A public repository, passing tests, a technical review and a scientific review are different facts.
 
 ## Four distinct states
 
 [config/editions.json](../../config/editions.json) records availability, review progress, reference approval and scientific review separately, outside the immutable payload. r1 became public within the interval recorded in `public_availability_evidence`, bounded by the existing mutation and anonymous readback receipts. A repository creation date or a commit timestamp is not its exact public-availability time.
 
-The old r1 `catalog.json` remains byte-for-byte unchanged, including its historical `candidate_not_reviewed` and null `published_at` fields. Those fields describe the original preparation; they do not deny today's public availability. `approved_release_at` is a separate approval date; it remains null. `revised_at` dates a correction candidate and need not imply publication.
+The old r1 `catalog.json` remains byte-for-byte unchanged, including its historical `candidate_not_reviewed` and null `published_at` fields. Those fields describe the original preparation; they do not deny today's public availability. `approved_release_at` is a separate approval date recorded only in the external edition registry. `revised_at` dates a correction candidate and need not imply publication.
 
 <!-- dwr:begin dates -->
 | Date or state | Value |
@@ -25,10 +29,9 @@ The old r1 `catalog.json` remains byte-for-byte unchanged, including its histori
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
 | generated_at | `2026-10-19` |
-| published_at | `null` (legacy approval field, not public availability) |
+| approved_release_at | `null` |
 | revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
-| next_review_target | weekly review `2026-10-19T13:17:00Z`, not guaranteed |
 | Updates | periodic update planned; manual preparation (automation not activated) |
 <!-- dwr:end dates -->
 
@@ -55,3 +58,5 @@ The receipt authenticates inputs and outputs. An identical retry returns `unchan
 ## Planning remains inactive
 
 The Monday 13:17 UTC weekly review and monthly preparation are **inactive templates**, not a service guarantee. Manual offline CI validates existing public files; it does not collect data. [status.json](../../data/status.json) distinguishes code readiness, synthetic execution, real-source availability, planning and approval. Public events in [operations.json](../../config/operations.json) use dates or evidence bounds; a publication annotation does not prove causality.
+
+Catalog schema 2 excludes availability, approval, scientific-review state, publication dates, the superseded-by pointer and planning targets. These mutable facts are read from the edition registry and operational configuration. Updating them and regenerating the presentation does not alter the approved payload digest. The historical r1 catalog keeps its original schema and bytes.

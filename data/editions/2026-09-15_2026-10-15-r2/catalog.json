@@ -1,5 +1,4 @@
 {
-  "availability_status": "local_candidate",
   "dates": {
     "calendar_days": 30,
     "exports_extracted_at": {
@@ -18,19 +17,8 @@
     },
     "last_included_date": "2026-10-14",
     "latest_available_data_date": "2026-10-14",
-    "next_review_target": {
-      "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
-      "guarantee": "none: planned target; manual preparation until automation is authorized and proven",
-      "next_monthly_window": {
-        "days": 31,
-        "end_exclusive": "2026-11-15",
-        "start_inclusive": "2026-10-15"
-      },
-      "weekly_review": "2026-10-19T13:17:00Z"
-    },
     "period_end_exclusive": "2026-10-15",
     "period_start_inclusive": "2026-09-15",
-    "published_at": null,
     "revised_at": "2026-10-19",
     "source_snapshot_at": "2026-10-16T12:30:48Z",
     "timezone": "UTC"
@@ -44,7 +32,7 @@
       "path": "actor-summary.csv",
       "rows": 141,
       "sha256": "5d18d5568b8653c256908c1acd66eb268b0ee663d15657495807e72e369693ee",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 881583,
@@ -52,7 +40,7 @@
       "path": "consultations.csv",
       "rows": 2049,
       "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 4717,
@@ -60,7 +48,7 @@
       "path": "coverage.csv",
       "rows": 30,
       "sha256": "bc2411cd0fa055947297e78a8363e8f54eb2a8fb267221125722b1107921c255",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 146160,
@@ -68,7 +56,7 @@
       "path": "daily-family-summary.csv",
       "rows": 1980,
       "sha256": "c25ee9dd3a183542d2c647c7c3a10b53c335c6a1d5f11994003ae3318474bbc7",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 20514,
@@ -76,7 +64,7 @@
       "path": "daily-summary.csv",
       "rows": 136,
       "sha256": "c9d1324be5c4798e06ac9d592d6cd9cd915cf4654b84d4d6c58d7074e9fac3a6",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 3445,
@@ -84,7 +72,7 @@
       "path": "exclusions.csv",
       "rows": 8,
       "sha256": "827cf7576a4799fbc7e5d0430303305dfe504dc658c6548b9b2e9689e9673219",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 3579619,
@@ -92,7 +80,7 @@
       "path": "links.csv",
       "rows": 17862,
       "sha256": "255dddb38f2423a3d7d40a37fc18a4f705117412917a1737da4ccf8d424cf29f",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 66552,
@@ -100,7 +88,7 @@
       "path": "resource-summary.csv",
       "rows": 390,
       "sha256": "4984cda02a473330bda29d698ccf15299e2774c314a28946a683e048a2952f49",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 279411,
@@ -108,7 +96,7 @@
       "path": "resources.csv",
       "rows": 411,
       "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656",
-      "status": "published_candidate"
+      "table_state": "populated"
     },
     {
       "bytes": 3775,
@@ -116,7 +104,7 @@
       "path": "reconciliation.json",
       "rows": null,
       "sha256": "1ce6755b8709d95c1ff3b6583682c05c0f65d58b15850d64b871c86b16599f31",
-      "status": "published_candidate"
+      "table_state": "metadata"
     },
     {
       "bytes": 10670,
@@ -124,7 +112,7 @@
       "path": "case-checks.json",
       "rows": null,
       "sha256": "6716163e82ee4c549889f7900a95eba7284b44fb49e4e03f5616add7bf081ed0",
-      "status": "published_candidate"
+      "table_state": "metadata"
     }
   ],
   "files_not_listed_here": [
@@ -161,6 +149,7 @@
     "The graph snapshots (private repositories): links.csv records each relation with its file and line."
   ],
   "observation_source_edition": "2026-09-15_2026-10-15-r1",
+  "operational_state_source": "config/editions.json",
   "private_lock_sha256": "038bc0b001f9bc278e4543e820589df6d8ec08cb0f3ac85411af357b465fe758",
   "producer_deployment_history": {
     "first_observed_at": "2026-09-15T01:04:40.158Z",
@@ -188,16 +177,12 @@
     "Archive: private daily-report archive, read at a pinned commit dated source_snapshot_at.",
     "Graphs: private source repositories of the three sites, read at pinned commits dated graph_snapshot_at."
   ],
-  "reference_release_status": "not_approved",
   "revision": 2,
   "revision_kind": "privacy_revision_same_observations",
-  "schema_version": "dwr-catalog/1.0.0",
-  "scientific_review_status": "no_independent_scientific_review_documented",
+  "schema_version": "dwr-catalog/2.0.0",
   "source_mode": "joint_acquisition",
   "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status.",
   "source_snapshot_id": "d1-joint-20261016t225716z",
-  "status": "candidate_not_reviewed",
-  "superseded_by": null,
   "supersedes": "2026-09-15_2026-10-15-r1",
   "versions": {
     "attribution_rules": "attribution-assessment/1.0.0",

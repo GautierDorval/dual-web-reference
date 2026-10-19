@@ -94,8 +94,9 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
                     for label, href in nav)
     switch = (f'<a class="lang" href="{esc(relative(page, counterpart))}" hreflang="{"fr" if lang == "en" else "en"}">'
               f'{"Français" if lang == "en" else "English"}</a>') if counterpart else ""
-    banner = t(lang, f"Public frozen r1 · local r2 candidate · reference not approved.",
-               f"r1 publique figée · r2 candidate locale · référence non approuvée.")
+    from . import edition_rules
+    entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
+    banner = edition_rules.status_label(entry, lang, scientific=False) + "."
     if lang == "fr":
         banner = typo.fr(banner)
     return (f'<!doctype html>\n<html lang="{lang}"><head><meta charset="utf-8">'
@@ -107,7 +108,7 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
             f'<nav aria-label="{esc(t(lang, "Main", "Principale"))}">{links}</nav>{switch}</div>'
             f'<p class="banner wrap">{esc(banner)}</p></header>'
             f'<main id="main" class="wrap" tabindex="-1">{body}</main>'
-            f'<footer class="wrap"><p><a href="{esc(root)}CITATION.cff">Citation</a> · <a href="{esc(root)}CONTRIBUTING.md">Contribution</a> · <a href="{esc(root)}SECURITY.md">{esc(t(lang, "Security", "Sécurité"))}</a></p><p>{esc(t(lang, "Static local build. Historical r1 is public; this r2 presentation awaits review. No tracking or external assets.", "Build statique local. r1 historique est publique ; cette présentation r2 attend sa revue. Aucun traçage ni actif externe."))}</p></footer>'
+            f'<footer class="wrap"><p><a href="{esc(root)}CITATION.cff">Citation</a> · <a href="{esc(root)}CONTRIBUTING.md">Contribution</a> · <a href="{esc(root)}SECURITY.md">{esc(t(lang, "Security", "Sécurité"))}</a></p><p>{esc(t(lang, "Static presentation. Availability and approval are recorded in the edition registry. No tracking or external assets.", "Présentation statique. Disponibilité et approbation figurent au registre des éditions. Aucun traçage ni actif externe."))}</p></footer>'
             f'<script src="{esc(root)}assets/explorer.js" defer></script></body></html>\n')
 
 
@@ -265,7 +266,7 @@ def editions_page(edition_id: str, lang: str) -> None:
             f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(status['last_review']['state'])}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
             + table_html(columns, rows, table_id="editions")
-            + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a local privacy revision. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision locale de confidentialité. Aucune tendance entre périodes n’est calculée.'))}</p>")
+            + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a privacy revision; its current state appears above. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision de confidentialité ; son état courant figure ci-dessus. Aucune tendance entre périodes n’est calculée.'))}</p>")
     if lang == "fr":
         body = typo.fr(body)
     write_text(DIST / page, layout(page, lang, t(lang, "Editions", "Éditions"), body, f"{'fr' if lang == 'en' else 'en'}/editions.html", edition_id))
@@ -302,7 +303,7 @@ def cmd(edition_id: str) -> dict:
                '<meta name="robots" content="noindex"><title>Dual Web Reference</title><link rel="stylesheet" href="assets/style.css"></head>'
                '<body><main class="wrap landing"><h1>Dual Web Reference</h1>'
                '<p><a href="en/index.html" hreflang="en">English</a> · <a href="fr/index.html" hreflang="fr">Français</a></p>'
-               f'<p>{esc("Public historical r1; local candidate " + edition_id + "; no approved reference.")}</p></main></body></html>\n')
+               f'<p>{esc(edition_id + "; availability and approval: see the edition registry via either language above.")}</p></main></body></html>\n')
     write_text(DIST / "index.html", landing)
     pages = sorted(str(p.relative_to(DIST)).replace("\\", "/") for p in DIST.rglob("*.html"))
     return {"output": "site/dist", "pages": len(pages)}

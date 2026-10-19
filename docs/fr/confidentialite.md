@@ -2,7 +2,7 @@
 
 [English](../en/privacy.md) · [Accueil du dépôt](../../README.fr.md)
 
-La [politique actuelle](../../config/small-cell-policy.json) est une **candidate de correction locale, version 2.0.0**. Elle décrit des protections d’agrégats testées, pas une anonymisation universelle ni l’impossibilité de toute inférence. r1 et ses [règles originales](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) restent des pièces historiques immuables.
+La [politique actuelle](../../config/small-cell-policy.json) est la **version 2.0.0** ; sa revue de diffusion figure au registre externe des éditions. Elle décrit des protections d’agrégats testées, pas une anonymisation universelle ni l’impossibilité de toute inférence. r1 et ses [règles originales](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) restent des pièces historiques immuables.
 
 ## Ce qui change
 
@@ -28,3 +28,5 @@ Le [rapport de diffusion combinée](../../data/editions/2026-09-15_2026-10-15-r2
 Les projections publiques ne comportent aucune IP de requête, chaîne d’agent utilisateur brute ou hachée, identifiant de témoin/session/appareil, secret, référent libre, chaîne de requête, transcription de conversation ou date du premier/dernier accès par chemin. Le trafic inconnu n’est pas requalifié en activité du propriétaire. Aucune nouvelle durée de conservation ni collecte rétroactive n’est autorisée.
 
 La porte vérifie les termes et identifiants privés configurés ainsi que des représentations dangereuses connues. Les exports privés et instantanés sources demeurent hors du dépôt. Les empreintes établissent l’identité des octets, pas la vérité de la collecte ; les tests fictifs ne prouvent pas une divulgation personnelle réelle. Un problème se signale par [le canal privé autorisé](../../SECURITY.md).
+
+La porte authentifie l’inventaire déclaré à partir des octets locaux. Elle ne découvre pas un historique Git omis : son exhaustivité exige une vérification distincte des références publiques exactes. Les trois états historiques nommés ont été comparés à ces références ; cela ne couvre pas les copies tierces inconnues ni leurs données auxiliaires.

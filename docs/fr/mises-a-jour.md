@@ -2,19 +2,23 @@
 
 [English](../en/updates.md) · [Accueil du dépôt](../../README.fr.md)
 
-**r1 est accessible publiquement et figée ; r2 est une candidate locale de correction de confidentialité. Aucune n’est une référence approuvée. Aucune évaluation scientifique indépendante n’est documentée.** Un dépôt public, des tests réussis, une revue technique et une revue scientifique sont des faits distincts.
+<!-- dwr:begin edition-state -->
+candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée.
+<!-- dwr:end edition-state -->
+
+Un dépôt public, des tests réussis, une revue technique et une revue scientifique sont des faits distincts.
 
 ## Quatre états distincts
 
 [config/editions.json](../../config/editions.json) décrit séparément la disponibilité, l’avancement de la revue, l’approbation de référence et la revue scientifique, hors du payload immuable. r1 est devenue publique dans l’intervalle de `public_availability_evidence`, borné par les reçus existants de mutation et de relecture anonyme. La création du dépôt et la date d’un commit ne donnent pas l’instant exact de disponibilité publique.
 
-Le `catalog.json` r1 demeure identique octet par octet, y compris ses champs historiques `candidate_not_reviewed` et `published_at` nul. Ils décrivent la préparation originale et ne nient pas la disponibilité publique actuelle. `approved_release_at` est une date d’approbation distincte ; elle reste nulle. `revised_at` date une candidate de correction sans présumer sa publication.
+Le `catalog.json` r1 demeure identique octet par octet, y compris ses champs historiques `candidate_not_reviewed` et `published_at` nul. Ils décrivent la préparation originale et ne nient pas la disponibilité publique actuelle. `approved_release_at` est une date d’approbation distincte, consignée uniquement dans le registre externe des éditions. `revised_at` date une candidate de correction sans présumer sa publication.
 
 <!-- dwr:begin dates -->
 | Date ou état | Valeur |
 |---|---|
 | Édition | `2026-09-15_2026-10-15-r2` |
-| Statut | candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée |
+| Statut | candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée |
 | Disponibilité | `local_candidate` |
 | Approbation de référence | `not_approved` |
 | Période mesurée | du 15 septembre au 14 octobre 2026 inclusivement, en UTC |
@@ -25,10 +29,9 @@ Le `catalog.json` r1 demeure identique octet par octet, y compris ses champs his
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
 | generated_at | `2026-10-19` |
-| published_at | `null` (champ hérité d’approbation, pas de disponibilité publique) |
+| approved_release_at | `null` |
 | revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
-| next_review_target | revue hebdomadaire `2026-10-19T13:17:00Z`, non garantie |
 | Mises à jour | actualisation périodique prévue ; préparation manuelle (automatisation non activée) |
 <!-- dwr:end dates -->
 
@@ -55,3 +58,5 @@ Le reçu authentifie les intrants et sorties. Une reprise identique donne `uncha
 ## Planification inactive
 
 La revue hebdomadaire du lundi à 13 h 17 UTC et la préparation mensuelle sont des **gabarits inactifs**, sans garantie de service. La CI manuelle hors ligne valide les fichiers publics existants sans recueillir de données. [status.json](../../data/status.json) distingue code prêt, essai synthétique, disponibilité réelle, planification et approbation. Les événements publics dans [operations.json](../../config/operations.json) portent des dates ou bornes étayées ; leur annotation ne prouve aucune causalité.
+
+Le catalogue de schéma 2 exclut disponibilité, approbation, état de revue scientifique, dates de publication, pointeur de remplacement et cibles de planification. Ces faits mutables viennent du registre des éditions et de la configuration opérationnelle. Les modifier puis régénérer la présentation ne change pas l’empreinte du contenu approuvé. Le catalogue historique r1 conserve son schéma et ses octets d’origine.

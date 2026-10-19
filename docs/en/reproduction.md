@@ -121,4 +121,4 @@ Dual Web Reference, edition 2026-09-15_2026-10-15-r1 (September 15 to October 14
 catalog.json SHA-256 <64 hexadecimal characters>, consulted <date>.
 ```
 
-The digest is computed with `sha256sum data/editions/<edition>/catalog.json` or `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, and it also appears in `SHA256SUMS.txt`. r1 is public and frozen but not an approved reference: cite its edition and catalog digest with that explicit status. r2 remains a local candidate and must not be cited as an approved release. A revision such as `r2` has its own identifier and digest ([updates](updates.md)).
+The digest is computed with `sha256sum data/editions/<edition>/catalog.json` or `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, and it also appears in `SHA256SUMS.txt`. Cite the edition and catalog digest together with the current availability and review state in `config/editions.json`. A reference is approved only when its external receipt validates against the payload digest. A revision such as `r2` has its own identifier and digest ([updates](updates.md)).

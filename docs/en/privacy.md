@@ -2,7 +2,7 @@
 
 [Français](../fr/confidentialite.md) · [Repository home](../../README.md)
 
-The [current policy](../../config/small-cell-policy.json) is a **local correction candidate, version 2.0.0**. It describes tested aggregate protections, not universal anonymity or an assurance that no information can be inferred. r1 and its [original rules](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) remain immutable historical evidence.
+The [current policy](../../config/small-cell-policy.json) is **version 2.0.0**; its distribution review is recorded in the external edition registry. It describes tested aggregate protections, not universal anonymity or an assurance that no information can be inferred. r1 and its [original rules](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) remain immutable historical evidence.
 
 ## What changed
 
@@ -28,3 +28,5 @@ The [combined-release report](../../data/editions/2026-09-15_2026-10-15-r2/discl
 Public projections have no request IP, raw or hashed user-agent string, cookie/session/device identifier, secret, free referrer, query string, conversation transcript or per-path first/last timestamp. Unknown traffic is not relabelled as owner activity. No new retention period or retrospective collection is authorized.
 
 The publication gate checks configured private terms and identifiers as well as known unsafe representations. Private exports and source snapshots stay outside this repository. Public hashes establish byte identity, not the truth of collection, and synthetic privacy tests are not evidence of an actual personal disclosure. Report a concern through [the approved private channel](../../SECURITY.md).
+
+The gate authenticates the declared inventory against local bytes. It does not discover omitted Git history: completeness requires a separate audit of exact public references. The three named historical states were compared at those references; this does not cover unknown third-party copies or auxiliary data.

@@ -12,7 +12,7 @@
       "files": {
         "G01.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G01.en.compact.svg",
-          "sha256": "a52808c00cc8db8bd42c26cddc20c1a07f9f26deb70fe8354ca720e4951a4637"
+          "sha256": "69d57f70fca21e76be7c25ef6ef29f2a4ef9c6703c91caf2949709623cdd2fbb"
         },
         "G01.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G01.en.svg",
@@ -20,7 +20,7 @@
         },
         "G01.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G01.fr.compact.svg",
-          "sha256": "0fb040aa58e947a8840ec13360c25b3dc99442fa7ca863d0d88f2a199484d4e4"
+          "sha256": "5987730f97453ec0e9f6a94bb41443589c6c968e8ba00dcf0a07df7494a822d8"
         },
         "G01.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G01.fr.svg",
@@ -57,19 +57,19 @@
       "files": {
         "G02.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G02.en.compact.svg",
-          "sha256": "6da38066a1e4f9e918444cc5b4e2c97dca428f61bbd27f390aaca14c6cef65a0"
+          "sha256": "fe4ec8e268bed712f2921c7488e9e0475d2fe488422ac51467918433c0814217"
         },
         "G02.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G02.en.svg",
-          "sha256": "e3817adc28306fa002501373a784f2cb44327a1fb6fd21348d85abba34e56909"
+          "sha256": "d54a39f9fb8009cd126373c791f9903ecb874da83becb0adb69afcb7bc5aa1ef"
         },
         "G02.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G02.fr.compact.svg",
-          "sha256": "e8d06bcf5f08ce0cdb4fca64d2a2a06c059ed6982deadfffed66b11826689997"
+          "sha256": "71ff18d68026fb09870b42663bcc642712fd9629f094148affe80dfac8eea876"
         },
         "G02.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G02.fr.svg",
-          "sha256": "394a002d607e0514d84dd11e037c5de212b213f097c85c66f52f464b7b5ef93f"
+          "sha256": "361c8c6641e51466b11ff6362fe06a6b320b732f1877411f3e29b78a4efb2295"
         }
       },
       "inputs": [
@@ -102,7 +102,7 @@
       "files": {
         "G03.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G03.en.compact.svg",
-          "sha256": "d8227b9203cdbd8a87477fdd616d777ec3d937fcc312069d1941bf02d138235e"
+          "sha256": "954380ab00116eef3516f7456ea1294960fafbd51179e7443b4af8c71e26303a"
         },
         "G03.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G03.en.svg",
@@ -110,7 +110,7 @@
         },
         "G03.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G03.fr.compact.svg",
-          "sha256": "5a87fe9e63ab83b763ca6c9046799ae7ae803ac45225b7269c50a1631a218019"
+          "sha256": "000f29eeb69638df8b6a0081491ee9206ae7cf7c986166e2f52bee447460d77b"
         },
         "G03.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G03.fr.svg",
@@ -151,7 +151,7 @@
       "files": {
         "G04.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G04.en.compact.svg",
-          "sha256": "8b139042f191027cf5b18b1ff61b35448d09481b2b51572d3efd6954eb10b972"
+          "sha256": "9128fc1cec7c23d3a2e5173f1206d670f4c26b9d5e95f2df075c9ae6b7e61e75"
         },
         "G04.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G04.en.svg",
@@ -159,7 +159,7 @@
         },
         "G04.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G04.fr.compact.svg",
-          "sha256": "294bb46c4a9375f2abc9fea95db95593fcba838f452c5b17681feca248498df0"
+          "sha256": "1c746536fe7b9393b8750bdf367571bf6ae01afd647d2e7965755f617e546a76"
         },
         "G04.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G04.fr.svg",
@@ -200,7 +200,7 @@
       "files": {
         "G05.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G05.en.compact.svg",
-          "sha256": "1dcabeb71c103404e1cf1ee666d0f8ffb32e223e99e09ae26090d7205fa369a7"
+          "sha256": "b48b44e76d13124b2696153c7a61260c874c0a4a06b210ed63f283e116510a06"
         },
         "G05.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G05.en.svg",
@@ -208,7 +208,7 @@
         },
         "G05.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G05.fr.compact.svg",
-          "sha256": "893293994701ef684cdd397caad96713609cd76b4ca6d78ace8874b03a124f12"
+          "sha256": "4b5bbe2e44ea82d0ba09f8c4cb5735da7da96b73580ae17b988359b403ffeab3"
         },
         "G05.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G05.fr.svg",
@@ -245,7 +245,7 @@
       "files": {
         "G06.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G06.en.compact.svg",
-          "sha256": "5f85ebc03f86d7c59de90067f0621b2035b9aa63ed8db1d2927a81c1e76c0330"
+          "sha256": "1af4959d6f8d5478c70c3da37e72dad6c93c1e9b6dcd85a8b68eac7f5efbcb4b"
         },
         "G06.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G06.en.svg",
@@ -253,7 +253,7 @@
         },
         "G06.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G06.fr.compact.svg",
-          "sha256": "fa70ea68ae9424835e33d2f2f052c89740042f6050b43b034d8dc8dec0381923"
+          "sha256": "c3972dd057eeff5f77bb7f12b99299a355f285f48d8832142be6d5eb9e6740db"
         },
         "G06.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G06.fr.svg",
@@ -286,19 +286,19 @@
       "files": {
         "G07.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G07.en.compact.svg",
-          "sha256": "65e06f276ad09e55f5c0c56e66303214b76f52c5cf0c79eb8f8be793b73fb714"
+          "sha256": "c650887d265448c292c97c36c2ce4ecde6cf657a8165088670c6f2321495f1d0"
         },
         "G07.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G07.en.svg",
-          "sha256": "21c289b115b9a5e812f221e2c360713586a2da082fe04209cedc7a1f21308d8f"
+          "sha256": "bf08a97b93465adee6fcb5e2bed6684e9afef4f91309688f842d61f89e618a63"
         },
         "G07.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G07.fr.compact.svg",
-          "sha256": "8b742a2594d234bf9b0c5faa1f4dd4bbb7b8cb4027c6c4b508e603a6ee94a931"
+          "sha256": "a9a403042ddb7c96bb38da7dbda212ebcbb4de8b4eeabb00cdfffe19f20034cd"
         },
         "G07.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G07.fr.svg",
-          "sha256": "e99f0e25013cb9f364654dbd543918f667cefde1aea9e5ddb3c8350ce8a0a8f4"
+          "sha256": "9377061eb07417b9c43a4acc6093306dffb5a66c5a881e64f83eaf614592d3e5"
         }
       },
       "inputs": [
@@ -335,7 +335,7 @@
       "files": {
         "G08.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G08.en.compact.svg",
-          "sha256": "5a3e0b42ef148563d86bd5d99f0a0c9d0f1670e1896f9ecedbd9cbc968451d42"
+          "sha256": "4212e7d8f4137ecb130c58d8797326d023afc64b7f06a9ea18f4e42b57a7e90e"
         },
         "G08.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G08.en.svg",
@@ -343,7 +343,7 @@
         },
         "G08.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G08.fr.compact.svg",
-          "sha256": "d40fa3951ce1842348ad634c804d2718a290394f16cddcac468a87d89f8f7d07"
+          "sha256": "5f497c5303788c8181154a6b7669d2a5a4873af4be41a537f52dab8e6cf0d4e5"
         },
         "G08.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G08.fr.svg",
@@ -357,7 +357,7 @@
         },
         {
           "path": "data/editions/2026-09-15_2026-10-15-r2/catalog.json",
-          "sha256": "5968d3a90a50732d8e1061cea0cfbb3032bf105fd171b897793064045f1e26db"
+          "sha256": "69b271bba08d600795b1a81dd08ea023f42842392ba022ca48b4bb30e70efb09"
         }
       ],
       "png": {
@@ -380,7 +380,7 @@
       "files": {
         "G10.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G10.en.compact.svg",
-          "sha256": "a7bd160ef911d463d487cb82cca119c6312bae92823fa1fc87f9d90cac86f752"
+          "sha256": "58f7130c417defc63e111bf23b1fe836ace04c47b13f32d763fcc6195c7b382a"
         },
         "G10.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G10.en.svg",
@@ -388,7 +388,7 @@
         },
         "G10.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G10.fr.compact.svg",
-          "sha256": "ecbbbe2c8969e5abb3f109a63bb6d4db6f6c75c25f8bd545cbf4dbb958e4a4c1"
+          "sha256": "a21dc59075c39aaa66bc19acc5cc3e32c1b2c5179a3603870cf6a80b40f37aae"
         },
         "G10.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G10.fr.svg",
@@ -421,7 +421,7 @@
       "files": {
         "G09-gautierdorval.com.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.compact.svg",
-          "sha256": "51e4787349159d2199ca87586edbd86c36e250ffbdd8990ff7897c1153c058e2"
+          "sha256": "584e5d3d0fa5e9fa4af33bd7ea880ef34f466deb5c9f2c849b97c13eb4d3a7e1"
         },
         "G09-gautierdorval.com.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.svg",
@@ -429,7 +429,7 @@
         },
         "G09-gautierdorval.com.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.fr.compact.svg",
-          "sha256": "a2feed2e11cabcae4fee44871befff3b8b60d319709df06c851de34798bdf442"
+          "sha256": "628e9dcd702c114c6baef2acb26e6ea561026dd4d8d6e52780f6bacd28451696"
         },
         "G09-gautierdorval.com.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.fr.svg",
@@ -462,7 +462,7 @@
       "files": {
         "G09-pagup.com.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.compact.svg",
-          "sha256": "8db0df0151ec3ad105159f4ae38c3a0e824fd55f4675120e6e6797b788b38b60"
+          "sha256": "6e6b9f2e9c7cabd071aa0d8fccb3953f10ac3590e577a42d844693a7bdfd458c"
         },
         "G09-pagup.com.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.svg",
@@ -470,7 +470,7 @@
         },
         "G09-pagup.com.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.fr.compact.svg",
-          "sha256": "afdad709a1a007e35df1b8d22bc99b36e1b33a0c2257769730e10ee191ce1b31"
+          "sha256": "bec6e4931ef2b9303018350b605b3cac1a2632637e0f74fe9951da720c34dbce"
         },
         "G09-pagup.com.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.fr.svg",
@@ -503,7 +503,7 @@
       "files": {
         "G09-better-robots.com.en.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.compact.svg",
-          "sha256": "086d9f78981d3e6d4666ded3e165f9322332d2e538232a27729e7c0d6b1fcab1"
+          "sha256": "3c133eb0919de2da3bc1930ac0282a0faf53c9699a9e399902d9cb6769636549"
         },
         "G09-better-robots.com.en.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.svg",
@@ -511,7 +511,7 @@
         },
         "G09-better-robots.com.fr.compact.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.compact.svg",
-          "sha256": "f5582a382c92174d040f1ac3ced02db3fdd363861c6829c9678a29ac32148999"
+          "sha256": "b34d330ea963caa4f30021783fc1613de979e55a3cd9eb219771e2dd0e9a1840"
         },
         "G09-better-robots.com.fr.svg": {
           "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.svg",
@@ -537,7 +537,7 @@
   "rendering": {
     "engine": "analysis/dwr/svg.py (standard library, deterministic)",
     "fonts": "system font stack only; no font is redistributed",
-    "layouts": "wide 960 px and compact 420 px; English and French"
+    "layouts": "wide 960 px and compact 288 px; English and French"
   },
   "schema_version": "dwr-figures/1.0.0"
 }

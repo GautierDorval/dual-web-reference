@@ -7,7 +7,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import archive, importer, reconcile
+from . import archive, importer, reconcile, edition_rules
 from .common import REPO_ROOT, DwrError, load_json, write_json
 from .dates import window_from_strings
 
@@ -221,7 +221,7 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
                       "empty_reason": EMPTY_REASONS.get(name) if rows == 0 else None})
     lock = private / "lock" / "private-lock.json"
     graphs = result["graph_snapshots"]
-    return {
+    return edition_rules.strip_operational_state({
         "schema_version": "dwr-catalog/1.0.0",
         "edition_id": entry["edition_id"],
         "edition_type": entry["edition_type"],
@@ -284,7 +284,7 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
         "files": files,
         "files_not_listed_here": ["catalog.json (this file)", "metrics.json and figures.json (derived after the catalog)",
                                   "SHA256SUMS.txt (does not include itself)"],
-    }
+    })
 
 
 # ---------------------------------------------------------------- public render

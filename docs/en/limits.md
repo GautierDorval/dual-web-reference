@@ -85,5 +85,5 @@ Restricts: what a success means.
 Restricts: the level of detail that is published.
 
 - **Established**: r1 preserves its historical grains; r2 follows a privacy revision defined after results, documented in [small-cell-policy.json](../../config/small-cell-policy.json). No IP address, user agent, cookie, session or device identifier, token, free referrer, query string, transcript, or first and last access dates per cell or per path. Day-level outputs never carry a path or an actor name.
-- **Not established**: universal non-reconstruction. Combining marginals or revisions can reveal aggregate detail. The historical policy was approved on 2026-10-17; the corrected policy remains a local candidate.
+- **Not established**: universal non-reconstruction. Combining marginals or revisions can reveal aggregate detail. The historical policy was approved on 2026-10-17; the corrected policy’s distribution review is recorded in the external edition registry.
 - **Does not allow denying**: patterns that would only appear at a finer grain. See [privacy.md](privacy.md).

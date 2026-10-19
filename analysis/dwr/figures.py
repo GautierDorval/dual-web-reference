@@ -1,7 +1,7 @@
 """render (figures): G01 to G10 from the public edition files only.
 
 Each figure is written in English and French, in a wide (960 px) and a compact
-(420 px) layout, with its own data table (CSV) holding exactly the plotted values.
+(288 px) layout, with its own data table (CSV) holding exactly the plotted values.
 Every visual carries: descriptive title, inclusive period, exclusive end, time
 zone, population, filters, unit, extraction date, edition identifier, coverage
 state and the path of its source table. A figure whose data is not available is
@@ -127,7 +127,7 @@ def _hbars(svg, x0, y, width, items, maximum, lang, label_width, bar_h=18, gap=1
 
 
 def figure_g01(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     coverage = {r["date_utc"]: r for r in _rows(ctx, "coverage.csv")}
     days = [d.isoformat() for d in sorted(date.fromisoformat(r["date_utc"]) for r in coverage.values())]
     values = defaultdict(int)
@@ -205,7 +205,7 @@ def figure_g01(ctx, lang, compact):
 
 
 def figure_g02(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     resources, provider = _main_provider(ctx)
     rows = []
     for site in (None,) + SITE_IDS:
@@ -254,11 +254,14 @@ def figure_g02(ctx, lang, compact):
     y += len(rows) * (112 if compact else 58) + 6
     svg.rect(20, y - 9, 12, 10, "var(--s5)")
     svg.text(38, y, "/llms.txt", "lb")
-    svg.rect(120, y - 9, 12, 10, "var(--s7)")
-    for li, line in enumerate(S.wrap(t(lang, "other main-population resources", "autres ressources de la population principale"), 12.5, width - 158)):
-        svg.text(138, y + li * 16, line, "lb")
-    y += 20 if compact else 0
-    y += 12
+    if compact:
+        y += 22
+    legend_x = 20 if compact else 120
+    svg.rect(legend_x, y - 9, 12, 10, "var(--s7)")
+    legend = S.wrap(t(lang, "other main-population resources", "autres ressources de la population principale"), 12.5, width - legend_x - 38)
+    for li, line in enumerate(legend):
+        svg.text(legend_x + 18, y + li * 16, line, "lb")
+    y += max(1, len(legend)) * 16
     y = S.footer(svg, y, ctx.footer(lang, ["consultations.csv", "resources.csv"]), width)
     svg.desc = t(lang, "Stacked horizontal bars, all sites and per site, splitting provider-origin AI-role GET 200 requests between /llms.txt and the other governance files; counts, totals and shares are written under each bar.",
                  "Barres horizontales empilées, trois sites et par site, répartissant les requêtes GET 200 des rôles IA à origine fournisseur entre /llms.txt et les autres fichiers de gouvernance ; comptes, totaux et parts sont écrits sous chaque barre.")
@@ -266,7 +269,7 @@ def figure_g02(ctx, lang, compact):
 
 
 def figure_g03(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     title = t(lang, "Actors, roles and provider families", "Acteurs, rôles et familles de fournisseurs")
     subtitles = [cap(ctx.period(lang)) + ".", t(lang,
         "Main documentary population; GET 200; provider-origin registry match. Unit: requests. Software agents, not unique people. User-initiated fetches remain separate.",
@@ -305,7 +308,7 @@ def figure_g03(ctx, lang, compact):
 
 
 def figure_g04(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     resources, provider = _main_provider(ctx)
     summary = {r["resource_id"]: r for r in _rows(ctx, "resource-summary.csv")}
     title = t(lang, "Distinct site-path pairs requested, and recurrence", "Couples site-chemin distincts demandés, et récurrence")
@@ -327,17 +330,18 @@ def figure_g04(ctx, lang, compact):
     top, grid = S.axis(max(observed.values()), 4)
     plot_w = width - label_w - 70
     for index, site in enumerate(SITE_IDS):
-        by = y + index * 34
-        svg.text(20 + label_w - 8, by + 14, site, "lb", "end")
-        svg.rect(20 + label_w, by + 2, plot_w * observed[site] / top, 16, "var(--neutral2)",
-                 title=f"{site}: {observed[site]} pairs with rows")
-        svg.bar_h(20 + label_w, by + 6, plot_w * with_ai[site] / top, 8, SITE_COLOR[site],
-                  title=f"{site}: {with_ai[site]} pairs with provider-origin AI GET 200")
-        svg.text(20 + label_w + plot_w * observed[site] / top + 6, by + 14,
+        by = y + index * (62 if compact else 34)
+        x = 20 if compact else 20 + label_w
+        plot = width - 115 if compact else plot_w
+        svg.text(20 if compact else x - 8, by + 14, site, "lb", "start" if compact else "end")
+        bar_y = by + 24 if compact else by + 2
+        svg.rect(x, bar_y, plot * observed[site] / top, 16, "var(--neutral2)", title=f"{site}: {observed[site]} pairs with rows")
+        svg.bar_h(x, bar_y + 4, plot * with_ai[site] / top, 8, SITE_COLOR[site], title=f"{site}: {with_ai[site]} pairs with provider-origin AI GET 200")
+        svg.text(x + plot * observed[site] / top + 6, bar_y + 12,
                  number(with_ai[site], lang) + t(lang, " of ", " sur ") + number(observed[site], lang), "vl")
         table.append({"panel": "A", "site_id": site, "pairs_with_rows": observed[site],
                       "pairs_with_provider_ai_get200": with_ai[site], "bucket": None, "pairs": None})
-    y += 3 * 34 + 4
+    y += 3 * (62 if compact else 34) + 4
     key = t(lang, "Wide grey bar: pairs with rows (all recorded classifications). Thin bar: pairs with at least one provider-origin AI GET 200.",
             "Barre grise large : couples avec lignes (toutes classifications enregistrées). Barre fine : couples avec au moins un GET 200 IA à origine fournisseur.")
     for line in S.wrap(key, 12, width - 40):
@@ -396,7 +400,7 @@ def figure_g04(ctx, lang, compact):
 
 
 def figure_g05(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     resources, provider = _main_provider(ctx)
     title = t(lang, "Most requested governance files per site, provider-origin AI roles only",
               "Fichiers de gouvernance les plus demandés par site, rôles IA à origine fournisseur seulement")
@@ -434,7 +438,7 @@ def figure_g05(ctx, lang, compact):
 
 
 def _not_available(ctx, lang, compact, title, reason, sources):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     svg = S.Svg(width, title, "")
     y = S.header(svg, title, [cap(ctx.period(lang)) + "."], width, compact)
     svg.rect(20, y, width - 40, 90, svg.hatch("na"))
@@ -450,7 +454,7 @@ def _not_available(ctx, lang, compact, title, reason, sources):
 
 
 def figure_g06(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     rows = _rows(ctx, "daily-family-summary.csv")
     title = t(lang, "Heat map: day x documentary family, automated provider-origin AI roles",
               "Carte de chaleur : jour x famille documentaire, rôles IA automatisés à origine fournisseur")
@@ -532,7 +536,7 @@ def figure_g06(ctx, lang, compact):
 
 
 def figure_g07(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     title = t(lang, "What the main result leaves out: HTTP volume by identification level, method and status, and perimeter",
               "Ce que le résultat principal laisse de côté : volume HTTP par niveau d’identification, méthode et statut, et périmètre")
     subtitles = [cap(ctx.period(lang)) + ".",
@@ -542,7 +546,8 @@ def figure_g07(ctx, lang, compact):
     y = S.header(svg, title, subtitles, width, compact)
     label_w = 170 if compact else 330
     table = []
-    svg.text(20, y, t(lang, "A. GET 200 by stored identification level", "A. GET 200 par niveau d’identification enregistré"), "vl")
+    for line in S.wrap(t(lang, "A. GET 200 by stored identification level", "A. GET 200 par niveau d’identification enregistré"), 12.5, width - 40):
+        svg.text(20, y, line, "vl"); y += 16
     tiers = ("provider_origin_verified_actor", "network_verified_claimed_actor", "cloudflare_verified_unattributed",
              "spoofed_or_failed_verification")
     items = []
@@ -552,7 +557,8 @@ def figure_g07(ctx, lang, compact):
         items.append((t(lang, *TIER_LABEL[tier]), value, fill, None))
         table.append({"panel": "A", "category": tier, "requests": value})
     y = _hbars(svg, 20, y + 12, width - 20, items, max(v for _, v, _, _ in items), lang, label_w) + 6
-    svg.text(20, y, t(lang, "B. Requests by method and status", "B. Requêtes par méthode et statut"), "vl")
+    for line in S.wrap(t(lang, "B. Requests by method and status", "B. Requêtes par méthode et statut"), 12.5, width - 40):
+        svg.text(20, y, line, "vl"); y += 16
     sums = defaultdict(int)
     resources = {r["resource_id"]: r for r in _rows(ctx, "resources.csv")}
     for row in _rows(ctx, "consultations.csv"):
@@ -563,7 +569,8 @@ def figure_g07(ctx, lang, compact):
     for label, value, _, _ in items:
         table.append({"panel": "B", "category": label, "requests": value})
     y = _hbars(svg, 20, y + 12, width - 20, items, max(v for _, v, _, _ in items), lang, label_w) + 6
-    svg.text(20, y, t(lang, "C. All requests recorded by the collector, by population", "C. Toutes les requêtes enregistrées par le collecteur, par population"), "vl")
+    for line in S.wrap(t(lang, "C. All requests recorded by the collector, by population", "C. Toutes les requêtes enregistrées par le collecteur, par population"), 12.5, width - 40):
+        svg.text(20, y, line, "vl"); y += 16
     populations = defaultdict(int)
     for row in _rows(ctx, "consultations.csv"):
         resource = resources[row["resource_id"]]
@@ -589,7 +596,7 @@ def figure_g07(ctx, lang, compact):
 
 
 def figure_g08(ctx, lang, compact):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     rows = _rows(ctx, "coverage.csv")
     title = t(lang, "Coverage and measurement provenance", "Couverture et provenance de la mesure")
     svg = S.Svg(width, title, "")
@@ -629,7 +636,7 @@ def figure_g08(ctx, lang, compact):
 
 
 def figure_g09(ctx, lang, compact, case):
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     links = [r for r in _rows(ctx, "links.csv") if r["source_site"] == case["site_id"]]
     nodes = case["nodes"]
     layer_of = {node["path"]: node["layer"] for node in nodes}
@@ -722,7 +729,7 @@ def figure_g09(ctx, lang, compact, case):
 
 def figure_g10(ctx, lang, compact):
     from .dates import window_from_strings, next_monthly_window
-    width = 420 if compact else 960
+    width = 288 if compact else 960
     title = t(lang, "Observed window and revision history", "Fenêtre observée et historique des révisions")
     svg = S.Svg(width, title, "")
     y = S.header(svg, title, [t(lang,

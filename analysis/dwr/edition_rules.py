@@ -23,7 +23,9 @@ COMPARABILITY_KEYS = ("edition_type", "source_mode", "scope_rules", "attribution
 
 
 def parse_edition_id(edition_id: str) -> tuple[str, str, int]:
-    match = EDITION_ID.match(edition_id or "")
+    if not isinstance(edition_id, str):
+        raise DwrError("edition_id_invalid", "expected text")
+    match = EDITION_ID.match(edition_id)
     if not match:
         raise DwrError("edition_id_invalid", str(edition_id))
     return match.group(1), match.group(2), int(match.group(3))
@@ -82,15 +84,26 @@ def approved(entry: dict, digest_of=None) -> bool:
             not receipt.get("evidence") or not receipt.get("reviewed_at") or
             any(receipt.get("decisions", {}).get(k) != "approved" for k in ("technical", "editorial", "distribution"))):
         return False
+    if not isinstance(receipt.get("reviewer"), str) or not receipt["reviewer"].strip():
+        return False
+    evidence = receipt.get("evidence")
+    if not isinstance(evidence, list) or not evidence or any(not isinstance(v, str) or not v.strip() for v in evidence):
+        return False
     try:
         start, end, revision = parse_edition_id(entry["edition_id"])
+        reviewed = review_date(receipt["reviewed_at"])
+        released = review_date(entry["approved_release_at"])
+        if reviewed < review_date(end) or released < reviewed:
+            return False
+        if entry.get("generated_at") and reviewed < review_date(entry["generated_at"]):
+            return False
         from .dates import window_from_strings
         window_from_strings(start, end)
         if revision < 1 or entry.get("period_end_exclusive") != end:
             return False
         actual = digest_of(entry["edition_id"]) if digest_of else payload_manifest(entry["edition_id"])["digest"]
         return receipt_valid(receipt.get("content_digest"), actual)
-    except (DwrError, OSError, KeyError):
+    except (DwrError, OSError, KeyError, TypeError, ValueError):
         return False
 
 
@@ -179,3 +192,45 @@ def growth(previous_count, current_count, comparable_editions: bool):
 
 def receipt_valid(approved_digest: str, candidate_digest: str) -> bool:
     return bool(isinstance(approved_digest, str) and re.fullmatch(r"[0-9a-f]{64}", approved_digest)) and approved_digest == candidate_digest
+
+
+def review_date(value):
+    """Explicit ISO date or timezone-aware instant, never a guessed local timezone."""
+    from datetime import datetime, timezone
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?", value):
+        raise ValueError("review_date_invalid")
+    stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return stamp.replace(tzinfo=timezone.utc) if len(value) == 10 else stamp.astimezone(timezone.utc)
+
+
+MUTABLE_CATALOG_FIELDS = ("status", "availability_status", "reference_release_status", "scientific_review_status",
+                          "approval_receipt", "approved_release_at", "review_status", "superseded_by")
+
+
+def strip_operational_state(catalog):
+    """Version 2 catalog is a citation anchor; mutable decisions live outside it."""
+    for key in MUTABLE_CATALOG_FIELDS:
+        catalog.pop(key, None)
+    for key in ("published_at", "next_review_target"):
+        catalog.get("dates", {}).pop(key, None)
+    for item in catalog.get("files", []):
+        item.pop("status", None)
+        item["table_state"] = "metadata" if item.get("rows") is None else "empty" if item["rows"] == 0 else "populated"
+    catalog["schema_version"] = "dwr-catalog/2.0.0"
+    catalog["operational_state_source"] = "config/editions.json"
+    return catalog
+
+
+def status_label(entry, lang, *, scientific=True):
+    """Human state from the external registry, with cryptographic receipt validation."""
+    fr = lang == "fr"
+    availability = {"local_candidate": ("local candidate", "candidate locale"),
+                    "private_candidate": ("private candidate", "candidate privée"),
+                    "publicly_accessible": ("publicly accessible", "accessible publiquement")}
+    label = availability.get(entry.get("availability_status"), ("availability unknown", "disponibilité inconnue"))[fr]
+    valid = approved(entry)
+    reference = ("reference approved", "référence approuvée") if valid else (("reference approval invalid", "approbation de référence invalide") if entry.get("reference_release_status") == "approved" else ("reference not approved", "référence non approuvée"))
+    parts = [label, reference[fr]]
+    if scientific:
+        parts.append(("no independent scientific review documented", "aucune évaluation scientifique indépendante documentée")[fr] if entry.get("scientific_review_status") in ("no_independent_scientific_review_documented", "not_independently_scientifically_reviewed") else ("scientific review: see edition registry", "revue scientifique : voir le registre des éditions")[fr])
+    return "; ".join(parts)

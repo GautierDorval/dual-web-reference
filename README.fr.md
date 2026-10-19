@@ -4,7 +4,9 @@
 
 Ce dépôt étudie les fichiers de gouvernance, leurs relations documentaires et leurs accès HTTP enregistrés.
 
-r1 est publique et figée ; r2 est une candidate locale de correction. Aucune référence approuvée ni évaluation scientifique indépendante documentée.
+<!-- dwr:begin edition-state -->
+candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée.
+<!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
 **174 URL documentaires touchées · 245 accès · 3 sites d’un même écosystème.** Du 15 septembre au 14 octobre 2026 inclusivement, en UTC.
@@ -45,7 +47,7 @@ Table de données : [G05.csv](figures/2026-09-15_2026-10-15-r2/G05.csv)
 <!-- dwr:begin cases -->
 | Site | Angle | Page de départ | Ressources | GET 200 IA à origine fournisseur sur ces ressources |
 |---|---|---|---:|---:|
-| [gautierdorval.com](cases/gautierdorval.com/README.fr.md) | Identité d’une personne, et distinction entre définitions, affirmations, sources, limites et contenus ordinaires du site. | `/en/ai-use-policy/` | 9 | 10 |
+| [gautierdorval.com](cases/gautierdorval.com/README.fr.md) | Identité d’une personne, et distinction entre définitions, affirmations, sources, limites et contenus ordinaires du site. | `/en/ai-use-policy/` (EN ; FR : `/ai-usage-policy/`) | 9 | 10 |
 | [pagup.com](cases/pagup.com/README.fr.md) | Contexte d’une organisation, périmètre de son offre, références et limites documentaires. | `/ai-usage-policy/` | 9 | 13 |
 | [better-robots.com](cases/better-robots.com/README.fr.md) | Contexte d’un produit, capacités déclarées, limites, et différence entre la publication d’une règle et le comportement effectif d’un robot. | `/governance/ai-usage-policy` | 9 | 15 |
 
@@ -73,7 +75,7 @@ Trois sites d’un seul écosystème ne sont pas trois réplications indépendan
 | Date ou état | Valeur |
 |---|---|
 | Édition | `2026-09-15_2026-10-15-r2` |
-| Statut | candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée |
+| Statut | candidate locale; référence non approuvée; aucune évaluation scientifique indépendante documentée |
 | Disponibilité | `local_candidate` |
 | Approbation de référence | `not_approved` |
 | Période mesurée | du 15 septembre au 14 octobre 2026 inclusivement, en UTC |
@@ -84,10 +86,9 @@ Trois sites d’un seul écosystème ne sont pas trois réplications indépendan
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
 | generated_at | `2026-10-19` |
-| published_at | `null` (champ hérité d’approbation, pas de disponibilité publique) |
+| approved_release_at | `null` |
 | revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
-| next_review_target | revue hebdomadaire `2026-10-19T13:17:00Z`, non garantie |
 | Mises à jour | actualisation périodique prévue ; préparation manuelle (automatisation non activée) |
 <!-- dwr:end dates -->
 

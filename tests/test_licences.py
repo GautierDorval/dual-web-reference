@@ -13,7 +13,7 @@ from dwr.common import REPO_ROOT
 # SHA-256 of https://creativecommons.org/licenses/by/4.0/legalcode.txt, retrieved on 2026-10-17.
 CC_BY_4_SHA256 = "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
 # SHA-256 of CITATION.cff as validated with cffconvert 2.0.0 (schema 1.2.0) on 2026-10-19.
-CITATION_SHA256 = "248fafdf0c8bc7be87d4e0b23b94da92fc2b9af3b41d16f01abd831e9ac217c8"
+CITATION_SHA256 = "e5b2b47c947e33185bfc1d6bf4c00e4c07c1ad90b9e163e94ca5f502a964c291"
 
 
 def licence_rows() -> dict:

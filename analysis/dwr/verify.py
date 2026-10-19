@@ -80,9 +80,10 @@ def check_catalog(report, edition_dir):
     from .dates import window_from_strings
     window = window_from_strings(dates["period_start_inclusive"], dates["period_end_exclusive"])
     entry = next(e for e in load_json(REPO_ROOT / "config" / "editions.json")["editions"] if e["edition_id"] == catalog["edition_id"])
-    report.add("dates_distinct_and_publication_state_consistent",
-               dates["published_at"] == entry["published_at"] and dates["revised_at"] == entry["revised_at"]
-               and (entry["status"] == "published") == (dates["published_at"] is not None)
+    historical = bool(frozen.entry(catalog["edition_id"]))
+    state_free = historical or (not any(k in catalog for k in pipeline.edition_rules.MUTABLE_CATALOG_FIELDS)
+                               and not any(k in dates for k in ("published_at", "next_review_target")))
+    report.add("observation_dates_valid_and_operational_state_external", state_free
                and dates["period_end_exclusive"] > dates["last_included_date"] == window.last_included.isoformat()
                and dates["latest_available_data_date"] <= dates["last_included_date"], json.dumps(dates)[:200])
     report.add("window_label_and_length_derived_from_bounds", catalog["labels"]["period_fr"] == window.label_fr()
@@ -282,7 +283,13 @@ def check_rendering(report, edition_id):
                 unsafe.append(name)
             needs = [edition_id, "UTC", f"{catalog_dates['period_end_exclusive']}T00:00:00Z",
                      catalog_dates["extracted_at"]["start"][:10], f"data/editions/{edition_id}/"]
-            if not all(token in text for token in needs) or "<desc" not in text:
+            # Narrow layouts wrap long paths over several visible text nodes.
+            # Check their visible characters, not a contiguous raw XML substring.
+            from xml.etree import ElementTree
+            svg_root = ElementTree.fromstring(text)
+            visible = "".join("".join(node.itertext()) for node in svg_root.iter("{http://www.w3.org/2000/svg}text"))
+            visible = re.sub(r"\s+", "", visible)
+            if not all(re.sub(r"\s+", "", token) in visible for token in needs) or "<desc" not in text:
                 missing_meta.append(name)
     report.add("figure_files_match_registry", not mismatched, ", ".join(mismatched))
     report.add("figures_carry_dates_edition_source_and_alt", not missing_meta, ", ".join(missing_meta))

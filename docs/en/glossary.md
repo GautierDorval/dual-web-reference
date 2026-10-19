@@ -7,7 +7,7 @@ Plain-language definitions of the labels, codes and acronyms that appear in the 
 ## Units and time
 
 - **Site-path pair**: one path on one site, for example pagup.com with `/llms.txt`. It is the unit of every distinct count. It counts URLs, never consumers, and distinct counts per actor are never added together.
-- **Edition**: a frozen set of public tables for one window, identified as `<start>_<end>-r<n>`, for example `2026-09-15_2026-10-15-r1`. Candidate status means reference approval is pending; it does not determine public availability. r1 is a publicly accessible, unapproved candidate; r2 is local.
+- **Edition**: a frozen set of public tables for one window, identified as `<start>_<end>-r<n>`, for example `2026-09-15_2026-10-15-r1`. Candidate status means reference approval is pending; it does not determine public availability. Current availability and approval are recorded in `config/editions.json`, outside each frozen catalog.
 - **Revision**: the `r<n>` suffix. A correction creates a new revision (`r2`) with its reason, numeric delta, author, reviewer and a link to the previous revision; the earlier revision is never edited ([updates.md](updates.md)).
 - **Window**: the measured period of an edition. Monthly reference windows start on the 15th, in UTC.
 - **Exclusive end**: the end date is not included. The window `[2026-09-15, 2026-10-15)` covers September 15 to October 14 inclusive, that is 30 days; the next one, `[2026-10-15, 2026-11-15)`, has 31 days.

@@ -5,7 +5,7 @@ changes the edition key, coarsens distribution and regenerates the catalog. It
 cannot revise an approved/public target or change the observed time window.
 """
 from copy import deepcopy
-from . import disclosure, frozen, pipeline
+from . import disclosure, frozen, pipeline, edition_rules
 from .common import REPO_ROOT, DwrError, load_json, write_json, write_text, csv_text, read_csv, sha256_file
 
 
@@ -47,7 +47,7 @@ def prepare(edition_id=None):
         item.update(sha256=sha256_file(path), bytes=path.stat().st_size)
         if path.suffix == ".csv":
             item["rows"] = len(read_csv(path))
-    write_json(target / "catalog.json", catalog)
+    write_json(target / "catalog.json", edition_rules.strip_operational_state(catalog))
     write_json(target / "disclosure.json", report)
     write_json(target / "delta-report.json", {"schema_version": "dwr-delta/2.0.0", "edition_id": entry["edition_id"],
                "compared_with": source, "cause": "privacy_revision", "additional_changes": ["presentation", "metadata", "derived_metrics"],

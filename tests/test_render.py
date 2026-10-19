@@ -31,14 +31,18 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(rows[0]["total_get200"], self.edition.m("main.get200"))
 
     def test_every_figure_carries_period_unit_population_and_source(self):
-        for figure_id, (function, inputs) in F.FIGURES.items():
+        from xml.etree import ElementTree
+        for figure_id, function, _, extra in R.figure_jobs(self.edition):
             for lang in ("en", "fr"):
-                text, _ = function(self.edition.ctx, lang, False)
-                self.assertIn(EDITION, text, figure_id)
-                self.assertIn("UTC", text, figure_id)
-                self.assertIn("<desc", text, figure_id)
-                self.assertNotIn("<script", text, figure_id)
-                self.assertRegex(text, r"data/editions/" + re.escape(EDITION), figure_id)
+                for compact in (False, True):
+                    text, _ = R.render_figure(self.edition, function, extra, lang, compact)
+                    root = ElementTree.fromstring(text)
+                    visible = re.sub(r"\s+", "", "".join("".join(e.itertext()) for e in root.iter("{http://www.w3.org/2000/svg}text")))
+                    for value in (EDITION, "UTC", "data/editions/" + EDITION + "/",
+                                  self.edition.catalog["dates"]["period_end_exclusive"] + "T00:00:00Z"):
+                        self.assertIn(value, visible, (figure_id, lang, compact))
+                    self.assertIn("<desc", text, figure_id)
+                    self.assertNotIn("<script", text, figure_id)
 
     def test_heat_map_comes_from_joint_cells_and_sums_to_its_table(self):
         text, rows = F.figure_g06(self.edition.ctx, "en", False)

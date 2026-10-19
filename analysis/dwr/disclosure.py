@@ -26,7 +26,7 @@ def tables(directory):
 
 
 def inventory(root=REPO_ROOT):
-    """Authenticate every inventoried public file, including superseded accessible releases."""
+    """Authenticate declared states against bytes; Git completeness needs a separate ref audit."""
     path = root / "config/publication-inventory.json"
     if not path.is_file():
         return {"status": "not_assessed", "releases": [], "reason": "public_history_inventory_missing"}
@@ -56,7 +56,7 @@ def inventory(root=REPO_ROOT):
     except (DwrError, OSError, KeyError, TypeError):
         return {"status": "not_assessed", "releases": [], "reason": "public_history_inventory_invalid"}
     return {"status": "assessed", "releases": releases,
-            "scope": "Named repository releases only; no claim about unknown third-party auxiliary data."}
+            "scope": "Declared repository inventory authenticated against local bytes; Git-history completeness requires a separate exact-ref audit. No claim about unknown third-party auxiliary data."}
 
 
 def signature(rows):
@@ -81,6 +81,43 @@ def assess(candidate, history, policy):
                 "policy_id": policy["policy_id"]}
     if set(candidate) != set(TABLES):
         reasons.append("unassessed_projection_surface")
+    # Schema extensions can themselves create a new disclosure surface.
+    from . import project
+    fields = {"consultations":project.CONSULTATION_FIELDS, "resources":project.RESOURCE_FIELDS,
+              "daily":project.DAILY_FIELDS, "coverage":project.COVERAGE_FIELDS,
+              "family_daily":project.FAMILY_DAILY_FIELDS, "resource_summary":project.RESOURCE_SUMMARY_FIELDS,
+              "actors":project.ACTOR_FIELDS, "exclusions":project.EXCLUSION_FIELDS}
+    for name, rows in candidate.items():
+        if name in fields and any(set(row) - set(fields[name]) for row in rows):
+            reasons.append("unassessed_projection_columns:" + name)
+    from collections import defaultdict
+    resource_totals = defaultdict(lambda: [0]*6)
+    daily_totals, family_totals = defaultdict(int), defaultdict(int)
+    try:
+        for row in candidate.get("consultations", []):
+            n = int(row["request_count"])
+            get = row.get("http_method") == "GET" and str(row.get("http_status")) == "200"
+            ai = get and row.get("stored_identity_tier") == "provider_origin_verified_actor" and row.get("actor_role") in ("ai_training", "ai_search", "user_initiated_fetch")
+            flags = (True, get, row.get("http_method") == "HEAD", str(row.get("http_status")) == "304", str(row.get("http_status", ""))[:1] in ("4", "5"), ai)
+            values = resource_totals[(row.get("site_id"), row.get("path"))]
+            for i, flag in enumerate(flags):
+                values[i] += n if flag else 0
+        count_fields = ("requests_all_actors", "get200_all_actors", "head_all_actors", "status304_all_actors", "status4xx5xx_all_actors", "provider_origin_ai_get200")
+        for row in candidate.get("resource_summary", []):
+            totals = resource_totals[(row.get("site_id"), row.get("path"))]
+            if any(key in row and int(row[key]) != totals[i] for i, key in enumerate(count_fields)):
+                reasons.append("resource_marginal_not_from_joint_cells")
+        for row in candidate.get("daily", []):
+            if row.get("population") == "main_documentary" and row.get("stored_identity_tier") == "provider_origin_verified_actor" and row.get("actor_role") in ("ai_training", "ai_search") and row.get("http_method") == "GET" and str(row.get("http_status")) == "200":
+                daily_totals[(row.get("date_utc"), row["actor_role"])] += int(row["request_count"])
+        for row in candidate.get("family_daily", []):
+            if row.get("request_count") not in (None, ""):
+                family_totals[(row.get("date_utc"), row.get("actor_role"))] += int(row["request_count"])
+        nonzero = lambda totals: {k:v for k,v in totals.items() if v}
+        if nonzero(daily_totals) != nonzero(family_totals):
+            reasons.append("family_daily_not_from_qualified_daily_cells")
+    except (TypeError, ValueError, KeyError):
+        reasons.append("projection_counts_malformed")
     monthly = [r for r in candidate.get("consultations", []) if protected(r, policy)]
     daily = [r for r in candidate.get("daily", []) if protected(r, policy)]
     if daily:

@@ -33,6 +33,23 @@ def validate_inputs(normalized, qualified, window):
     archive = normalized["archive_inventory"]["days"]
     if sorted(d["date_utc"] for d in archive) != [d.isoformat() for d in window.dates()]:
         raise DwrError("coverage_window_incomplete_or_duplicate")
+    from collections import defaultdict
+    daily = defaultdict(int)
+    for row in rows:
+        daily[row["date_utc"]] += row["request_count"]
+    marginal = defaultdict(int)
+    for row in normalized["marginals"]["daily"]:
+        if not window.contains(dates.parse_date(row["date_utc"])) or type(row["all_requests"]) is not int or row["all_requests"] < 0:
+            raise DwrError("marginal_daily_invalid")
+        marginal[row["date_utc"]] += row["all_requests"]
+    for day in archive:
+        stamp = day["date_utc"]
+        if day.get("archive_status") == "archived":
+            count = day.get("aggregate_count")
+            if type(count) is not int or count < 0 or count != daily[stamp]:
+                raise DwrError("archive_joint_daily_mismatch")
+        if marginal[stamp] != daily[stamp]:
+            raise DwrError("marginal_joint_daily_mismatch")
     counts = joint.path_counts(rows)
     actual = {(r["site_id"], r["path"]): r.get("counts") for r in qualified["resources"] if r.get("counts")}
     if actual != counts:
@@ -107,6 +124,12 @@ def prepare(private: Path, now=None):
                           "family_daily":"FAMILY_DAILY", "resource_summary":"RESOURCE_SUMMARY", "actors":"ACTOR", "exclusions":"EXCLUSION"}[key]
             write_text(payload / name, csv_text(getattr(project, field_name + "_FIELDS"), result[key]))
         write_text(payload / "links.csv", csv_text(project.LINK_FIELDS, result["links"]))
+        from . import public_checks, verify
+        schema_report = verify.Report()
+        verify.check_tables(schema_report, payload)
+        identities = public_checks.reconcile_tables(payload)
+        if not schema_report.result()["passed"] or not all(identities.values()):
+            raise DwrError("prepared_projection_schema_or_reconciliation_failed")
         catalog = {"edition_id": edition_id, "edition_type": "monthly_reference", "source_mode": "joint_acquisition",
                    "metrics_version": "dwr-metrics/2.0.0", "coverage_status": result["measurement"]["coverage_status"],
                    "versions": {**pipeline.rule_versions(), "scope_registry_sha256": sha256_file(REPO_ROOT / "config/scope-registry.csv"),
@@ -117,7 +140,7 @@ def prepare(private: Path, now=None):
                              "calendar_days": window.days, "generated_at": timestamp, "extracted_at": normalized["joint_extracted_at"]},
                    "labels": {"period_en": window.label_en(), "period_fr": window.label_fr()},
                    "nature": normalized.get("nature", "local_private_candidate")}
-        write_json(payload / "catalog.json", catalog)
+        write_json(payload / "catalog.json", edition_rules.strip_operational_state(catalog))
         write_json(payload / "metrics.json", metrics.compute(payload))
         render.render_figures(render.Edition(edition_id, payload, entry), target / "figures")
         base = load_json(pipeline.edition_dir(pipeline.edition_entry(None)["edition_id"]) / "catalog.json")

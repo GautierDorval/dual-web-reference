@@ -77,8 +77,8 @@ class CombinedDisclosureTests(unittest.TestCase):
         self.assertTrue(disclosure.protected({"stored_identity_tier": "network_verified_claimed_actor"}, self.policy))
         candidate = synthetic()
         candidate["consultations"] = []
-        candidate["daily"] = [{"actor_role": "ai_training", "stored_identity_tier": "provider_origin_verified_actor", "request_count": "1"}]
-        candidate["family_daily"] = [{"actor_role": "ai_training", "family": "one-resource", "request_count": "1"}]
+        candidate["daily"] = [{"date_utc":"2026-09-20", "population":"main_documentary", "http_method":"GET", "http_status":"200", "actor_role": "ai_training", "stored_identity_tier": "provider_origin_verified_actor", "request_count": "1"}]
+        candidate["family_daily"] = [{"date_utc":"2026-09-20", "actor_role": "ai_training", "family": "one-resource", "request_count": "1"}]
         result = disclosure.assess(candidate, history(candidate), self.policy)
         self.assertTrue(result["allowed"])
         self.assertTrue(any("sole" in r for r in result["residual_cases"]))

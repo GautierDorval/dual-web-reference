@@ -4,7 +4,9 @@
 
 This repository studies governance files, their documentary relations and recorded HTTP accesses.
 
-r1 is public and frozen; r2 is a local correction candidate. No approved reference or documented independent scientific review.
+<!-- dwr:begin edition-state -->
+local candidate; reference not approved; no independent scientific review documented.
+<!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
 **174 documentary URLs reached · 245 accesses · 3 sites in one ecosystem.** September 15 to October 14, 2026 inclusive, UTC.
@@ -84,10 +86,9 @@ Three sites in one ecosystem are not three independent replications. Coverage is
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
 | generated_at | `2026-10-19` |
-| published_at | `null` (legacy approval field, not public availability) |
+| approved_release_at | `null` |
 | revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
-| next_review_target | weekly review `2026-10-19T13:17:00Z`, not guaranteed |
 | Updates | periodic update planned; manual preparation (automation not activated) |
 <!-- dwr:end dates -->
 

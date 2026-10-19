@@ -85,5 +85,5 @@ Restreint : ce que signifie un succès.
 Restreint : le niveau de détail publié.
 
 - **Établi** : r1 conserve ses grains historiques ; r2 applique une révision de confidentialité définie après les résultats, documentée dans [small-cell-policy.json](../../config/small-cell-policy.json). Aucune adresse IP, aucun agent utilisateur, témoin (cookie), identifiant de session ou d’appareil, jeton, référent libre, chaîne de requête, transcription, ni date de premier ou de dernier accès par cellule ou par chemin. Les sorties quotidiennes ne portent jamais de chemin ni de nom d’acteur.
-- **Non établi** : une non-reconstruction universelle. Le croisement de marges ou de révisions peut révéler du détail agrégé. La politique historique a été approuvée le 2026-10-17 ; la politique corrigée reste une candidate locale.
+- **Non établi** : une non-reconstruction universelle. Le croisement de marges ou de révisions peut révéler du détail agrégé. La politique historique a été approuvée le 2026-10-17 ; la revue de diffusion de la politique corrigée figure au registre externe des éditions.
 - **Ne permet pas de nier** : des régularités qui n’apparaîtraient qu’à un grain plus fin. Voir [confidentialite.md](confidentialite.md).

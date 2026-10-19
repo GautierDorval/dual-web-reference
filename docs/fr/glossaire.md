@@ -7,7 +7,7 @@ Définitions en langage courant des libellés, codes et sigles qui figurent dans
 ## Unités et temps
 
 - **Couple site-chemin** : un chemin sur un site, par exemple pagup.com avec `/llms.txt`. C’est l’unité de tout compte distinct. Il compte des URL, jamais des consommateurs, et les comptes distincts par acteur ne sont jamais additionnés.
-- **Édition** : un ensemble figé de tables publiques pour une fenêtre, identifié sous la forme `<début>_<fin>-r<n>`, par exemple `2026-09-15_2026-10-15-r1`. Le statut de candidate indique une approbation de référence en attente, pas sa disponibilité. r1 est accessible publiquement sans être approuvée ; r2 reste locale.
+- **Édition** : un ensemble figé de tables publiques pour une fenêtre, identifié sous la forme `<début>_<fin>-r<n>`, par exemple `2026-09-15_2026-10-15-r1`. Le statut de candidate indique une approbation de référence en attente, pas sa disponibilité. La disponibilité et l’approbation courantes figurent dans `config/editions.json`, à l’extérieur de chaque catalogue figé.
 - **Révision** : le suffixe `r<n>`. Une correction crée une nouvelle révision (`r2`) avec son motif, l’écart chiffré, son auteur, la personne qui l’a revue et un lien vers la révision précédente ; la révision antérieure n’est jamais modifiée ([mises-a-jour.md](mises-a-jour.md)).
 - **Fenêtre** : la période mesurée d’une édition. Les fenêtres mensuelles de référence commencent le 15, en UTC.
 - **Fin exclusive** : la date de fin n’est pas incluse. La fenêtre `[2026-09-15, 2026-10-15)` couvre du 15 septembre au 14 octobre inclusivement, soit 30 jours ; la suivante, `[2026-10-15, 2026-11-15)`, compte 31 jours.

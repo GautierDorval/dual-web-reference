@@ -14,7 +14,7 @@ Pour r1, `analyze` et `render` vérifient les empreintes du payload entier et de
 
 La nouvelle clé primaire de consultation ajoute `measurement_epoch_id` pour conserver les versions réellement séparables. Les schémas historiques sont scellés sous `config/history/`. La structure des métriques reste compatible ; `metrics_version` identifie les définitions version 2. [metrics.schema.json](../../schemas/metrics.schema.json) décrit valeurs, états nuls, filtres, numérateur, dénominateur, provenance et libellés bilingues.
 
-r1 peut être citée avec son identifiant, l’empreinte de son catalogue et son statut explicite de candidate publique non approuvée. r2 locale ne doit pas être citée comme référence approuvée. Aucune de ces citations n’implique une validation scientifique.
+Chaque édition peut être citée avec son identifiant, l’empreinte de son catalogue et son statut courant, consigné dans `config/editions.json`. Seul un reçu externe valide autorise la qualification de référence approuvée. Aucune de ces citations n’implique une validation scientifique.
 
 
 ## Environnement
@@ -123,4 +123,4 @@ Dual Web Reference, édition 2026-09-15_2026-10-15-r1 (du 15 septembre au 14 oct
 catalog.json SHA-256 <64 caractères hexadécimaux>, consulté le <date>.
 ```
 
-L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. r1 est publique et figée, mais sans référence approuvée : citer son identifiant et son empreinte avec ce statut explicite. r2 reste locale et ne doit pas être présentée comme une référence approuvée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).
+L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. Citer l’identifiant et l’empreinte avec le statut courant dans `config/editions.json`. Seul un reçu externe valide autorise la qualification de référence approuvée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).
