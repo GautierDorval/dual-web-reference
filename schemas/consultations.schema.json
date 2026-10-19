@@ -136,6 +136,7 @@
   ],
   "name": "consultations.csv",
   "primaryKey": [
+    "measurement_epoch_id",
     "site_id",
     "path",
     "http_method",

@@ -4,6 +4,8 @@
 
 This page explains what this repository calls the documentary layer of a site, what that layer is not, how the three measured sites relate to each other, and what the published counts can and cannot say. The measurement method itself is described in [methodology.md](methodology.md).
 
+A governance file makes a specific part of a site explicit: its identity, sources, scope or interpretation limits. An index helps find these files; a policy states how the author wants them read. These functions come before file names or doctrinal acronyms. They are illustrated in [file roles](file-roles.md).
+
 ## Starting point: the canonical definition
 
 The layer comes from a standard defined on gautierdorval.com, “SSA-E + A2 + Dual Web”. Its definition page opens with this statement:
@@ -14,7 +16,7 @@ The same page describes the Dual Web component this way:
 
 > “Dual Web designates a dual-layer architecture where a human reading and a machine reading coexist without contradicting each other: machine-first index, neutral entry points, canonical references, routing conventions, and authority files.”
 
-- Address: https://gautierdorval.com/en/definitions/ssa-e-a2-dual-web/ (French page: https://gautierdorval.com/definitions/ssa-e-a2-dual-web/).
+- Address: `https://gautierdorval.com/en/definitions/ssa-e-a2-dual-web/` (French page: `https://gautierdorval.com/definitions/ssa-e-a2-dual-web/`).
 - Declared in the page metadata: date 2026-01-08, updated 2026-07-07, concept version 1.0.
 - Consulted on 2026-10-16, in the source repository snapshot of the site dated 2026-10-14. The page was not fetched from the live site.
 

@@ -1,0 +1,13 @@
+panel,category,requests
+A,provider_origin_verified_actor,335
+A,network_verified_claimed_actor,827
+A,cloudflare_verified_unattributed,9186
+A,spoofed_or_failed_verification,18
+B,GET 200,10366
+B,HEAD 200,3357
+B,GET 304,439
+B,POST 405,18
+C,main_documentary,14180
+C,other_documentary,5407
+C,robots_control,4167
+C,undeclared_bucket,1061

@@ -2,9 +2,11 @@
 
 [Français](README.fr.md) · [Repository home](../../README.md)
 
-> Edition `2026-09-15_2026-10-15-r1` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-06` · candidate, not published
+> Edition `2026-09-15_2026-10-15-r2` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-06` · local candidate; reference not approved
 
-## Angle
+**41 documentary URLs; 61 provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.
+
+## Question and scope
 
 Context of an organization, scope of its offer, references and documentary limits.
 
@@ -18,7 +20,21 @@ Starting from the pagup.com AI policy page, and without going through llms.txt, 
 
 ## Available documentary path
 
-Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). It shows what a reader can follow; it is not an observed robot path.
+Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv). It shows what a reader can follow; it is not an observed robot path.
+
+Copyable paths only. A manually visited online resource may differ from the dated snapshot; full private snapshot bytes are not distributed.
+
+## Read by function
+
+- `/dualweb-index.md` : Canonical index of published surfaces and recommended reading order.
+- `/identity.json` : Identity lock: descriptors, invariants, negations, contact data and non-promises.
+- `/canon.md` : Canonical identity, invariants, negations and order of precedence.
+- `/site-context.md` : Nature of the site and its limits.
+- `/services-non-publics.md` : Forbids inferring unpublished commercial terms.
+- `/governance_scope.json` : Perimeter of the published rules and its exclusions.
+- `/source-precedence.json` : Ranked source hierarchy and conflict rule.
+
+These seven reading landmarks introduce the full source and count tables below; no observation or scope is removed.
 
 - `/` → `/ai-usage-policy/`
 - `/ai-usage-policy/` → `/dualweb-index.md`
@@ -35,7 +51,7 @@ No qualified execution trace is part of this edition. None is reconstructed from
 
 ## Documentary graph
 
-<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r1/G09-pagup.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r1/G09-pagup.com.en.svg" alt="Documentary relations between the case resources of pagup.com in the source snapshot" width="960"></picture>
+<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.svg" alt="Documentary relations between the case resources of pagup.com in the source snapshot" width="960"></picture>
 
 ## Representative resources
 
@@ -51,11 +67,11 @@ No qualified execution trace is part of this edition. None is reconstructed from
 | `/claims.json` | `core_governance` | Verifiable claims, each with a verification URL. | “Ces affirmations sont vérifiables aux URLs indiquées.” (98) | version 1.1.0; lastVerified 2026-08-09 |
 | `/negative-definitions.md` | `core_governance` | What Pagup and its governance files are not. | “Les artefacts de gouvernance ne constituent pas à eux seuls une preuve d’exécution runtime.” (9) | none declared |
 
-Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
+Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
 
 ## Aggregated accesses
 
-September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not allow any path to be reconstructed.
+September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not establish an executed session or navigation order.
 
 | Resource | Provider-origin AI GET 200 | Days with these requests | GET 200, all recorded classifications | HEAD | 304 |
 |---|---:|---:|---:|---:|---:|
@@ -80,4 +96,4 @@ Filters: GET 200 counts use the recorded method and status. The provider-origin 
 
 ## Reproduce
 
-All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r1/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r1/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). See [reproduction](../../docs/en/reproduction.md).
+All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r2/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r2/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). See [reproduction](../../docs/en/reproduction.md).

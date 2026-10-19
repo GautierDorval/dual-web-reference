@@ -1,0 +1,18 @@
+{
+  "allowed": true,
+  "historical_releases_considered": 1,
+  "policy_id": "small-cell-policy/2.0.0",
+  "reasons": [],
+  "residual_cases": [
+    "A sole automated provider-origin actor can be inferred from its role.",
+    "A single-resource family can reveal that automated resource's daily count.",
+    "Already public historical margins remain accessible; this revision cannot erase them.",
+    "The gate does not prove universal non-reconstruction or person anonymity."
+  ],
+  "scope": "Canonical source tables plus deterministic derivatives verified against them; any new output surface needs a new contract.",
+  "status": "assessed_limited_no_new_protected_detail",
+  "withheld": {
+    "coverage_daily_counts": "withheld_not_zero",
+    "protected_daily_rows": "withheld_not_zero"
+  }
+}

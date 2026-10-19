@@ -8,7 +8,7 @@
     if (!hash || hash.indexOf('=') < 0) return state;
     hash.split('&').forEach(function (pair) {
       var parts = pair.split('=');
-      if (parts.length === 2) state[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+      try { if (parts.length === 2) state[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]); } catch (_) { /* malformed fragments do not hide the complete table */ }
     });
     return state;
   }
@@ -49,6 +49,20 @@
         apply();
       });
     });
+    var reset = form.querySelector('button.reset');
+    if (reset) { reset.disabled = false; reset.addEventListener('click', function () {
+      selects.forEach(function (select) { select.value = ''; delete state[tableId + '.' + select.getAttribute('data-filter')]; });
+      writeState(state); apply();
+    }); }
+    var download = form.querySelector('button.export');
+    if (download) { download.disabled = false; download.addEventListener('click', function () {
+      function safe(value) { value = String(value); if (/^[=+@\t\r-]/.test(value)) value = "'" + value; return '"' + value.replace(/"/g, '""') + '"'; }
+      var rows = [[].map.call(table.tHead.rows[0].cells, function (c) { return c.getAttribute('data-key'); })];
+      [].forEach.call(table.tBodies[0].rows, function (row) { if (!row.hidden) rows.push([].map.call(row.cells, function (c) { return c.getAttribute('data-value'); })); });
+      var blob = new Blob([rows.map(function (r) { return r.map(safe).join(','); }).join('\n') + '\n'], {type:'text/csv;charset=utf-8'});
+      var url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = tableId + '-filtered.spreadsheet.csv'; link.click(); URL.revokeObjectURL(url);
+    }); }
+    selects.forEach(function (select) { select.disabled = false; });
     apply();
   });
   document.querySelectorAll('table.data').forEach(function (table) {
@@ -56,6 +70,7 @@
     Array.prototype.forEach.call(headers, function (header, index) {
       var button = header.querySelector('button.sort');
       if (!button) return;
+      button.disabled = false;
       button.addEventListener('click', function () {
         var ascending = header.getAttribute('aria-sort') !== 'ascending';
         Array.prototype.forEach.call(headers, function (other) { other.removeAttribute('aria-sort'); });

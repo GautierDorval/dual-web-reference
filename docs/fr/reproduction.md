@@ -4,6 +4,19 @@
 
 Cette page présente les commandes de la chaîne de calcul, ce que chacune lit et écrit, celles qui fonctionnent hors ligne, et ce qu’un lecteur public peut refaire ou non. Les étapes elles-mêmes sont décrites dans [méthode](methode.md).
 
+## Reproduction corrigée et historique
+
+Les commandes sélectionnent r2 par défaut. Exécuter `revise-public`, `analyze`, `render`, `prepare-edition`, `build-site`, puis `verify`. `revise-public` transforme explicitement les tables r1 inventoriées : changement de clé d’édition, rétention des lignes quotidiennes protégées et des compléments de couverture, puis régénération du catalogue candidat. Aucune acquisition. Deux exécutions sur les mêmes intrants sont déterministes.
+
+Pour r1, `analyze` et `render` vérifient les empreintes du payload entier et des règles/schémas originaux au lieu d’appliquer le style courant. `verify --edition 2026-09-15_2026-10-15-r1` rejoue ses règles scellées. r1 ne peut être la cible de `project-public`, `prepare-edition` ou du rendu PNG.
+
+`prepare-next --private-root <repertoire>` lit les intrants locaux normalisés et qualifiés existants et écrit exclusivement sous la racine privée. Sa répétition complète synthétique utilise les vraies fonctions de projection, mesure, métriques et figures. Elle n’acquiert aucune donnée D1, n’active aucune planification et ne promeut aucune référence. Voir [mises à jour](mises-a-jour.md).
+
+La nouvelle clé primaire de consultation ajoute `measurement_epoch_id` pour conserver les versions réellement séparables. Les schémas historiques sont scellés sous `config/history/`. La structure des métriques reste compatible ; `metrics_version` identifie les définitions version 2. [metrics.schema.json](../../schemas/metrics.schema.json) décrit valeurs, états nuls, filtres, numérateur, dénominateur, provenance et libellés bilingues.
+
+r1 peut être citée avec son identifiant, l’empreinte de son catalogue et son statut explicite de candidate publique non approuvée. r2 locale ne doit pas être citée comme référence approuvée. Aucune de ces citations n’implique une validation scientifique.
+
+
 ## Environnement
 
 - Bibliothèque standard de Python seulement, aucun paquet à installer. Python 3.12 ou plus récent est requis ; la chaîne a été développée et testée seulement avec Python 3.14.6 (les versions antérieures ne sont pas testées), et `.python-version` comme la CI utilisent Python 3.14.
@@ -61,7 +74,7 @@ Avant toute publication, `python -I scripts/dwr.py publication-gate --ref public
 | `identifier_40` | un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>` | dans un commentaire d’un modèle de workflow ; la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@` ; un épinglage absent de la liste, sur une étape `uses:` ; un épinglage absent de la liste, dans le bloc scalaire d’une étape `run:` ; une ligne `tree` dans le message du commit |
 | `short_commit` | une référence courte de commit (`commit` suivi de 7 à 12 caractères hexadécimaux) | dans un Markdown |
 | `png_chunk_not_admitted` | un bloc PNG autre que IHDR, IDAT et IEND | un bloc texte ; un bloc de palette |
-| `png_malformed` | un PNG dont la structure diffère d’un IHDR unique de 13 octets, de blocs IDAT et d’un IEND unique et vide, ou dont les données d’image diffèrent de la taille annoncée | des données après IEND ; un IEND non vide ; un second IHDR ; des données d’image en trop ; un fichier tronqué ; une somme de contrôle fausse ; des dimensions au-delà de 16 384 pixels |
+| `png_malformed` | un PNG dont la structure diffère d’un IHDR unique de 13 octets, de blocs IDAT et d’un IEND unique et vide, ou dont les données d’image diffèrent de la taille annoncée | des données après IEND ; un IEND non vide ; un second IHDR ; des données d’image en trop ; un fichier tronqué ; une somme de contrôle fausse ; des dimensions au-delà de 16 384 pixels |
 
 Chacun des 59 contre-exemples ci-dessus est placé par un test par mutation dans `tests/test_publication_gate.py`, qui exige l’échec de la porte dans cette catégorie ; un autre test exige que ce tableau et les mutations se correspondent un à un. Une variante non listée n’est pas revendiquée. Non couvert : les pixels d’un PNG, qui rendent un SVG contrôlé comme texte mais ne sont pas lus eux-mêmes comme du texte, et un contenu fabriqué exprès pour contourner la porte.
 <!-- dwr:end publication-gate -->
@@ -91,7 +104,7 @@ Une empreinte concordante montre que les fichiers sont ceux qui ont été revus�
 
 ## Conventions CSV
 
-UTF-8 sans indicateur d’ordre des octets, fins de ligne LF, virgule comme séparateur, ligne d’en-tête, guillemets selon la RFC 4180 au besoin, point décimal, dates ISO 8601, booléens écrits `true` et `false`, et cellule vide signifiant null, jamais zéro. Les types de colonnes, les clés primaires et le minimum de 0 pour les comptes figurent dans les [schémas](../../schemas/).
+UTF-8 sans indicateur d’ordre des octets, fins de ligne LF, virgule comme séparateur, ligne d’en-tête, guillemets selon la RFC 4180 au besoin, point décimal, dates ISO 8601, booléens écrits `true` et `false`, et cellule vide signifiant null, jamais zéro. Les types de colonnes, les clés primaires et le minimum de 0 pour les comptes figurent dans les schémas JSON, dont le [schéma des consultations](../../schemas/consultations.schema.json).
 
 Une variante adaptée aux tableurs (`*.spreadsheet.csv`) est définie pour les copies destinées à être ouvertes dans un tableur : toute cellule commençant par `=`, `+`, `-`, `@`, une tabulation ou un retour chariot est précédée d’une apostrophe, afin de ne jamais être lue comme une formule. Les CSV canoniques conservent les valeurs exactes et sont ceux à utiliser pour tout calcul.
 
@@ -110,4 +123,4 @@ Dual Web Reference, édition 2026-09-15_2026-10-15-r1 (du 15 septembre au 14 oct
 catalog.json SHA-256 <64 caractères hexadécimaux>, consulté le <date>.
 ```
 
-L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. L’édition courante est une candidate, non revue et non publiée : son empreinte peut encore changer, et seule une édition publiée devrait être citée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).
+L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. r1 est publique et figée, mais sans référence approuvée : citer son identifiant et son empreinte avec ce statut explicite. r2 reste locale et ne doit pas être présentée comme une référence approuvée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).

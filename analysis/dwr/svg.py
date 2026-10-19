@@ -42,7 +42,9 @@ def text_width(text: str, size: float) -> float:
 def wrap(text: str, size: float, width: float) -> list[str]:
     # Keep French punctuation attached to the preceding word before breaking lines.
     text = re.sub(r" ([:;!?\u00bb%])", "\u00a0\\1", text).replace("\u00ab ", "\u00ab\u00a0")
-    words, lines, current = text.split(" "), [], ""
+    limit = max(1, int(width / (size * CHAR)))
+    words = [part for word in text.split(" ") for part in ([word[i:i+limit] for i in range(0, len(word), limit)] if len(word) > limit else [word])]
+    lines, current = [], ""
     for word in words:
         candidate = f"{current} {word}".strip()
         if current and text_width(candidate, size) > width:

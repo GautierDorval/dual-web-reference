@@ -2,7 +2,7 @@
 
 [English](../en/quality-and-coverage.md) · [Accueil du dépôt](../../README.fr.md)
 
-Cette page décrit ce que l’on sait de la complétude des données enregistrées, comment les lacunes et les journées partielles restent visibles, et comment les différentes formes de « rien » sont distinguées. La table par jour est [coverage.csv](../../data/editions/2026-09-15_2026-10-15-r1/coverage.csv) ; la figure G08 la présente sous forme de calendrier.
+Cette page décrit ce que l’on sait de la complétude des données enregistrées, comment les lacunes et les journées partielles restent visibles, et comment les différentes formes de « rien » sont distinguées. La table par jour est [coverage.csv](../../data/editions/2026-09-15_2026-10-15-r2/coverage.csv) ; la figure G08 la présente sous forme de calendrier.
 
 ## D’où vient l’information de couverture
 
@@ -28,7 +28,7 @@ L’archive peut contenir plusieurs instantanés d’une même date lorsqu’un 
 ## Couverture de cette édition
 
 <!-- dwr:begin coverage -->
-30 jours sur 30 ont des lignes archivées ; les 30 rapports d’archive sont partiels (déclarés), 28 sans attestation de fenêtre du collecteur et 2 avec un écart agrégat/V3 d’une requête (2026-10-06, 2026-10-13). Somme agrégée archivée 24 815, somme V3 24 813. Des lignes sur 30 jours ne prouvent pas une couverture intégrale.
+30 jours sur 30 ont des lignes archivées ; 30 sont déclarés partiels. Les marges agrégées et V3 quotidiennes sont retenues, pas égales à zéro. r1 conserve ses deux écarts d’une requête (6 et 13 octobre). Les observations restent les mêmes ; la couverture partielle n’est pas requalifiée.
 <!-- dwr:end coverage -->
 
 La concordance des totaux quotidiens des exports et de l’agrégat conjoint avec les comptes agrégés archivés (`export_matches_archive`, `joint_matches_archive`) n’est pas une validation indépendante : tous proviennent de la même chaîne productrice. La présence de lignes un jour donné montre que quelque chose a été enregistré, pas que tout l’a été.
@@ -51,7 +51,7 @@ Une table vide est publiée avec son motif dans `catalog.json` (`status = empty_
 
 ## Instantané du graphe et octets déployés
 
-[links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv) est extrait des dépôts sources des sites à des commits épinglés ; `graph_snapshot_at` en donne la date pour chaque site. Ce sont des fichiers sources, pas les octets servis aux clients pendant la fenêtre. Une relation signifie « cette référence est écrite dans ce fichier de cet instantané », avec le fichier et la ligne comme pièce. Elle ne prouve pas qu’un client l’a suivie, et une relation absente signifie « non trouvée dans ce graphe », pas l’absence de toute référence ailleurs. Aucune URL trouvée dans un instantané n’est visitée. Les extraits des cas sont vérifiés mot pour mot (espaces normalisées) contre les mêmes fichiers d’instantané ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). Voir [découverte et maillage](decouverte-et-maillage.md).
+[links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv) est extrait des dépôts sources des sites à des commits épinglés ; `graph_snapshot_at` en donne la date pour chaque site. Ce sont des fichiers sources, pas les octets servis aux clients pendant la fenêtre. Une relation signifie « cette référence est écrite dans ce fichier de cet instantané », avec le fichier et la ligne comme pièce. Elle ne prouve pas qu’un client l’a suivie, et une relation absente signifie « non trouvée dans ce graphe », pas l’absence de toute référence ailleurs. Aucune URL trouvée dans un instantané n’est visitée. Les extraits des cas sont vérifiés mot pour mot (espaces normalisées) contre les mêmes fichiers d’instantané ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). Voir [découverte et maillage](decouverte-et-maillage.md).
 
 ## Comptes non revérifiés
 

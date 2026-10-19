@@ -1,0 +1,44 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "date_utc",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "family",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "actor_role",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "request_count",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "observation_status",
+      "type": "string"
+    }
+  ],
+  "name": "daily-family-summary.csv",
+  "primaryKey": [
+    "date_utc",
+    "family",
+    "actor_role"
+  ],
+  "schema_version": "dwr-public/1.0.0"
+}

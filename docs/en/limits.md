@@ -16,7 +16,7 @@ Restricts: to whom the requests can be attributed.
 
 Restricts: how a file was found.
 
-- **Established**: the references written in snapshot files, by type, file and line ([links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv)).
+- **Established**: the references written in snapshot files, by type, file and line ([links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv)).
 - **Not established**: the route that any client used; head link relations and HTTP `Link` headers, which are not extracted; references on other sites; addresses known beforehand.
 - **Does not allow denying**: that a file was found through llms.txt, an external page or a URL already known; nor that llms.txt played a role on days without any request to it. See [discovery-and-linking.md](discovery-and-linking.md).
 
@@ -33,7 +33,7 @@ Restricts: which content was served.
 Restricts: the completeness of the counts.
 
 <!-- dwr:begin coverage -->
-30 of 30 days have archived rows; all 30 archive reports are partial (declared), 28 with missing collector window attestation and 2 with a one-request aggregate/V3 gap (2026-10-06, 2026-10-13). Archived aggregate sum 24,815, V3 sum 24,813. Rows on 30 days do not prove complete coverage.
+30 of 30 days have archived rows; 30 declared partial. Daily aggregate and V3 margins are withheld, not zero. Historical r1 preserves its two one-request gaps (October 6 and 13). The same observations are used; partial coverage has not been upgraded.
 <!-- dwr:end coverage -->
 
 - **Established**: archived rows for the days of the window, and agreement of the exports and of the joint aggregate with the archive.
@@ -84,6 +84,6 @@ Restricts: what a success means.
 
 Restricts: the level of detail that is published.
 
-- **Established**: tables follow the grains fixed before results in [small-cell-policy.json](../../config/small-cell-policy.json). No IP address, user agent, cookie, session or device identifier, token, free referrer, query string, transcript, or first and last access dates per cell or per path. Day-level outputs never carry a path or an actor name.
-- **Not established**: anything that would require a day crossed with a path, or a day crossed with an actor; the owner validated this policy on 2026-10-17.
+- **Established**: r1 preserves its historical grains; r2 follows a privacy revision defined after results, documented in [small-cell-policy.json](../../config/small-cell-policy.json). No IP address, user agent, cookie, session or device identifier, token, free referrer, query string, transcript, or first and last access dates per cell or per path. Day-level outputs never carry a path or an actor name.
+- **Not established**: universal non-reconstruction. Combining marginals or revisions can reveal aggregate detail. The historical policy was approved on 2026-10-17; the corrected policy remains a local candidate.
 - **Does not allow denying**: patterns that would only appear at a finer grain. See [privacy.md](privacy.md).

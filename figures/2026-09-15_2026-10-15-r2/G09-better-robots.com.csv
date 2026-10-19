@@ -1,0 +1,11 @@
+source_path,target_path,relation_type
+/,/governance/ai-usage-policy,html_anchor
+/governance/ai-usage-policy,/.well-known/ai-governance.json,html_anchor
+/governance/ai-usage-policy,/.well-known/anti-plausibility.json,html_anchor
+/governance/ai-usage-policy,/ai-manifest.json,html_anchor
+/governance/ai-usage-policy,/limitations-context.md,html_anchor
+/governance/ai-usage-policy,/llms.txt,html_anchor
+/governance/ai-usage-policy,/plugin-context.md,html_anchor
+/governance/ai-usage-policy,/plugin-scope.md,html_anchor
+/governance/ai-usage-policy,/robots-txt-context.md,html_anchor
+/governance/ai-usage-policy,/robots.txt,html_anchor

@@ -7,7 +7,7 @@ Définitions en langage courant des libellés, codes et sigles qui figurent dans
 ## Unités et temps
 
 - **Couple site-chemin** : un chemin sur un site, par exemple pagup.com avec `/llms.txt`. C’est l’unité de tout compte distinct. Il compte des URL, jamais des consommateurs, et les comptes distincts par acteur ne sont jamais additionnés.
-- **Édition** : un ensemble figé de tables publiques pour une fenêtre, identifié sous la forme `<début>_<fin>-r<n>`, par exemple `2026-09-15_2026-10-15-r1`. Une édition candidate est préparée, mais pas encore revue ni publiée.
+- **Édition** : un ensemble figé de tables publiques pour une fenêtre, identifié sous la forme `<début>_<fin>-r<n>`, par exemple `2026-09-15_2026-10-15-r1`. Le statut de candidate indique une approbation de référence en attente, pas sa disponibilité. r1 est accessible publiquement sans être approuvée ; r2 reste locale.
 - **Révision** : le suffixe `r<n>`. Une correction crée une nouvelle révision (`r2`) avec son motif, l’écart chiffré, son auteur, la personne qui l’a revue et un lien vers la révision précédente ; la révision antérieure n’est jamais modifiée ([mises-a-jour.md](mises-a-jour.md)).
 - **Fenêtre** : la période mesurée d’une édition. Les fenêtres mensuelles de référence commencent le 15, en UTC.
 - **Fin exclusive** : la date de fin n’est pas incluse. La fenêtre `[2026-09-15, 2026-10-15)` couvre du 15 septembre au 14 octobre inclusivement, soit 30 jours ; la suivante, `[2026-10-15, 2026-11-15)`, compte 31 jours.
@@ -69,8 +69,8 @@ Le résultat principal retient les trois premiers rôles.
 
 - `coverage_status` = `partial_declared` : l’archive du producteur déclare partiel le rapport du jour ; des lignes existent, mais l’intégralité n’est pas attestée ([qualite-et-couverture.md](qualite-et-couverture.md)).
 - `observed` : la cellule est enregistrée avec un compte supérieur à zéro. `observed_zero` : un zéro explicite, écrit seulement dans `daily-family-summary.csv`, pour un jour, une famille et un rôle sans aucune requête de ce type dans la table du producteur ; sous une couverture partielle, ce n’est pas une preuve d’absence. Une cellule vide (null) signifie non disponible ou non calculable, jamais zéro.
-- Ligne absente : une combinaison sans aucune ligne dans `consultations.csv` ou `daily-summary.csv` n’a aucune requête enregistrée dans la table du producteur ; ce n’est pas une absence mesurée sur le Web.
-- `protected_strata`, avec `http_method` et `http_status` = `ANY` : dans `daily-summary.csv`, la ligne quotidienne unique par site et par population qui regroupe toutes les requêtes des strates protégées, quels que soient leur rôle, leur niveau enregistré, leur méthode ou leur statut ([confidentialite.md](confidentialite.md)).
+- Ligne absente : dans les tables r1 figées, aucune ligne signifie aucune requête enregistrée au grain indiqué. Dans les tables quotidiennes r2, les lignes protégées sont retenues : leur absence ne signifie jamais zéro.
+- `protected_strata`, avec `http_method` et `http_status` = `ANY` : dans `daily-summary.csv` de r1 figée, la ligne quotidienne unique par site et par population qui regroupe toutes les requêtes des strates protégées, quels que soient leur rôle, leur niveau enregistré, leur méthode ou leur statut ([confidentialite.md](confidentialite.md)).
 - `cell_derivation` = `joint_exact` : la cellule est une somme exacte de lignes de l’agrégat conjoint ([methode.md](methode.md)).
 - `initiation_provenance` = `unknown`, `initiation_evidence_status` = `not_established` : qui a déclenché la requête n’est pas établi.
 - `source_mode` = `joint_acquisition` : l’édition a été construite à partir d’une extraction bornée, en lecture seule, de l’agrégat conjoint du producteur (jour, site, chemin, méthode, statut, acteur et niveau croisés ensemble), contrôlée contre les exports du relevé interne.

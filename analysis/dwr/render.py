@@ -38,10 +38,11 @@ def code(text: str) -> str:
 
 
 class Edition:
-    def __init__(self, edition_id: str):
+    def __init__(self, edition_id: str, directory=None, entry=None):
         self.id = edition_id
-        self.dir = REPO_ROOT / "data" / "editions" / edition_id
+        self.dir = directory or REPO_ROOT / "data" / "editions" / edition_id
         self.catalog = load_json(self.dir / "catalog.json")
+        self.entry = entry or next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
         self.metrics_doc = load_json(self.dir / "metrics.json")
         self.metrics = {m["metric_id"]: m for m in self.metrics_doc["metrics"]}
         self.ctx = F.Context(self.catalog, self.dir, self.metrics_doc)
@@ -76,8 +77,8 @@ def render_figure(edition: Edition, function, extra, lang: str, compact: bool):
     return function(edition.ctx, lang, compact, extra)
 
 
-def render_figures(edition: Edition) -> dict:
-    target = REPO_ROOT / "figures" / edition.id
+def render_figures(edition: Edition, target=None) -> dict:
+    target = target or REPO_ROOT / "figures" / edition.id
     target.mkdir(parents=True, exist_ok=True)
     registry = []
     for figure_id, function, inputs, extra in figure_jobs(edition):
@@ -137,8 +138,10 @@ def dates_box(edition: Edition, lang: str) -> str:
     status = edition.catalog["status"]
     rows = [
         (t(lang, "Edition", "Édition"), code(edition.id)),
-        (t(lang, "Status", "Statut"), t(lang, "candidate, not reviewed, not published", "candidate, non revue, non publiée")
+        (t(lang, "Status", "Statut"), t(lang, "local candidate; reference not approved; no independent scientific review documented", "candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée")
          if status == "candidate_not_reviewed" else status),
+        (t(lang, "Availability", "Disponibilité"), code(edition.entry["availability_status"])),
+        (t(lang, "Reference approval", "Approbation de référence"), code(edition.entry["reference_release_status"])),
         (t(lang, "Measured period", "Période mesurée"), edition.catalog["labels"][f"period_{lang}"]),
         ("period_start_inclusive", code(d["period_start_inclusive"])),
         ("period_end_exclusive", code(d["period_end_exclusive"])),
@@ -147,8 +150,8 @@ def dates_box(edition: Edition, lang: str) -> str:
         ("source_snapshot_at", code(d["source_snapshot_at"])),
         ("graph_snapshot_at", ", ".join(f"{site} {code(value)}" for site, value in d["graph_snapshot_at"].items())),
         ("generated_at", code(d["generated_at"])),
-        ("published_at", code("null") + t(lang, " (not published)", " (non publiée)")),
-        ("revised_at", code("null")),
+        ("published_at", code(d.get("published_at") or "null") + t(lang, " (legacy approval field, not public availability)", " (champ hérité d’approbation, pas de disponibilité publique)")),
+        ("revised_at", code(d.get("revised_at") or "null")),
         ("latest_available_data_date", code(d["latest_available_data_date"])),
         ("next_review_target", t(lang, f"weekly review {code(d['next_review_target']['weekly_review'])}, not guaranteed",
                                  f"revue hebdomadaire {code(d['next_review_target']['weekly_review'])}, non garantie")),
@@ -162,24 +165,33 @@ def dates_box(edition: Edition, lang: str) -> str:
 def headline(edition: Edition, lang: str, prefix: str = "") -> str:
     total, pairs = edition.m("main.get200"), edition.m("main.site_path_pairs")
     llms, other = edition.m("main.llms_get200"), edition.m("main.other_get200")
-    share = edition.m("main.other_share")
-    hist = edition.m("historical.provider_ai.get200")
-    by_site = ", ".join(f"{site} {number(edition.m(f'main.site.{site}.get200'), lang)}" for site in SITE_IDS)
-    roles = [number(edition.m(f"main.role.{role}.get200"), lang) for role in ("ai_training", "ai_search", "user_initiated_fetch")]
-    if lang == "en":
+    if "main.recorded_pairs" not in edition.metrics:
+        return t(lang, "Historical edition: see its frozen metrics.", "Édition historique : voir ses métriques figées.")
+    m = lambda key: number(edition.m(key), lang)
+    case = prefix + "cases/gautierdorval.com/" + ("README.fr.md" if lang == "fr" else "README.md")
+    if lang == "fr":
         lines = [
-            f"In the main documentary population, the collector recorded **{number(total, lang)} GET 200 requests** from AI roles whose provider origin was recorded as verified by an official IP-range match, on **{number(pairs, lang)} distinct site-path pairs**.",
-            f"Of these requests, **{number(llms, lang)}** went to `/llms.txt` and **{number(other, lang)}** to other governance files, that is **{percent(share, lang)}** of the same selection (same period, sites, scope, method, status and identification level). This share describes how recorded requests are distributed; it is not an adoption rate.",
-            f"By site: {by_site}. By recorded actor role: collection for training {roles[0]}, AI search {roles[1]}, user-initiated fetch {roles[2]}; without user-initiated fetches, {number(edition.m('main.sensitivity.without_user_fetch.get200'), lang)} requests remain (a sensitivity reading, not evidence of independence).",
-            f"Qualification: provider-origin attribution does not use the Cloudflare predicate under review; the levels that do use it are kept apart. The initial internal report counted {number(hist, lang)} such requests on a wider scope that included method, protocol and service-description files; the difference is itemized in [the scope delta]({prefix}docs/en/scope.md).",
+            f"**{number(pairs, lang)} URL documentaires touchées · {number(total, lang)} accès · {number(len(SITE_IDS), lang)} sites d’un même écosystème.** {cap(edition.catalog['labels']['period_fr'])}.",
+            "Sélection principale : requêtes GET 200 de rôles IA, origine fournisseur enregistrée comme vérifiée par correspondance avec des plages IP officielles. **Couverture partielle déclarée.** Une requête ne prouve ni compréhension, ni adoption, ni effet causal.",
+            f"[Voir le cas Gautier Dorval]({case}) : partir de la politique IA, distinguer identité, sources et limites, puis examiner les relations de l’instantané.",
+            f"**{number(llms, lang)}** accès visaient `llms.txt` et **{number(other, lang)}** les autres fichiers. La part de {percent(edition.m('main.other_share'), lang)} hors `llms.txt` décrit cette sélection ; elle ne mesure pas une préférence. Parmi les {m('main.recorded_pairs')} ressources principales ayant des lignes, tous acteurs, méthodes et statuts confondus, {number(pairs, lang)} ont été touchées dans la sélection principale. Ce dénominateur n’est pas l’inventaire historique complet du Web documentaire.",
+            f"Par ressource avec lignes : {m('main.llms_get200')}/{m('main.llms_recorded_pairs')} = {m('main.llms_requests_per_recorded_url')} accès pour `llms.txt`, contre {m('main.other_get200')}/{m('main.other_recorded_pairs')} = {edition.m('main.other_requests_per_recorded_url'):.2f} ailleurs. Disponibilité et exposition ne sont pas contrôlées.",
+            f"GPTBot : {m('main.actor_name.GPTBot.get200')} ; OAI-SearchBot : {m('main.actor_name.OAI-SearchBot.get200')} ; PerplexityBot : {m('main.actor_name.PerplexityBot.get200')} ; ChatGPT-User : {m('main.actor_name.ChatGPT-User.get200')}. La famille OpenAI représente {m('main.actor_family.openai.get200')}/{number(total, lang)} accès ; ce n’est pas une part de marché de tous les agents.",
+            f"Hors récupérations à la demande : {m('main.daily.sum_check')} accès automatisés sur {m('main.daily.days_with_requests')} jours ; les trois journées les plus actives en portent {m('main.automated.top3_days_get200')}, soit {percent(edition.m('main.automated.top3_days_share'), lang)}. {m('main.recurrence.pairs_with_1_days')} des {number(pairs, lang)} couples ont des accès sur un seul jour.",
+            f"Exclusion explicite : {m('main.failed_origin_selected.get200')} requêtes sous ces quatre noms ont une **vérification d’origine échouée selon le producteur**, sur {number(edition.metrics['main.failed_origin_selected.share']['denominator'], lang)} requêtes des seuls niveaux fournisseur vérifié et vérification échouée retenus. Aucune usurpation n’est démontrée. Sur PAGUP : aucun GET 200 de `llms.txt` dans cette sélection et cette fenêtre ; un accès antérieur reste possible.",
         ]
     else:
         lines = [
-            f"Dans la population documentaire principale, le collecteur a enregistré **{number(total, lang)} requêtes GET 200** de rôles IA dont l’origine fournisseur a été enregistrée comme vérifiée par correspondance avec des plages IP officielles, sur **{number(pairs, lang)} couples site-chemin distincts**.",
-            f"Parmi ces requêtes, **{number(llms, lang)}** visaient `/llms.txt` et **{number(other, lang)}** d’autres fichiers de gouvernance, soit **{percent(share, lang)}** de la même sélection (même période, mêmes sites, même périmètre, même méthode, même statut et même niveau d’identification). Cette part décrit la répartition des requêtes enregistrées ; ce n’est pas un taux d’adoption.",
-            f"Par site : {by_site}. Par rôle d’acteur enregistré : collecte pour entraînement {roles[0]}, recherche IA {roles[1]}, récupération à la demande {roles[2]} ; sans les récupérations à la demande, il reste {number(edition.m('main.sensitivity.without_user_fetch.get200'), lang)} requêtes (une lecture de sensibilité, pas une preuve d’indépendance).",
-            f"Qualification : l’attribution à origine fournisseur n’utilise pas le prédicat Cloudflare en revue ; les niveaux qui l’utilisent restent à part. Le relevé interne initial comptait {number(hist, lang)} requêtes de cette nature sur un périmètre plus large incluant des fichiers de méthode, de protocole et de description de services ; l’écart est détaillé dans [le delta de périmètre]({prefix}docs/fr/perimetre.md).",
+            f"**{number(pairs, lang)} documentary URLs reached · {number(total, lang)} accesses · {number(len(SITE_IDS), lang)} sites in one ecosystem.** {cap(edition.catalog['labels']['period_en'])}.",
+            "Main selection: GET 200 requests from AI roles, with provider origin recorded as verified against official IP ranges. **Declared partial coverage.** A request does not prove understanding, adoption or a causal effect.",
+            f"[Explore the Gautier Dorval case]({case}): start at the AI policy, distinguish identity, sources and limits, then examine the snapshot relations.",
+            f"**{number(llms, lang)}** accesses went to `llms.txt` and **{number(other, lang)}** to other files. The {percent(edition.m('main.other_share'), lang)} share outside `llms.txt` describes this selection; it does not measure preference. Of {m('main.recorded_pairs')} main resources with rows across all actors, methods and statuses, {number(pairs, lang)} were reached in the main selection. This denominator is not a complete historical documentary-web inventory.",
+            f"Per resource with rows: {m('main.llms_get200')}/{m('main.llms_recorded_pairs')} = {m('main.llms_requests_per_recorded_url')} accesses for `llms.txt`, versus {m('main.other_get200')}/{m('main.other_recorded_pairs')} = {edition.m('main.other_requests_per_recorded_url'):.2f} elsewhere. Availability and exposure are not controlled.",
+            f"GPTBot: {m('main.actor_name.GPTBot.get200')}; OAI-SearchBot: {m('main.actor_name.OAI-SearchBot.get200')}; PerplexityBot: {m('main.actor_name.PerplexityBot.get200')}; ChatGPT-User: {m('main.actor_name.ChatGPT-User.get200')}. The OpenAI family accounts for {m('main.actor_family.openai.get200')}/{number(total, lang)} accesses; this is not market share across all agents.",
+            f"Excluding user-initiated fetches: {m('main.daily.sum_check')} automated accesses on {m('main.daily.days_with_requests')} days; the three busiest days account for {m('main.automated.top3_days_get200')}, or {percent(edition.m('main.automated.top3_days_share'), lang)}. {m('main.recurrence.pairs_with_1_days')} of the {number(pairs, lang)} pairs received requests on only one day.",
+            f"Explicit exclusion: {m('main.failed_origin_selected.get200')} requests under those four names have **failed origin verification according to the producer**, among {number(edition.metrics['main.failed_origin_selected.share']['denominator'], lang)} requests in the selected provider-verified and failed-verification tiers only. Spoofing is not demonstrated. On PAGUP: no GET 200 of `llms.txt` in this selection and window; an earlier access remains possible.",
         ]
+    lines[1], lines[2] = lines[2], lines[1]
     return "\n\n".join(lines)
 
 
@@ -255,6 +267,10 @@ def reconciliation_table(edition: Edition, lang: str) -> str:
 
 def coverage_summary(edition: Edition, lang: str) -> str:
     days = edition.m("coverage.days_in_window")
+    if edition.catalog.get("metrics_version") == "dwr-metrics/2.0.0":
+        return t(lang,
+                 f"{number(edition.m('coverage.days_observed'), lang)} of {number(days, lang)} days have archived rows; {number(edition.m('coverage.days_partial_declared'), lang)} declared partial. Daily aggregate and V3 margins are withheld, not zero. Historical r1 preserves its two one-request gaps (October 6 and 13). The same observations are used; partial coverage has not been upgraded.",
+                 f"{number(edition.m('coverage.days_observed'), lang)} jours sur {number(days, lang)} ont des lignes archivées ; {number(edition.m('coverage.days_partial_declared'), lang)} sont déclarés partiels. Les marges agrégées et V3 quotidiennes sont retenues, pas égales à zéro. r1 conserve ses deux écarts d’une requête (6 et 13 octobre). Les observations restent les mêmes ; la couverture partielle n’est pas requalifiée.")
     return t(lang,
              f"{number(edition.m('coverage.days_observed'), lang)} of {number(days, lang)} days have archived rows; all {number(edition.m('coverage.days_partial_declared'), lang)} archive reports are partial (declared), {number(edition.m('coverage.days_attestation_missing'), lang)} with missing collector window attestation and {number(edition.m('coverage.aggregate_v3_mismatch_days'), lang)} with a one-request aggregate/V3 gap ({edition.metrics['coverage.aggregate_v3_mismatch_days']['filters'].replace(';', ', ')}). Archived aggregate sum {number(edition.m('coverage.aggregate_sum'), lang)}, V3 sum {number(edition.m('coverage.v3_sum'), lang)}. Rows on {number(edition.m('coverage.days_observed'), lang)} days do not prove complete coverage.",
              f"{number(edition.m('coverage.days_observed'), lang)} jours sur {number(days, lang)} ont des lignes archivées ; les {number(edition.m('coverage.days_partial_declared'), lang)} rapports d’archive sont partiels (déclarés), {number(edition.m('coverage.days_attestation_missing'), lang)} sans attestation de fenêtre du collecteur et {number(edition.m('coverage.aggregate_v3_mismatch_days'), lang)} avec un écart agrégat/V3 d’une requête ({edition.metrics['coverage.aggregate_v3_mismatch_days']['filters'].replace(';', ', ')}). Somme agrégée archivée {number(edition.m('coverage.aggregate_sum'), lang)}, somme V3 {number(edition.m('coverage.v3_sum'), lang)}. Des lignes sur {number(edition.m('coverage.days_observed'), lang)} jours ne prouvent pas une couverture intégrale.")
@@ -380,10 +396,13 @@ def case_page(edition, case, lang, resources, summary, checks, provider) -> str:
         t(lang, f"[Français]({other}) · [Repository home]({p}README.md)", f"[English]({other}) · [Accueil du dépôt]({p}README.fr.md)"),
         "",
         f"> {t(lang, 'Edition', 'Édition')} {code(edition.id)} · {edition.catalog['labels'][f'period_{lang}']} · "
-        + t(lang, f"graph snapshot {code(d['graph_snapshot_at'][site])} · candidate, not published",
-            f"instantané du graphe {code(d['graph_snapshot_at'][site])} · candidate, non publiée"),
+        + t(lang, f"graph snapshot {code(d['graph_snapshot_at'][site])} · local candidate; reference not approved",
+            f"instantané du graphe {code(d['graph_snapshot_at'][site])} · candidate locale ; référence non approuvée"),
         "",
-        "## " + t(lang, "Angle", "Angle"),
+        t(lang, f"**{number(edition.m('main.site.' + site + '.site_path_pairs'), lang)} documentary URLs; {number(edition.m('main.site.' + site + '.get200'), lang)} provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.",
+                f"**{number(edition.m('main.site.' + site + '.site_path_pairs'), lang)} URL documentaires ; {number(edition.m('main.site.' + site + '.get200'), lang)} GET 200 IA à origine fournisseur sur ce site.** Couverture partielle ; un des trois cas du même écosystème d’auteur, pas une réplication indépendante."),
+        "",
+        "## " + t(lang, "Question and scope", "Question et portée"),
         "",
         md_escape(case[f"angle_{lang}"]),
         "",
@@ -402,6 +421,13 @@ def case_page(edition, case, lang, resources, summary, checks, provider) -> str:
           "Chaque étape est une référence écrite dans un fichier de l’instantané source, vérifiée dans [links.csv](" + p + f"data/editions/{edition.id}/links.csv). Elle montre ce qu’un lecteur peut suivre ; ce n’est pas un parcours de robot observé."),
         "",
     ]
+    lines += [t(lang, "Copyable paths only. A manually visited online resource may differ from the dated snapshot; full private snapshot bytes are not distributed.",
+                     "Chemins copiables seulement. Une ressource visitée manuellement en ligne peut différer de l’instantané daté ; les octets complets de l’instantané privé ne sont pas distribués."), ""]
+    lines += ["## " + t(lang, "Read by function", "Lire par fonction"), ""]
+    for resource in case["resources"][:7]:
+        lines.append("- " + code(resource["path"]) + " : " + md_escape(resource[f"role_{lang}"]))
+    lines += ["", t(lang, "These seven reading landmarks introduce the full source and count tables below; no observation or scope is removed.",
+                         "Ces sept repères de lecture introduisent les tables complètes de sources et de comptes ci-dessous ; aucune observation ni classe de périmètre n’est retirée."), ""]
     for source, target in case["path_steps"]:
         ok = checks.get((site, "path_step", f"{source} -> {target}"))
         lines.append(f"- {code(source)} → {code(target)}" + ("" if ok else t(lang, " (not verified)", " (non vérifié)")))
@@ -438,8 +464,8 @@ def case_page(edition, case, lang, resources, summary, checks, provider) -> str:
               "",
               "## " + t(lang, "Aggregated accesses", "Accès agrégés"),
               "",
-              t(lang, f"{cap(edition.catalog['labels']['period_en'])}. Monthly totals per URL; they do not allow any path to be reconstructed.",
-                f"{cap(edition.catalog['labels']['period_fr'])}. Totaux mensuels par URL ; ils ne permettent de reconstituer aucun parcours."),
+              t(lang, f"{cap(edition.catalog['labels']['period_en'])}. Monthly totals per URL; they do not establish an executed session or navigation order.",
+                f"{cap(edition.catalog['labels']['period_fr'])}. Totaux mensuels par URL ; ils n’établissent aucune session exécutée ni ordre de navigation."),
               "",
               t(lang, "| Resource | Provider-origin AI GET 200 | Days with these requests | GET 200, all recorded classifications | HEAD | 304 |\n|---|---:|---:|---:|---:|---:|",
                 "| Ressource | GET 200 IA à origine fournisseur | Jours avec ces requêtes | GET 200, toutes classifications enregistrées | HEAD | 304 |\n|---|---:|---:|---:|---:|---:|")]
@@ -476,20 +502,22 @@ def render_index(edition: Edition) -> None:
          "period_start_inclusive": e["period_start_inclusive"], "period_end_exclusive": e["period_end_exclusive"],
          "revision": e["revision"], "published_at": e["published_at"], "revised_at": e["revised_at"],
          "supersedes": e["supersedes"], "superseded_by": e["superseded_by"],
+         **{k: e.get(k) for k in ("availability_status", "review_status", "reference_release_status", "scientific_review_status", "public_availability_evidence", "approved_release_at")},
          "catalog": f"data/editions/{e['edition_id']}/catalog.json"} for e in editions]}
     write_json(REPO_ROOT / "data" / "index.json", index)
-    published = [e for e in editions if e["status"] == "published" and e["published_at"]]
-    latest = published[-1]["edition_id"] if published else None
+    from .edition_rules import latest_pointer
+    latest = latest_pointer(editions)
     write_json(REPO_ROOT / "data" / "latest.json", {
         "schema_version": "dwr-latest/1.0.0", "latest_published_edition": latest,
-        "rule": "points only to a reviewed public edition; never to a draft or to the last successful run",
-        "reason": None if latest else "no edition has been reviewed and published yet"})
+        "rule": "shared latest_pointer selects an externally approved public payload with a matching receipt; never a candidate or a successful run",
+        "reason": None if latest else "no publicly accessible edition has a matching approved reference receipt"})
     operations = load_json(REPO_ROOT / "config" / "operations.json")
     last = operations["reviews"][-1]
     write_json(REPO_ROOT / "data" / "status.json", {
         "schema_version": "dwr-status/1.0.0",
         "realtime": False,
         "automation": operations["automation"],
+        "preparation": operations.get("preparation"),
         "latest_published_edition": latest,
         "candidate_edition": edition.id,
         "candidate_state": last["state"],
@@ -514,7 +542,7 @@ def render_schemas() -> None:
     boolean_fields = {"main_population", "llms_txt", "declares_canonical_source", "mentions_runtime_or_mcp",
                       "found_in_snapshot", "export_matches_archive", "joint_matches_archive"}
     keys = {
-        "consultations.csv": ["site_id", "path", "http_method", "http_status", "actor_family", "actor_name", "actor_role", "stored_identity_tier"],
+        "consultations.csv": ["measurement_epoch_id", "site_id", "path", "http_method", "http_status", "actor_family", "actor_name", "actor_role", "stored_identity_tier"],
         # Every key below is the full grain of its table: no two rows share it (verify checks it).
         "resources.csv": ["resource_id"],
         "links.csv": ["source_site", "source_path", "target_site", "target_path", "relation_type"],
@@ -546,6 +574,10 @@ def render_schemas() -> None:
 
 
 def cmd(edition_id: str) -> dict:
+    from .frozen import verify as verify_frozen
+    historical = verify_frozen(edition_id)
+    if historical:
+        return historical
     edition = Edition(edition_id)
     figures = render_figures(edition)
     cases = render_cases(edition)

@@ -2,7 +2,7 @@
 
 [Français](../fr/qualite-et-couverture.md) · [Repository home](../../README.md)
 
-This page describes what is known about the completeness of the recorded data, how gaps and partial days are kept visible, and how the different kinds of "nothing" are told apart. The per-day table is [coverage.csv](../../data/editions/2026-09-15_2026-10-15-r1/coverage.csv) and the figure G08 draws it as a calendar.
+This page describes what is known about the completeness of the recorded data, how gaps and partial days are kept visible, and how the different kinds of "nothing" are told apart. The per-day table is [coverage.csv](../../data/editions/2026-09-15_2026-10-15-r2/coverage.csv) and the figure G08 draws it as a calendar.
 
 ## Where coverage information comes from
 
@@ -28,7 +28,7 @@ The archive may hold several snapshots of one date when a report is captured aga
 ## Coverage in this edition
 
 <!-- dwr:begin coverage -->
-30 of 30 days have archived rows; all 30 archive reports are partial (declared), 28 with missing collector window attestation and 2 with a one-request aggregate/V3 gap (2026-10-06, 2026-10-13). Archived aggregate sum 24,815, V3 sum 24,813. Rows on 30 days do not prove complete coverage.
+30 of 30 days have archived rows; 30 declared partial. Daily aggregate and V3 margins are withheld, not zero. Historical r1 preserves its two one-request gaps (October 6 and 13). The same observations are used; partial coverage has not been upgraded.
 <!-- dwr:end coverage -->
 
 Agreement of the daily totals of the exports and of the joint aggregate with the archived aggregate counts (`export_matches_archive`, `joint_matches_archive`) is not an independent validation: all of them come from the same producer chain. The presence of rows on a day shows that something was recorded, not that everything was.
@@ -51,7 +51,7 @@ An empty table is published with its reason in `catalog.json` (`status = empty_w
 
 ## Graph snapshot versus deployed bytes
 
-[links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv) is extracted from the site source repositories at pinned commits; `graph_snapshot_at` gives the date for each site. These are source files, not the bytes served to clients during the window. A relation means "this reference is written in this file of this snapshot", with the file and line as evidence. It is not evidence that any client followed it, and an absent relation means "not found in this graph", not absence of any reference elsewhere. No URL found in a snapshot is fetched. Case excerpts are checked verbatim (whitespace-normalized) against the same snapshot files ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). See [discovery and linking](discovery-and-linking.md).
+[links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv) is extracted from the site source repositories at pinned commits; `graph_snapshot_at` gives the date for each site. These are source files, not the bytes served to clients during the window. A relation means "this reference is written in this file of this snapshot", with the file and line as evidence. It is not evidence that any client followed it, and an absent relation means "not found in this graph", not absence of any reference elsewhere. No URL found in a snapshot is fetched. Case excerpts are checked verbatim (whitespace-normalized) against the same snapshot files ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). See [discovery and linking](discovery-and-linking.md).
 
 ## Counts that are not re-verified
 

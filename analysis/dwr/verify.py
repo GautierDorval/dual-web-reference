@@ -15,6 +15,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from . import figures as F
+from . import frozen, disclosure
 from . import gate
 from . import pipeline
 from . import project
@@ -88,7 +89,7 @@ def check_catalog(report, edition_dir):
                and catalog["labels"]["period_en"] == window.label_en() and dates["calendar_days"] == window.days,
                catalog["labels"]["period_fr"])
     report.add("rule_versions_match_configuration",
-               all(catalog["versions"].get(key) == value for key, value in pipeline.rule_versions().items()),
+               all(catalog["versions"].get(key) == value for key, value in pipeline.rule_versions(catalog["edition_id"]).items()),
                json.dumps(catalog["versions"])[:200])
 
 
@@ -108,7 +109,7 @@ def check_tables(report, edition_dir):
             problems.append(f"{name}: header differs from schema")
         if any(column in FORBIDDEN_COLUMNS for column in header):
             problems.append(f"{name}: forbidden column")
-        schema = load_json(REPO_ROOT / "schemas" / name.replace(".csv", ".schema.json"))
+        schema = load_json((frozen.rule_path(edition_dir.name, "schemas") if frozen.entry(edition_dir.name) else REPO_ROOT / "schemas") / name.replace(".csv", ".schema.json"))
         rows = read_csv(edition_dir / name)
         keys = [tuple(row[k] for k in schema["primaryKey"]) for row in rows]
         if len(keys) != len(set(keys)):
@@ -138,7 +139,7 @@ def check_semantics(report, edition_dir):
     consultations = read_csv(edition_dir / "consultations.csv")
     report.add("consultations_edition_grain_only",
                all(r["time_grain"] == "edition" and r["date_utc"] == "" for r in consultations))
-    report.add("cells_are_exact_joint_sums", all(r["cell_derivation"] == "joint_exact" for r in consultations)
+    report.add("cells_declare_joint_derivation", all(r["cell_derivation"] == "joint_exact" for r in consultations)
                and load_json(edition_dir / "catalog.json")["source_mode"] == "joint_acquisition")
     report.add("unknown_never_becomes_provider_origin",
                not any(r["stored_identity_tier"] == "provider_origin_verified_actor"
@@ -151,10 +152,10 @@ def check_semantics(report, edition_dir):
     report.add("daily_outputs_carry_no_path_or_actor",
                not any(column in ("path", "actor_name", "resource_id") for column in (daily[0].keys() if daily else [])))
     isolated = isolated_protected_daily_groups(consultations, read_csv(edition_dir / "resources.csv"), daily,
-                                               load_json(REPO_ROOT / "config" / "small-cell-policy.json"))
+                                               load_json(frozen.rule_path(edition_dir.name, "small-cell-policy.json")))
     report.add("protected_strata_combined_in_daily_outputs", not isolated["detailed_protected_rows"],
                f"{isolated['detailed_protected_rows']} detailed protected daily rows")
-    report.add("no_daily_group_isolates_a_protected_path", not isolated["groups_below_minimum"],
+    report.add("historical_monthly_path_count_threshold_only", not isolated["groups_below_minimum"],
                "; ".join(f"{s} {p}: {n} paths" for s, p, n in isolated["groups_below_minimum"]))
     family = read_csv(edition_dir / "daily-family-summary.csv")
     resources = {r["resource_id"]: r for r in read_csv(edition_dir / "resources.csv")}
@@ -165,11 +166,23 @@ def check_semantics(report, edition_dir):
     report.add("heat_map_built_from_joint_cells_and_reconciled",
                bool(family) and sum(int(r["request_count"]) for r in family) == automated
                and all(r["actor_role"] in ("ai_training", "ai_search") for r in family))
-    report.add("daily_and_edition_tables_agree",
-               sum(int(r["request_count"]) for r in daily) == sum(int(r["request_count"]) for r in consultations)
-               == sum(int(r["aggregate_count"]) for r in read_csv(edition_dir / "coverage.csv")))
+    if frozen.entry(edition_dir.name):
+        report.add("historical_daily_and_edition_totals_agree",
+                   sum(int(r["request_count"]) for r in daily) == sum(int(r["request_count"]) for r in consultations)
+                   == sum(int(r["aggregate_count"]) for r in read_csv(edition_dir / "coverage.csv")))
+    else:
+        policy = load_json(REPO_ROOT / "config/small-cell-policy.json")
+        decision = disclosure.assess(disclosure.tables(edition_dir), disclosure.inventory(), policy)
+        report.add("combined_disclosure_gate", decision["allowed"], ";".join(decision["reasons"]))
+        report.add("daily_nonprotected_totals_match_edition_cells",
+                   sum(int(r["request_count"]) for r in daily) ==
+                   sum(int(r["request_count"]) for r in consultations if not disclosure.protected(r, policy)))
+        report.add("withheld_coverage_is_null_not_zero", all(r[k] == "" for r in read_csv(edition_dir / "coverage.csv") for k in disclosure.COVERAGE_COUNTS))
+    from .public_checks import reconcile_tables
+    for name, passed in reconcile_tables(edition_dir).items():
+        report.add(name, passed)
     actors = read_csv(edition_dir / "actor-summary.csv")
-    attribution = load_json(REPO_ROOT / "config" / "attribution-rules.json")["assessments"]
+    attribution = load_json(frozen.rule_path(edition_dir.name, "attribution-rules.json"))["assessments"]
     report.add("stored_tiers_kept_and_assessed_separately",
                all(r["attribution_assessment"] == attribution[r["stored_identity_tier"]]["attribution_assessment"] for r in actors))
     under_review = {t for t, spec in attribution.items() if spec["depends_on_cloudflare_predicate"]}
@@ -180,20 +193,20 @@ def check_semantics(report, edition_dir):
     report.add("every_day_of_the_window_has_a_coverage_row",
                len(coverage) == catalog["dates"]["calendar_days"] and len({r["date_utc"] for r in coverage}) == len(coverage))
     report.add("partial_reports_and_v3_gaps_kept",
-               all(r["coverage_status"] in ("partial_declared", "complete_declared", "observation_unavailable") for r in coverage)
+               all(r["coverage_status"] in ("partial_declared", "complete_declared", "observation_unavailable", "coverage_unknown") for r in coverage)
                and all(r["aggregate_minus_v3"] == "" or r["aggregate_minus_v3"].lstrip("-").isdigit() for r in coverage))
     report.add("one_snapshot_per_day_no_double_count", all(r["snapshots_for_date"] == "1" for r in coverage))
     links = read_csv(edition_dir / "links.csv")
     report.add("links_only_snapshot_relations", all(r["relation_type"] in (
         "html_anchor", "markdown_link", "json_reference", "sitemap_entry", "declared_relation", "plain_url_mention") for r in links))
     checks = load_json(edition_dir / "case-checks.json")
-    report.add("case_excerpts_and_paths_verified", checks["all_verified"])
+    report.add("case_snapshot_verification_receipt_declares_success", checks["all_verified"])
 
 
 def isolated_protected_daily_groups(consultations, resources, daily, policy) -> dict:
-    """Crossing check behind the small-cell policy: a daily row of a protected stratum must be the
-    combined group, and that group must span enough paths at the edition grain, so that subtracting
-    published tables can never recover the day of a request to one path."""
+    """Historical structural check only: monthly path count does not prove non-reconstruction.
+    Kept to reproduce B1/B2; new diffusion uses disclosure.assess.
+    """
     roles = set(policy["protected_strata"]["actor_roles"])
     tiers = set(policy["protected_strata"]["stored_identity_tiers"])
     group = policy["daily_protected_group"]
@@ -226,7 +239,7 @@ def check_metrics(report, edition_dir):
     report.add("llms_plus_other_equals_total", value("main.llms_get200") + value("main.other_get200") == value("main.get200"))
     report.add("sites_add_up_to_total", sum(value(f"main.site.{s}.get200") for s in SITE_IDS) == value("main.get200"))
     report.add("share_is_ratio_of_same_selection",
-               abs(value("main.other_share") - value("main.other_get200") / value("main.get200")) < 1e-6)
+               ((value("main.get200") == 0 and value("main.other_share") is None) or (value("main.get200") > 0 and value("main.other_share") is not None and abs(value("main.other_share") - value("main.other_get200") / value("main.get200")) < 1e-6)))
     report.add("pairs_counted_on_pairs", sum(value(f"main.site.{s}.site_path_pairs") for s in SITE_IDS) == value("main.site_path_pairs")
                and value("main.site_path_pairs") <= len(read_csv(edition_dir / "resources.csv")))
     report.add("scope_delta_explained",
@@ -234,8 +247,8 @@ def check_metrics(report, edition_dir):
                and sum(m["value"] for k, m in metrics.items() if k.startswith("scope_delta.") and k.split(".")[1] not in (
                    "control_resource", "undeclared_bucket")) == value("main.scope_delta.provider_ai_get200_excluded"))
     reconciliation = load_json(edition_dir / "reconciliation.json")
-    report.add("historical_figures_reproduced", reconciliation["historical_figures"]["all_match"])
-    report.add("joint_aggregate_consistent_with_exports", reconciliation["joint_aggregate_vs_exports"]["all_consistent"])
+    report.add("historical_reconciliation_receipt_declares_match", reconciliation["historical_figures"]["all_match"])
+    report.add("private_joint_reconciliation_receipt_declares_consistency", reconciliation["joint_aggregate_vs_exports"]["all_consistent"])
     report.add("daily_series_and_roles_add_up_to_total",
                value("main.daily.sum_check") == value("main.get200") - value("main.role.user_initiated_fetch.get200")
                and sum(value(f"main.role.{r}.get200") for r in ("ai_training", "ai_search", "user_initiated_fetch")) == value("main.get200")
@@ -245,6 +258,10 @@ def check_metrics(report, edition_dir):
 
 
 def check_rendering(report, edition_id):
+    historical = frozen.verify(edition_id)
+    if historical:
+        report.add("historical_figures_original_bytes_preserved", True, str(historical["files"]))
+        return
     edition = R.Edition(edition_id)
     directory = REPO_ROOT / "figures" / edition_id
     registry = load_json(edition.dir / "figures.json")
@@ -270,9 +287,17 @@ def check_rendering(report, edition_id):
     report.add("figure_files_match_registry", not mismatched, ", ".join(mismatched))
     report.add("figures_carry_dates_edition_source_and_alt", not missing_meta, ", ".join(missing_meta))
     report.add("figures_have_no_script_or_external_reference", not unsafe, ", ".join(unsafe))
-    # Determinism: re-render G02 in memory and compare bytes.
-    text, rows = F.figure_g02(edition.ctx, "en", False)
-    report.add("figure_rendering_deterministic", text == (directory / "G02.en.svg").read_text(encoding="utf-8"))
+    differences = []
+    for figure_id, function, _, extra in R.figure_jobs(edition):
+        for lang in ("en", "fr"):
+            for compact in (False, True):
+                generated, _ = R.render_figure(edition, function, extra, lang, compact)
+                if lang == "fr":
+                    generated = typo.fr(generated)
+                name = f"{figure_id}.{lang}{'.compact' if compact else ''}.svg"
+                if generated != (directory / name).read_text(encoding="utf-8"):
+                    differences.append(name)
+    report.add("all_canonical_figure_variants_recomputed", not differences, ", ".join(differences))
     table = read_csv(directory / "G02.csv")
     total = next(r for r in table if r["site_id"] == "all_sites")
     svg_en = (directory / "G02.en.svg").read_text(encoding="utf-8")
@@ -320,14 +345,14 @@ def check_privacy(report, private_lock: Path | None):
         report.add("no_private_terms_in_any_tracked_file", not exact, "; ".join(exact[:8]))
     report.add("no_private_identifiers_ips_or_user_agents_in_public_files", not patterns, "; ".join(patterns[:8]))
     policy = load_json(REPO_ROOT / "config" / "small-cell-policy.json")
-    report.add("small_cell_policy_fixed", policy["fixed_before_results"] and policy["numeric_suppression"].startswith("none"))
+    report.add("corrected_policy_has_explicit_limited_contract", policy["policy_id"] == "small-cell-policy/2.0.0" and not policy["fixed_before_results"] and "withheld" in policy["numeric_suppression"])
 
 
 def check_maintenance(report):
     latest = load_json(REPO_ROOT / "data" / "latest.json")
     editions = load_json(REPO_ROOT / "config" / "editions.json")["editions"]
-    published = [e["edition_id"] for e in editions if e["status"] == "published" and e["published_at"]]
-    report.add("latest_points_only_to_reviewed_publication", latest["latest_published_edition"] == (published[-1] if published else None))
+    from .edition_rules import latest_pointer
+    report.add("latest_points_only_to_reviewed_publication", latest["latest_published_edition"] == latest_pointer(editions))
     status = load_json(REPO_ROOT / "data" / "status.json")
     report.add("status_not_realtime_and_automation_inactive",
                status["realtime"] is False and all(v != "active" for k, v in status["automation"].items() if not k.startswith("label")))

@@ -11,13 +11,15 @@ from __future__ import annotations
 
 import html
 import re
+from urllib.parse import urlsplit
+from .common import SITE_IDS
 
 INLINE_CODE = re.compile(r"`([^`]+)`")
 LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 BOLD = re.compile(r"\*\*(.+?)\*\*")
 ESCAPED = re.compile(r"\\([\\`*_\[\]<>|#])")
 PICTURE = re.compile(r'^<picture><source media="\(max-width: 640px\)" srcset="([^"<>]+)"><img src="([^"<>]+)" alt="([^"<>]*)" width="960"></picture>$')
-SAFE_URL = re.compile(r"^(https://|http://|\.{0,2}/|[A-Za-z0-9._-]+(/|\.|#|$))")
+SAFE_URL = re.compile(r"^(mailto:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+$|https://|http://|\.{0,2}/|[A-Za-z0-9._-]+(/|\.|#|$))")
 
 
 def _inline(text: str, rewrite) -> str:
@@ -32,6 +34,8 @@ def _inline(text: str, rewrite) -> str:
 
     def link(match):
         label, url = match.group(1), match.group(2)
+        if urlsplit(url).hostname in SITE_IDS:
+            return keep(_inline(label, rewrite) + " <code>" + html.escape(url) + "</code>")
         target = rewrite(url) if SAFE_URL.match(url) and not url.lower().startswith("javascript:") else None
         inner = _inline(label, rewrite)
         if not target:
@@ -97,9 +101,9 @@ def render(markdown: str, rewrite=lambda url: url) -> str:
         picture = PICTURE.match(stripped)
         if picture:
             compact, wide, alt = (rewrite(picture.group(1)), rewrite(picture.group(2)), picture.group(3))
-            out.append(f'<figure><picture><source media="(max-width: 640px)" srcset="{html.escape(compact, quote=True)}">'
+            out.append(f'<figure><div class="plot-wrap" tabindex="0" role="region" aria-label="Figure"><picture><source media="(max-width: 640px)" srcset="{html.escape(compact, quote=True)}">'
                        f'<img src="{html.escape(wide, quote=True)}" alt="{html.escape(html.unescape(alt), quote=True)}" '
-                       f'loading="lazy" width="960"></picture></figure>')
+                       f'loading="lazy" width="960"></picture></div></figure>')
             index += 1
             continue
         if stripped.startswith("|") and index + 1 < len(lines) and re.match(r"^\|?\s*:?-{3,}", lines[index + 1].strip()):
@@ -114,7 +118,7 @@ def render(markdown: str, rewrite=lambda url: url) -> str:
             rows = "".join("<tr>" + "".join(
                 f'<td class="{"num" if aligns[i] == "right" else ""}">{_inline(cell, rewrite)}</td>'
                 for i, cell in enumerate(row)) + "</tr>" for row in body)
-            out.append(f'<div class="table-wrap"><table><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>')
+            out.append(f'<div class="table-wrap" tabindex="0" role="region" aria-label="Table"><table><thead><tr>{head}</tr></thead><tbody>{rows}</tbody></table></div>')
             continue
         if stripped.startswith(">"):
             block = []

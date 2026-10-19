@@ -2,9 +2,11 @@
 
 [English](README.md) · [Accueil du dépôt](../../README.fr.md)
 
-> Édition `2026-09-15_2026-10-15-r1` · du 15 septembre au 14 octobre 2026 inclusivement, en UTC · instantané du graphe `2026-10-06` · candidate, non publiée
+> Édition `2026-09-15_2026-10-15-r2` · du 15 septembre au 14 octobre 2026 inclusivement, en UTC · instantané du graphe `2026-10-06` · candidate locale ; référence non approuvée
 
-## Angle
+**90 URL documentaires ; 122 GET 200 IA à origine fournisseur sur ce site.** Couverture partielle ; un des trois cas du même écosystème d’auteur, pas une réplication indépendante.
+
+## Question et portée
 
 Contexte d’un produit, capacités déclarées, limites, et différence entre la publication d’une règle et le comportement effectif d’un robot.
 
@@ -18,7 +20,21 @@ Selon les fichiers de gouvernance de better-robots.com, que permet de publier le
 
 ## Parcours documentaire disponible
 
-Chaque étape est une référence écrite dans un fichier de l’instantané source, vérifiée dans [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). Elle montre ce qu’un lecteur peut suivre ; ce n’est pas un parcours de robot observé.
+Chaque étape est une référence écrite dans un fichier de l’instantané source, vérifiée dans [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv). Elle montre ce qu’un lecteur peut suivre ; ce n’est pas un parcours de robot observé.
+
+Chemins copiables seulement. Une ressource visitée manuellement en ligne peut différer de l’instantané daté ; les octets complets de l’instantané privé ne sont pas distribués.
+
+## Lire par fonction
+
+- `/plugin-context.md` : Contexte produit : ce à quoi sert le plugin et ce qu’il ne garantit pas.
+- `/plugin-scope.md` : Capacités déclarées dans et hors du périmètre, et frontière entre le plugin et l’audit /check.
+- `/limitations-context.md` : Limites publiques du produit comme outil de publication.
+- `/robots-txt-context.md` : Définit robots.txt comme une déclaration d’intention, pas une preuve du comportement des robots.
+- `/robots.txt` : Règle d’exploration publiée par le site lui-même, exemple de la couche de règles (ressource de contrôle, hors population principale).
+- `/ai-usage-policy.md` : Texte de la politique en Markdown, dont la préférence d’usage déclarée sur l’entraînement de modèles.
+- `/.well-known/anti-plausibility.json` : Complétions qu’un lecteur ne doit pas inventer au sujet du produit.
+
+Ces sept repères de lecture introduisent les tables complètes de sources et de comptes ci-dessous ; aucune observation ni classe de périmètre n’est retirée.
 
 - `/` → `/governance/ai-usage-policy`
 - `/governance/ai-usage-policy` → `/plugin-context.md`
@@ -33,7 +49,7 @@ Aucune trace d’exécution qualifiée ne fait partie de cette édition. Aucune 
 
 ## Graphe documentaire
 
-<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r1/G09-better-robots.com.fr.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r1/G09-better-robots.com.fr.svg" alt="Relations documentaires entre les ressources du cas better-robots.com dans l’instantané source" width="960"></picture>
+<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.svg" alt="Relations documentaires entre les ressources du cas better-robots.com dans l’instantané source" width="960"></picture>
 
 ## Ressources représentatives
 
@@ -49,11 +65,11 @@ Aucune trace d’exécution qualifiée ne fait partie de cette édition. Aucune 
 | `/.well-known/ai-governance.json` | `core_governance` | Point d’entrée qui déclare l’intention d’usage et ne remplace aucun contrôle réel. | « They do not replace infrastructure controls, private contracts, or human verification. » (290) | schema\_version 2.4 |
 | `/llms.txt` | `discovery_index` | Index de découverte qui oriente les questions sur le plugin vers les fichiers de contexte et de périmètre. | « is not the plugin runtime. » (266) | aucune déclarée |
 
-Les extraits sont cités dans la langue du fichier et vérifiés mot pour mot contre l’instantané ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). Les dates déclarées sont celles écrites dans les fichiers ; ce ne sont pas des dates de déploiement.
+Les extraits sont cités dans la langue du fichier et vérifiés mot pour mot contre l’instantané ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). Les dates déclarées sont celles écrites dans les fichiers ; ce ne sont pas des dates de déploiement.
 
 ## Accès agrégés
 
-Du 15 septembre au 14 octobre 2026 inclusivement, en UTC. Totaux mensuels par URL ; ils ne permettent de reconstituer aucun parcours.
+Du 15 septembre au 14 octobre 2026 inclusivement, en UTC. Totaux mensuels par URL ; ils n’établissent aucune session exécutée ni ordre de navigation.
 
 | Ressource | GET 200 IA à origine fournisseur | Jours avec ces requêtes | GET 200, toutes classifications enregistrées | HEAD | 304 |
 |---|---:|---:|---:|---:|---:|
@@ -78,4 +94,4 @@ Filtres : les GET 200 reprennent la méthode et le statut enregistrés. Les col
 
 ## Reproduire
 
-Tous les comptes ci-dessus viennent de [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r1/resource-summary.csv) et [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r1/consultations.csv) ; les relations de [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv) ; rôles et classes de périmètre de [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). Voir [reproduction](../../docs/fr/reproduction.md).
+Tous les comptes ci-dessus viennent de [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r2/resource-summary.csv) et [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r2/consultations.csv) ; les relations de [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv) ; rôles et classes de périmètre de [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). Voir [reproduction](../../docs/fr/reproduction.md).

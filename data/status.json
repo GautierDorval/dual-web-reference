@@ -6,12 +6,12 @@
     "monthly_edition": "template_not_activated",
     "weekly_preparation": "template_not_activated"
   },
-  "candidate_edition": "2026-09-15_2026-10-15-r1",
+  "candidate_edition": "2026-09-15_2026-10-15-r2",
   "candidate_state": "awaiting_review",
   "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
   "last_review": {
-    "date": "2026-10-16",
-    "kind": "manual_preparation_first_edition",
+    "date": "2026-10-19",
+    "kind": "local_correction_and_synthetic_preparation",
     "state": "awaiting_review"
   },
   "latest_available_data_date": "2026-10-14",
@@ -25,6 +25,14 @@
       "start_inclusive": "2026-10-15"
     },
     "weekly_review": "2026-10-19T13:17:00Z"
+  },
+  "preparation": {
+    "code_ready": true,
+    "command": "prepare-next",
+    "manual_synthetic_rehearsal": "passed",
+    "planning_activated": false,
+    "public_promotion": "not_implemented_by_preparation",
+    "real_next_window": "not_available"
   },
   "realtime": false,
   "schema_version": "dwr-status/1.0.0"

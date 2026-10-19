@@ -2,9 +2,11 @@
 
 [Français](README.fr.md) · [Repository home](../../README.md)
 
-> Edition `2026-09-15_2026-10-15-r1` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-14` · candidate, not published
+> Edition `2026-09-15_2026-10-15-r2` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-14` · local candidate; reference not approved
 
-## Angle
+**43 documentary URLs; 62 provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.
+
+## Question and scope
 
 Identity of a person, and the distinction between definitions, claims, sources, limits and ordinary site content.
 
@@ -18,7 +20,21 @@ When a system is asked “Who is Gautier Dorval?”, which published file is mea
 
 ## Available documentary path
 
-Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). It shows what a reader can follow; it is not an observed robot path.
+Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv). It shows what a reader can follow; it is not an observed robot path.
+
+Copyable paths only. A manually visited online resource may differ from the dated snapshot; full private snapshot bytes are not distributed.
+
+## Read by function
+
+- `/identity.json` : Canonical identity record: name, location, roles, negations, canonical sources and a role ceiling.
+- `/entity-graph.jsonld` : Schema.org graph of the person, the website and the defined doctrinal terms.
+- `/claims.json` : Claims registry separating verified, attested, narrative and boundary claims about the subject.
+- `/canon.md` : French canon of definitions with canonical identity, negations and precedence over external inference.
+- `/.well-known/eac-registry.json` : Declares which external sources are admissible, for which claim families, proofs and output ceilings.
+- `/non-goals.md` : Structural exclusions: what the site is explicitly not intended to do.
+- `/authority-precedence.json` : Source precedence levels and the arbitration order between governance layers.
+
+These seven reading landmarks introduce the full source and count tables below; no observation or scope is removed.
 
 - `/en/ai-use-policy/` → `/.well-known/ai-governance.json`
 - `/en/ai-use-policy/` → `/ai-manifest.json`
@@ -35,7 +51,7 @@ No qualified execution trace is part of this edition. None is reconstructed from
 
 ## Documentary graph
 
-<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r1/G09-gautierdorval.com.en.svg" alt="Documentary relations between the case resources of gautierdorval.com in the source snapshot" width="960"></picture>
+<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.svg" alt="Documentary relations between the case resources of gautierdorval.com in the source snapshot" width="960"></picture>
 
 ## Representative resources
 
@@ -51,11 +67,11 @@ No qualified execution trace is part of this edition. None is reconstructed from
 | `/site-context.md` | `core_governance` | Canonical site context: purpose, entity, scope and interpretation boundaries. | “It may describe expertise, positions, and contact points, but it does not publish packaged offers, pricing, or engagement terms.” (15) | updates noted 2026-05-09, 2026-05-13, 2026-07-06 |
 | `/llms.txt` | `discovery_index` | Discovery file with access policy, canonical host and ordered pointers to governance files. | “If a conflict exists, they take precedence over all other sources.” (102) | updates noted 2026-05-09, 2026-05-13, 2026-06-26 |
 
-Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
+Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
 
 ## Aggregated accesses
 
-September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not allow any path to be reconstructed.
+September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not establish an executed session or navigation order.
 
 | Resource | Provider-origin AI GET 200 | Days with these requests | GET 200, all recorded classifications | HEAD | 304 |
 |---|---:|---:|---:|---:|---:|
@@ -80,4 +96,4 @@ Filters: GET 200 counts use the recorded method and status. The provider-origin 
 
 ## Reproduce
 
-All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r1/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r1/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). See [reproduction](../../docs/en/reproduction.md).
+All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r2/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r2/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). See [reproduction](../../docs/en/reproduction.md).

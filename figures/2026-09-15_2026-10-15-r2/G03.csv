@@ -1,0 +1,10 @@
+panel,category,get200,share
+actor_name,GPTBot,200,0.816327
+actor_name,PerplexityBot,16,0.065306
+actor_name,ChatGPT-User,15,0.061224
+actor_name,OAI-SearchBot,14,0.057143
+actor_family,openai,229,0.934694
+actor_family,perplexity,16,0.065306
+role,ai_training,200,
+role,ai_search,30,
+role,user_initiated_fetch,15,

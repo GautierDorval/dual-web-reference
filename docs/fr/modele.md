@@ -4,6 +4,8 @@
 
 Cette page explique ce que ce dépôt appelle la couche documentaire d’un site, ce que cette couche n’est pas, comment les trois sites mesurés se rattachent les uns aux autres, et ce que les comptes publiés permettent ou non d’affirmer. La méthode de mesure elle-même est décrite dans [methode.md](methode.md).
 
+Un fichier de gouvernance rend explicite un aspect du site : son identité, ses sources, son périmètre ou ses limites d’interprétation. Un index aide à trouver ces fichiers ; une politique énonce la manière dont l’auteur souhaite les voir lus. Ces fonctions précèdent les noms de fichiers et les sigles doctrinaux. Voir les [rôles des fichiers](roles-des-fichiers.md).
+
 ## Point de départ : la définition canonique
 
 La couche provient d’un standard défini sur gautierdorval.com, « SSA-E + A2 + Dual Web ». Sa page de définition s’ouvre sur cet énoncé :
@@ -14,7 +16,7 @@ La même page décrit ainsi la composante Dual Web :
 
 > Dual Web désigne une architecture à double couche où une lecture humaine et une lecture machine coexistent sans se contredire : index machine-first, points d’entrée neutres, références canoniques, conventions de routage et fichiers d’autorité.
 
-- Adresse : https://gautierdorval.com/definitions/ssa-e-a2-dual-web/ (page anglaise : https://gautierdorval.com/en/definitions/ssa-e-a2-dual-web/).
+- Adresse : `https://gautierdorval.com/definitions/ssa-e-a2-dual-web/` (page anglaise : `https://gautierdorval.com/en/definitions/ssa-e-a2-dual-web/`).
 - Métadonnées de la page : date 2026-01-08, mise à jour 2026-07-07, version du concept 1.0.
 - Consultée le 2026-10-16, dans l’instantané du dépôt source du site daté du 2026-10-14. La page n’a pas été récupérée sur le site en ligne.
 

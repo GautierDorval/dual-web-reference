@@ -2,7 +2,7 @@
 
 [Français](../fr/decouverte-et-maillage.md) · [Repository home](../../README.md)
 
-A file of the layer can be reached in several ways. This page lists those routes, says what [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv) records about them, and separates three things that are easy to confuse: a path that is available, a path that was executed, and accesses counted in aggregate.
+A file of the layer can be reached in several ways. This page lists those routes, says what [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv) records about them, and separates three things that are easy to confuse: a path that is available, a path that was executed, and accesses counted in aggregate.
 
 ## Routes to a file
 
@@ -53,4 +53,4 @@ The graph is extracted from the source repositories of the sites at a snapshot d
 
 ## Why no coverage ratio against today's inventory
 
-One could divide the number of files requested by the number of files in the inventory and call the result the share of the layer that was reached. This ratio is not computed. The inventory (the scope registry and resources.csv) reflects the state at registration and snapshot time, after the window. Some resources are registered now without any row in the window (column `window_rows_status`), others may have existed then and changed since, and daily coverage is declared partial. The numerator and the denominator would not describe the same set of files at the same time. The repository publishes counts per site-path pair instead.
+One could divide the number of files requested by the number of files in the inventory and call the result the share of the layer that was reached. An inventory-wide reach ratio is not computed. The separate ratio 174/269 uses only main-population site-path pairs with recorded rows across all actors, methods and statuses. It is conditional on those records, not the complete historical inventory. The inventory (the scope registry and resources.csv) reflects the state at registration and snapshot time, after the window. Some resources are registered now without any row in the window (column `window_rows_status`), others may have existed then and changed since, and daily coverage is declared partial. The numerator and the denominator would not describe the same set of files at the same time. The repository publishes counts per site-path pair instead.

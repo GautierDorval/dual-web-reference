@@ -1,17 +1,57 @@
 {
   "editions": [
     {
+      "approved_release_at": null,
+      "availability_status": "publicly_accessible",
       "catalog": "data/editions/2026-09-15_2026-10-15-r1/catalog.json",
       "edition_id": "2026-09-15_2026-10-15-r1",
       "edition_type": "monthly_reference",
       "period_end_exclusive": "2026-10-15",
       "period_start_inclusive": "2026-09-15",
+      "public_availability_evidence": {
+        "earliest_bound_utc": "2026-10-18T23:45:37.9798885Z",
+        "evidence": "Owner-authorized repository visibility mutation log and anonymous readback; retained privately. Commit time and repository creation time are not used.",
+        "latest_bound_utc": "2026-10-18T23:45:40.7151037Z",
+        "precision": "bounded_interval_exact_time_unknown"
+      },
       "published_at": null,
+      "reference_release_status": "not_approved",
+      "review_status": {
+        "distribution": "corrections_in_progress",
+        "editorial": "corrections_in_progress",
+        "evidence": [],
+        "technical": "corrections_in_progress"
+      },
       "revised_at": null,
       "revision": 1,
+      "scientific_review_status": "no_independent_scientific_review_documented",
       "status": "candidate_not_reviewed",
       "superseded_by": null,
       "supersedes": null
+    },
+    {
+      "approved_release_at": null,
+      "availability_status": "local_candidate",
+      "catalog": "data/editions/2026-09-15_2026-10-15-r2/catalog.json",
+      "edition_id": "2026-09-15_2026-10-15-r2",
+      "edition_type": "monthly_reference",
+      "period_end_exclusive": "2026-10-15",
+      "period_start_inclusive": "2026-09-15",
+      "public_availability_evidence": null,
+      "published_at": null,
+      "reference_release_status": "not_approved",
+      "review_status": {
+        "distribution": "corrections_in_progress",
+        "editorial": "corrections_in_progress",
+        "evidence": [],
+        "technical": "corrections_in_progress"
+      },
+      "revised_at": "2026-10-19",
+      "revision": 2,
+      "scientific_review_status": "no_independent_scientific_review_documented",
+      "status": "candidate_not_reviewed",
+      "superseded_by": null,
+      "supersedes": "2026-09-15_2026-10-15-r1"
     }
   ],
   "schema_version": "dwr-index/1.0.0"

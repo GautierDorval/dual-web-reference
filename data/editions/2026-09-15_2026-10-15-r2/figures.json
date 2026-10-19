@@ -1,0 +1,543 @@
+{
+  "edition_id": "2026-09-15_2026-10-15-r2",
+  "figures": [
+    {
+      "alt_en": "Three column charts, one per site, of daily GET 200 requests to the main documentary population from provider-origin automated AI roles over 30 UTC days; requests occur on 12 of these days; 30 days carry a partial archive report.",
+      "alt_fr": "Trois histogrammes, un par site, des requêtes GET 200 quotidiennes vers la population documentaire principale par des rôles IA automatisés à origine fournisseur sur 30 jours UTC ; des requêtes apparaissent 12 de ces jours ; 30 jours portent un rapport d’archive partiel.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G01.csv",
+        "sha256": "4d5f548d992adc4102cc1e4b0b60623c2b01e23ed7d073d66bef99825d04857a"
+      },
+      "figure_id": "G01",
+      "files": {
+        "G01.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G01.en.compact.svg",
+          "sha256": "a52808c00cc8db8bd42c26cddc20c1a07f9f26deb70fe8354ca720e4951a4637"
+        },
+        "G01.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G01.en.svg",
+          "sha256": "9f664c83edbcdf3784b975ed344b669477c080af327df5beb6121209d565cf96"
+        },
+        "G01.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G01.fr.compact.svg",
+          "sha256": "0fb040aa58e947a8840ec13360c25b3dc99442fa7ca863d0d88f2a199484d4e4"
+        },
+        "G01.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G01.fr.svg",
+          "sha256": "c238035247b4d0f00f3b5f13913d331fc67f4f6d09613100623994e0a241e8aa"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/daily-summary.csv",
+          "sha256": "c9d1324be5c4798e06ac9d592d6cd9cd915cf4654b84d4d6c58d7074e9fac3a6"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/coverage.csv",
+          "sha256": "bc2411cd0fa055947297e78a8363e8f54eb2a8fb267221125722b1107921c255"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G01.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g01)",
+      "status": "rendered",
+      "title_en": "Daily GET 200 requests to the main documentary population, provider-origin automated AI roles, by site",
+      "title_fr": "Requêtes GET 200 quotidiennes vers la population documentaire principale, rôles IA automatisés à origine fournisseur, par site"
+    },
+    {
+      "alt_en": "Stacked horizontal bars, all sites and per site, splitting provider-origin AI-role GET 200 requests between /llms.txt and the other governance files; counts, totals and shares are written under each bar.",
+      "alt_fr": "Barres horizontales empilées, trois sites et par site, répartissant les requêtes GET 200 des rôles IA à origine fournisseur entre /llms.txt et les autres fichiers de gouvernance ; comptes, totaux et parts sont écrits sous chaque barre.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G02.csv",
+        "sha256": "73624b954d0bcebf27acfba373a03dcdd4b2b360d87f325a7273ff877e50f490"
+      },
+      "figure_id": "G02",
+      "files": {
+        "G02.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G02.en.compact.svg",
+          "sha256": "6da38066a1e4f9e918444cc5b4e2c97dca428f61bbd27f390aaca14c6cef65a0"
+        },
+        "G02.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G02.en.svg",
+          "sha256": "e3817adc28306fa002501373a784f2cb44327a1fb6fd21348d85abba34e56909"
+        },
+        "G02.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G02.fr.compact.svg",
+          "sha256": "e8d06bcf5f08ce0cdb4fca64d2a2a06c059ed6982deadfffed66b11826689997"
+        },
+        "G02.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G02.fr.svg",
+          "sha256": "394a002d607e0514d84dd11e037c5de212b213f097c85c66f52f464b7b5ef93f"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+          "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+          "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G02.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g02)",
+      "status": "rendered",
+      "title_en": "llms.txt and the other governance files: GET 200 requests from provider-origin AI roles",
+      "title_fr": "llms.txt et les autres fichiers de gouvernance : requêtes GET 200 des rôles IA à origine fournisseur"
+    },
+    {
+      "alt_en": "Three panels separate named actors, provider families and roles; failed-origin counts are contextual, not added.",
+      "alt_fr": "Trois panneaux séparent acteurs nommés, familles de fournisseurs et rôles ; les origines non vérifiées restent un contexte distinct.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G03.csv",
+        "sha256": "adad54e8fd0867e8fdea9ed0cdc4de932702f3e9c1f6eee93cbd48345a38f409"
+      },
+      "figure_id": "G03",
+      "files": {
+        "G03.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G03.en.compact.svg",
+          "sha256": "d8227b9203cdbd8a87477fdd616d777ec3d937fcc312069d1941bf02d138235e"
+        },
+        "G03.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G03.en.svg",
+          "sha256": "edcc83857b6bb6bdbc44d2ca8ae02dbf942df12c4cc88d509e979de0f4252171"
+        },
+        "G03.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G03.fr.compact.svg",
+          "sha256": "5a87fe9e63ab83b763ca6c9046799ae7ae803ac45225b7269c50a1631a218019"
+        },
+        "G03.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G03.fr.svg",
+          "sha256": "c588273ca5ce190dc793e3691fd6e3bd7387f881b0ecbf19164f74cc94fe3b85"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/metrics.json",
+          "sha256": "beae14611836002ceedaa4ced76dbcd50ce2e2b4d783f02ddf4bb39cc12c0ce1"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+          "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+          "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G03.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g03)",
+      "status": "rendered",
+      "title_en": "Actors, roles and provider families",
+      "title_fr": "Acteurs, rôles et familles de fournisseurs"
+    },
+    {
+      "alt_en": "Panel A compares, per site, main-population pairs with rows and pairs with provider-origin AI GET 200. Panel B shows how many requested pairs had such requests on 1, 2 to 3, 4 to 7 or 8 or more UTC days.",
+      "alt_fr": "Le panneau A compare, par site, les couples de la population principale avec lignes et ceux avec GET 200 IA à origine fournisseur. Le panneau B indique combien de couples demandés ont reçu de telles requêtes sur 1, 2 à 3, 4 à 7 ou 8 jours UTC et plus.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G04.csv",
+        "sha256": "4979aef59add3cf0f8b3f439e45b44b48689d3079beb639d49c45786ddc5b7e9"
+      },
+      "figure_id": "G04",
+      "files": {
+        "G04.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G04.en.compact.svg",
+          "sha256": "8b139042f191027cf5b18b1ff61b35448d09481b2b51572d3efd6954eb10b972"
+        },
+        "G04.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G04.en.svg",
+          "sha256": "a99eef5685a7f76c6244acbb11629811322b8bec185dddcc7303b20eece0d433"
+        },
+        "G04.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G04.fr.compact.svg",
+          "sha256": "294bb46c4a9375f2abc9fea95db95593fcba838f452c5b17681feca248498df0"
+        },
+        "G04.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G04.fr.svg",
+          "sha256": "648d5bea9738439d6a6a1b0e775ab2c95c0de587a2802be81546f7ef521b6ab6"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+          "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+          "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resource-summary.csv",
+          "sha256": "4984cda02a473330bda29d698ccf15299e2774c314a28946a683e048a2952f49"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G04.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g04)",
+      "status": "rendered",
+      "title_en": "Distinct site-path pairs requested, and recurrence",
+      "title_fr": "Couples site-chemin distincts demandés, et récurrence"
+    },
+    {
+      "alt_en": "Three ranked horizontal bar lists, one per site, of the ten main-population files with most provider-origin AI GET 200 requests.",
+      "alt_fr": "Trois listes de barres horizontales classées, une par site, des dix fichiers de la population principale ayant le plus de requêtes GET 200 IA à origine fournisseur.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G05.csv",
+        "sha256": "94960cd25aac75f2c3d03c514f3913b6d6f21705a323e2281a7357fa3f15eafa"
+      },
+      "figure_id": "G05",
+      "files": {
+        "G05.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G05.en.compact.svg",
+          "sha256": "1dcabeb71c103404e1cf1ee666d0f8ffb32e223e99e09ae26090d7205fa369a7"
+        },
+        "G05.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G05.en.svg",
+          "sha256": "d6a549adb9e6d973269fe38bd9a3ab250a8897c3272c86139b18bd72f4440c60"
+        },
+        "G05.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G05.fr.compact.svg",
+          "sha256": "893293994701ef684cdd397caad96713609cd76b4ca6d78ace8874b03a124f12"
+        },
+        "G05.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G05.fr.svg",
+          "sha256": "8c8ed5329455fae33179a37887fb849d49f124719bd71971d18d9336508cfbc5"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+          "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+          "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G05.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g05)",
+      "status": "rendered",
+      "title_en": "Most requested governance files per site, provider-origin AI roles only",
+      "title_fr": "Fichiers de gouvernance les plus demandés par site, rôles IA à origine fournisseur seulement"
+    },
+    {
+      "alt_en": "A grid of 33 documentary families by 30 UTC days, shaded by the number of automated provider-origin AI GET 200 requests.",
+      "alt_fr": "Une grille de 33 familles documentaires sur 30 jours UTC, colorée selon le nombre de requêtes GET 200 IA automatisées à origine fournisseur.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G06.csv",
+        "sha256": "6a62251498dae85af0f95a378168adecedf001ecc9016e4ea685cf4fe173ab8a"
+      },
+      "figure_id": "G06",
+      "files": {
+        "G06.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G06.en.compact.svg",
+          "sha256": "5f85ebc03f86d7c59de90067f0621b2035b9aa63ed8db1d2927a81c1e76c0330"
+        },
+        "G06.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G06.en.svg",
+          "sha256": "328aba5218a90228b006d99f9276a402a71cdb0c8e58e362c85c395b6e0a0bd6"
+        },
+        "G06.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G06.fr.compact.svg",
+          "sha256": "fa70ea68ae9424835e33d2f2f052c89740042f6050b43b034d8dc8dec0381923"
+        },
+        "G06.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G06.fr.svg",
+          "sha256": "779f405f17afa46323ea91130eb4b10aca98a223e3c60ff62db5190a9e7f567d"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/daily-family-summary.csv",
+          "sha256": "c25ee9dd3a183542d2c647c7c3a10b53c335c6a1d5f11994003ae3318474bbc7"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G06.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g06)",
+      "status": "rendered",
+      "title_en": "Heat map: day x documentary family, automated provider-origin AI roles",
+      "title_fr": "Carte de chaleur : jour x famille documentaire, rôles IA automatisés à origine fournisseur"
+    },
+    {
+      "alt_en": "Three horizontal bar panels: GET 200 of the main population by identification level, its requests by method and status, and all collector requests by population.",
+      "alt_fr": "Trois panneaux de barres horizontales : GET 200 de la population principale par niveau d’identification, ses requêtes par méthode et statut, et toutes les requêtes du collecteur par population.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G07.csv",
+        "sha256": "41b01bf3a42207864a9cbf093e21dcb1d7af17e68c1588c690e28dcd5fd720cf"
+      },
+      "figure_id": "G07",
+      "files": {
+        "G07.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G07.en.compact.svg",
+          "sha256": "65e06f276ad09e55f5c0c56e66303214b76f52c5cf0c79eb8f8be793b73fb714"
+        },
+        "G07.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G07.en.svg",
+          "sha256": "21c289b115b9a5e812f221e2c360713586a2da082fe04209cedc7a1f21308d8f"
+        },
+        "G07.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G07.fr.compact.svg",
+          "sha256": "8b742a2594d234bf9b0c5faa1f4dd4bbb7b8cb4027c6c4b508e603a6ee94a931"
+        },
+        "G07.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G07.fr.svg",
+          "sha256": "e99f0e25013cb9f364654dbd543918f667cefde1aea9e5ddb3c8350ce8a0a8f4"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+          "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+          "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/daily-summary.csv",
+          "sha256": "c9d1324be5c4798e06ac9d592d6cd9cd915cf4654b84d4d6c58d7074e9fac3a6"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G07.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g07)",
+      "status": "rendered",
+      "title_en": "What the main result leaves out: HTTP volume by identification level, method and status, and perimeter",
+      "title_fr": "Ce que le résultat principal laisse de côté : volume HTTP par niveau d’identification, méthode et statut, et périmètre"
+    },
+    {
+      "alt_en": "Daily coverage calendar with explicit partial, complete and unknown states, followed by recorded measurement versions.",
+      "alt_fr": "Calendrier quotidien à états partiels, complets et inconnus explicites, puis versions de mesure enregistrées.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G08.csv",
+        "sha256": "5b3566498eabe44c8d47da7d11aa8e9351c34fe02bed8045302582f20fba1314"
+      },
+      "figure_id": "G08",
+      "files": {
+        "G08.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G08.en.compact.svg",
+          "sha256": "5a3e0b42ef148563d86bd5d99f0a0c9d0f1670e1896f9ecedbd9cbc968451d42"
+        },
+        "G08.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G08.en.svg",
+          "sha256": "861b8d7e7962d27ab41f69ad132d9af71614faec1b26dd8e4230682e13afdd55"
+        },
+        "G08.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G08.fr.compact.svg",
+          "sha256": "d40fa3951ce1842348ad634c804d2718a290394f16cddcac468a87d89f8f7d07"
+        },
+        "G08.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G08.fr.svg",
+          "sha256": "27d3a210c027e14ff599204f818ac640faad7e1f3360dd8521eb14321b2f00e2"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/coverage.csv",
+          "sha256": "bc2411cd0fa055947297e78a8363e8f54eb2a8fb267221125722b1107921c255"
+        },
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/catalog.json",
+          "sha256": "5968d3a90a50732d8e1061cea0cfbb3032bf105fd171b897793064045f1e26db"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G08.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g08)",
+      "status": "rendered",
+      "title_en": "Coverage and measurement provenance",
+      "title_fr": "Couverture et provenance de la mesure"
+    },
+    {
+      "alt_en": "One window, explicitly no temporal growth or trend.",
+      "alt_fr": "Une fenêtre, explicitement sans croissance ni tendance temporelle.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G10.csv",
+        "sha256": "7d5b382b59af4098af47cad92fb886ad4c7559473e1fb30e95b111642e4987df"
+      },
+      "figure_id": "G10",
+      "files": {
+        "G10.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G10.en.compact.svg",
+          "sha256": "a7bd160ef911d463d487cb82cca119c6312bae92823fa1fc87f9d90cac86f752"
+        },
+        "G10.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G10.en.svg",
+          "sha256": "5ce367541b51e92c0f78c25adf5aab60d12e1ae60491c91104949958d4f336e8"
+        },
+        "G10.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G10.fr.compact.svg",
+          "sha256": "ecbbbe2c8969e5abb3f109a63bb6d4db6f6c75c25f8bd545cbf4dbb958e4a4c1"
+        },
+        "G10.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G10.fr.svg",
+          "sha256": "7690a39530b297ae92ad5836d58b13e44890f789a075f35c5ba1c5fdb96493d5"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/metrics.json",
+          "sha256": "beae14611836002ceedaa4ced76dbcd50ce2e2b4d783f02ddf4bb39cc12c0ce1"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G10.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g10)",
+      "status": "rendered",
+      "title_en": "Observed window and revision history",
+      "title_fr": "Fenêtre observée et historique des révisions"
+    },
+    {
+      "alt_en": "Node-link diagram of 12 documents of gautierdorval.com and the 25 references written between them in the source snapshot.",
+      "alt_fr": "Diagramme nœuds-liens de 12 documents de gautierdorval.com et des 25 références écrites entre eux dans l’instantané source.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.csv",
+        "sha256": "39b48c5657be4baa5cb5e834eabb0f6f980d2aa4b8e3ba2a6e07af5822210729"
+      },
+      "figure_id": "G09-gautierdorval.com",
+      "files": {
+        "G09-gautierdorval.com.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.compact.svg",
+          "sha256": "51e4787349159d2199ca87586edbd86c36e250ffbdd8990ff7897c1153c058e2"
+        },
+        "G09-gautierdorval.com.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.en.svg",
+          "sha256": "a1b3bc074e7b8fff27fa6fb24f6778dc7994e4c9ab4fa0551472ea19e82b0db6"
+        },
+        "G09-gautierdorval.com.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.fr.compact.svg",
+          "sha256": "a2feed2e11cabcae4fee44871befff3b8b60d319709df06c851de34798bdf442"
+        },
+        "G09-gautierdorval.com.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-gautierdorval.com.fr.svg",
+          "sha256": "73f8b6d86d520ba7dcad3e1da0fe0a6464dd63649a930e85d0483a5156f8bd5a"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/links.csv",
+          "sha256": "255dddb38f2423a3d7d40a37fc18a4f705117412917a1737da4ccf8d424cf29f"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G09-gautierdorval.com.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g09)",
+      "status": "rendered",
+      "title_en": "Documentary relations verified in the source snapshot: gautierdorval.com",
+      "title_fr": "Relations documentaires vérifiées dans l’instantané source : gautierdorval.com"
+    },
+    {
+      "alt_en": "Node-link diagram of 11 documents of pagup.com and the 11 references written between them in the source snapshot.",
+      "alt_fr": "Diagramme nœuds-liens de 11 documents de pagup.com et des 11 références écrites entre eux dans l’instantané source.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.csv",
+        "sha256": "e3d8d39445801403cd8f82a4b895c265117507dca0b6ebc9a93ac89528c455bc"
+      },
+      "figure_id": "G09-pagup.com",
+      "files": {
+        "G09-pagup.com.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.compact.svg",
+          "sha256": "8db0df0151ec3ad105159f4ae38c3a0e824fd55f4675120e6e6797b788b38b60"
+        },
+        "G09-pagup.com.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.en.svg",
+          "sha256": "222097840843c106809807919078f6420018b48d06a1225fa85a39eeb46d73e1"
+        },
+        "G09-pagup.com.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.fr.compact.svg",
+          "sha256": "afdad709a1a007e35df1b8d22bc99b36e1b33a0c2257769730e10ee191ce1b31"
+        },
+        "G09-pagup.com.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-pagup.com.fr.svg",
+          "sha256": "a27b1f3b2a2166a66858bd05792871bf64fffe99c7f4541e0a72e1e5ba315282"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/links.csv",
+          "sha256": "255dddb38f2423a3d7d40a37fc18a4f705117412917a1737da4ccf8d424cf29f"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G09-pagup.com.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g09)",
+      "status": "rendered",
+      "title_en": "Documentary relations verified in the source snapshot: pagup.com",
+      "title_fr": "Relations documentaires vérifiées dans l’instantané source : pagup.com"
+    },
+    {
+      "alt_en": "Node-link diagram of 11 documents of better-robots.com and the 10 references written between them in the source snapshot.",
+      "alt_fr": "Diagramme nœuds-liens de 11 documents de better-robots.com et des 10 références écrites entre eux dans l’instantané source.",
+      "data_table": {
+        "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.csv",
+        "sha256": "14dc85f167836ff710141792c1c9aed21b9758f989049c2f6a9fd7e517882db2"
+      },
+      "figure_id": "G09-better-robots.com",
+      "files": {
+        "G09-better-robots.com.en.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.compact.svg",
+          "sha256": "086d9f78981d3e6d4666ded3e165f9322332d2e538232a27729e7c0d6b1fcab1"
+        },
+        "G09-better-robots.com.en.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.svg",
+          "sha256": "48abc7ca558884b4dfa2fd5101e69bcb362e26bbaad5655400b63bbbc963da85"
+        },
+        "G09-better-robots.com.fr.compact.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.compact.svg",
+          "sha256": "f5582a382c92174d040f1ac3ced02db3fdd363861c6829c9678a29ac32148999"
+        },
+        "G09-better-robots.com.fr.svg": {
+          "path": "figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.fr.svg",
+          "sha256": "a8cce0ae4aba10149101c59eb103dfeaeea71fb2e47482b1d1f4f3cc5c036d38"
+        }
+      },
+      "inputs": [
+        {
+          "path": "data/editions/2026-09-15_2026-10-15-r2/links.csv",
+          "sha256": "255dddb38f2423a3d7d40a37fc18a4f705117412917a1737da4ccf8d424cf29f"
+        }
+      ],
+      "png": {
+        "path": "figures/2026-09-15_2026-10-15-r2/png/G09-better-robots.com.en.png",
+        "status": "optional_fallback_not_bit_reproducible"
+      },
+      "script": "analysis/dwr/figures.py (figure_g09)",
+      "status": "rendered",
+      "title_en": "Documentary relations verified in the source snapshot: better-robots.com",
+      "title_fr": "Relations documentaires vérifiées dans l’instantané source : better-robots.com"
+    }
+  ],
+  "rendering": {
+    "engine": "analysis/dwr/svg.py (standard library, deterministic)",
+    "fonts": "system font stack only; no font is redistributed",
+    "layouts": "wide 960 px and compact 420 px; English and French"
+  },
+  "schema_version": "dwr-figures/1.0.0"
+}

@@ -1,18 +1,22 @@
-# Mises à jour
+# Éditions, revues et mises à jour
 
 [English](../en/updates.md) · [Accueil du dépôt](../../README.fr.md)
 
-Ce dépôt suit une opération continue, pas un rapport intemporel. Chaque édition indique quand ses données ont été mesurées, lues, générées, publiées et révisées, et ces dates restent distinctes. Le calendrier est [config/edition-calendar.json](../../config/edition-calendar.json), les éditions sont listées dans [config/editions.json](../../config/editions.json) et les revues réellement effectuées dans [config/operations.json](../../config/operations.json).
+**r1 est accessible publiquement et figée ; r2 est une candidate locale de correction de confidentialité. Aucune n’est une référence approuvée. Aucune évaluation scientifique indépendante n’est documentée.** Un dépôt public, des tests réussis, une revue technique et une revue scientifique sont des faits distincts.
 
-État actuel : **Actualisation périodique prévue ; préparation manuelle.** Aucune automatisation n’est activée.
+## Quatre états distincts
 
-## Dates de l’édition courante
+[config/editions.json](../../config/editions.json) décrit séparément la disponibilité, l’avancement de la revue, l’approbation de référence et la revue scientifique, hors du payload immuable. r1 est devenue publique dans l’intervalle de `public_availability_evidence`, borné par les reçus existants de mutation et de relecture anonyme. La création du dépôt et la date d’un commit ne donnent pas l’instant exact de disponibilité publique.
+
+Le `catalog.json` r1 demeure identique octet par octet, y compris ses champs historiques `candidate_not_reviewed` et `published_at` nul. Ils décrivent la préparation originale et ne nient pas la disponibilité publique actuelle. `approved_release_at` est une date d’approbation distincte ; elle reste nulle. `revised_at` date une candidate de correction sans présumer sa publication.
 
 <!-- dwr:begin dates -->
 | Date ou état | Valeur |
 |---|---|
-| Édition | `2026-09-15_2026-10-15-r1` |
-| Statut | candidate, non revue, non publiée |
+| Édition | `2026-09-15_2026-10-15-r2` |
+| Statut | candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée |
+| Disponibilité | `local_candidate` |
+| Approbation de référence | `not_approved` |
 | Période mesurée | du 15 septembre au 14 octobre 2026 inclusivement, en UTC |
 | period_start_inclusive | `2026-09-15` |
 | period_end_exclusive | `2026-10-15` |
@@ -20,60 +24,34 @@ Ce dépôt suit une opération continue, pas un rapport intemporel. Chaque édit
 | extracted_at | `2026-10-16T22:57:16.784712Z / 2026-10-16T22:58:54.949414Z` |
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
-| generated_at | `2026-10-16` |
-| published_at | `null` (non publiée) |
-| revised_at | `null` |
+| generated_at | `2026-10-19` |
+| published_at | `null` (champ hérité d’approbation, pas de disponibilité publique) |
+| revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
 | next_review_target | revue hebdomadaire `2026-10-19T13:17:00Z`, non garantie |
 | Mises à jour | actualisation périodique prévue ; préparation manuelle (automatisation non activée) |
 <!-- dwr:end dates -->
 
-| Champ | Sens |
-|---|---|
-| `period_start_inclusive` | premier jour UTC de la fenêtre mesurée, inclus |
-| `period_end_exclusive` | fin exclusive de la fenêtre : le premier jour non inclus, qui n’est pas le dernier jour compté |
-| `last_included_date` | dernier jour UTC effectivement inclus dans les comptes |
-| `extracted_at` | intervalle (début et fin, UTC) pendant lequel l’agrégat conjoint a été lu chez le producteur ; la lecture antérieure des exports figure dans `exports_extracted_at` de `catalog.json` |
-| `source_snapshot_at` | date du commit épinglé de l’archive privée utilisée pour la couverture |
-| `graph_snapshot_at` | pour chaque site, date de l’instantané des sources dont sont tirés `links.csv` et le registre |
-| `generated_at` | date de préparation de cette candidate ; fixée dans `config/editions.json` pour qu’une reconstruction des mêmes intrants donne les mêmes octets |
-| `published_at` | première publication publique réelle de l’édition ; `null` jusque-là et jamais modifiée par une reconstruction |
-| `revised_at` | date d’une correction publiée ; `null` s’il n’y en a pas |
-| `latest_available_data_date` | dernier jour disponible et interprétable, pas la date de la dernière exécution réussie |
-| `next_review_target` | prochaine revue hebdomadaire prévue et prochaine fenêtre mensuelle, explicitement sans garantie |
+## Approuver sans modifier le catalogue cité
 
-Un rendu régénéré aujourd’hui à partir de données de septembre ne devient pas une observation d’aujourd’hui. Une figure historique conserve sa propre période, même lorsque l’accueil renvoie vers une édition plus récente.
+Un reçu de revue dans la configuration externe des éditions identifie l’édition, le réviseur, la preuve, l’heure de revue et les décisions technique, éditoriale et de diffusion. Son `content_digest` est le SHA-256 déterministe du manifeste ordonné chemin-vers-SHA-256 de tous les fichiers des répertoires de données et figures de l’édition, PNG de repli compris, à l’exclusion du seul manifeste dérivé `SHA256SUMS.txt`. Reçus, pointeurs opérationnels et pages d’accueil sont hors de cette portée. Leur texte ne doit pas prétendre à une approbation plus large. Il n’y a aucun cycle d’empreinte ; toute modification du payload invalide le reçu.
 
-## Fenêtres mensuelles ancrées le 15
+La fonction partagée `latest_pointer` contrôle les octets réels, la complétude du reçu et la disponibilité publique, puis ordonne les éditions admissibles par fin de fenêtre et révision. Une candidate de remplacement non approuvée ne masque pas une référence approuvée valide. [latest.json](../../data/latest.json) reste nul faute de reçu d’approbation correspondant, bien que r1 soit publique.
 
-Les éditions de référence utilisent des fenêtres mensuelles consécutives en UTC, du 15 (inclus) au 15 du mois suivant (exclu) (`analysis/dwr/dates.py`). La première fenêtre est `[2026-09-15, 2026-10-15)` : 30 jours, du 15 septembre au 14 octobre inclusivement. La suivante est `[2026-10-15, 2026-11-15)` : 31 jours, du 15 octobre au 14 novembre inclusivement. Les éditions ne font donc pas toutes « 30 jours ». Le jour UTC en cours n’est jamais inclus, et une acquisition refuse une fenêtre qui n’est pas close.
+## Observations immuables et révision de confidentialité
 
-## Préparation hebdomadaire et déclenchement manuel
+Les cinq causes de révision demeurent : observations tardives, correction du classificateur, changement de périmètre, correction de transformation et révision de confidentialité. r2 relève de la **révision de confidentialité** : les lignes quotidiennes protégées et les compléments de couverture sont retenus ensemble. Métadonnées, indicateurs dérivés et présentation accompagnent ce changement. Le [rapport de delta](../../data/editions/2026-09-15_2026-10-15-r2/delta-report.json) indique que les observations ne changent pas. Ce n’est pas une croissance temporelle. Liens de retour et états opérationnels restent hors du catalogue r1 figé.
 
-Le calendrier prévoit une revue hebdomadaire le lundi à 13 h 17 UTC et une édition mensuelle. Les deux sont des modèles marqués `activation_status = template_not_activated`, conservés hors du dossier des workflows automatiques. Le workflow de CI hors ligne accepte aussi les exécutions manuelles `workflow_dispatch`. Il vérifie la projection publique existante ; il ne collecte aucune nouvelle donnée et ne publie aucune édition.
+[historical-editions.json](../../config/historical-editions.json) contrôle les octets historiques du payload, des figures, des schémas et des règles. `analyze` et `render --edition ...-r1` vérifient ces octets sans les réécrire ; la projection et la préparation vers r1 sont refusées. L’[inventaire public](../../config/publication-inventory.json) comprend les états remplacés encore accessibles. Une ancienne présentation du graphe diffère ; ses tables de comptes canoniques sont identiques. Voir le contrat limité de diffusion combinée dans [confidentialité](confidentialite.md).
 
-Ce que fait la préparation : vérifier la disponibilité des sources, préparer une édition candidate et un rapport de différences, et consigner l’état de l’opération. Ce qu’elle ne fait jamais : publier automatiquement, publier des données privées ou une candidate non revue, ou exécuter l’acquisition privée authentifiée. Celle-ci ne s’exécute que dans l’environnement privé, jamais dans une CI publique ; les jobs publics n’ont accès ni à la base du producteur ni aux sources privées.
+## Préparation manuelle de la fenêtre suivante
 
-La documentation de GitHub ([Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), consultée le 2026-10-16) indique que les exécutions planifiées peuvent être retardées en période de forte charge et que certains jobs en file d’attente peuvent être abandonnés ; les planifications ne s’exécutent que depuis la branche par défaut et, dans un dépôt public, elles sont désactivées après 60 jours sans activité. Aucune heure de mise à jour n’est donc promise ici.
+Les fenêtres vont du 15 inclus au 15 suivant exclu, en UTC. La fenêtre historique compte 30 jours ; `[2026-10-15, 2026-11-15)` en compte 31. La préparation attend 48 heures après la fermeture. Les tests couvrent février à 28 et 29 jours, les mois de 30 et 31 jours, le changement d’année et la consolidation UTC. Les fenêtres glissantes ne s’additionnent pas.
 
-## Délai de consolidation
+Exécuter `python -I scripts/dwr.py prepare-next --private-root <repertoire-prive-existant>` après que les étapes hors ligne de normalisation et de qualification ont produit les intrants locaux de la fenêtre. La commande choisit la **prochaine fenêtre manquante**, sans la sauter, valide les intrants, qualifie provenance et couverture, écrit une candidate privée, régénère les métriques et toutes les variantes de figures, prépare le delta et le rapport de diffusion combinée, puis s’arrête en `awaiting_review`. Un refus de diffusion demeure un refus ; une candidate privée n’est pas une projection publiable.
 
-Une édition mensuelle n’est préparée qu’au moins 48 heures après la clôture de la fenêtre (`consolidation_delay_hours`). Ce délai laisse aux comptes tardifs le temps d’arriver ; il ne garantit rien. Si la source reste partielle, l’édition l’indique. Les seuils de fraîcheur (revue hebdomadaire en retard après 10 jours, édition mensuelle en retard 21 jours après la consolidation) sont des règles d’exploitation, pas des engagements.
+Le reçu authentifie les intrants et sorties. Une reprise identique donne `unchanged` ; des intrants modifiés exigent une révision distincte, et une candidate interrompue exige une inspection. Une source manquante donne `source_unavailable` ; un intrant invalide, `validation_failed`. Aucun de ces états n’avance la fraîcheur des données ni la dernière référence approuvée. Le statut privé consigne l’heure UTC réelle. La répétition complète synthétique a réussi ; aucune nouvelle observation réelle n’a été acquise et la prochaine fenêtre réelle n’est pas encore disponible.
 
-## États d’opération et relances
+## Planification inactive
 
-Chaque exécution se termine dans l’un de six états : `new_data`, `unchanged`, `source_unavailable`, `validation_failed`, `awaiting_review` et `published`. Une exécution réussie ne prouve pas l’arrivée de données nouvelles : une exécution qui ne trouve rien de nouveau est `unchanged` et ne fait jamais avancer la date des données. Les relances sont bornées (3 tentatives au plus) et idempotentes. Une exécution tardive ou relancée ne déplace jamais la fenêtre vers une période plus favorable, et une fenêtre incomplète ou manquée reste visible.
-
-## Éditions figées et révisions
-
-Une édition est identifiée sous la forme `<début>_<fin>-r<n>`, par exemple `2026-09-15_2026-10-15-r1`. Version du code, version du schéma, versions des règles et identifiant d’édition sont distincts (voir `versions` dans `catalog.json`). Une fois publiée, une édition est figée. Une correction crée `r2`, avec son motif, le delta chiffré, l’auteur et le relecteur de la correction, et des liens dans les deux sens (`supersedes`, `superseded_by`). La cause est l’une des suivantes : observations tardives, correction du classificateur, changement de périmètre, correction de transformation, révision de confidentialité. Aucune de ces causes n’est une croissance. Un retrait exigé pour la confidentialité ou les droits est traité comme une exception documentée, sans réécrire l’historique pour le masquer. Une correction du classificateur ouvre aussi une nouvelle époque de mesure (`measurement_epoch_id`) ; les libellés enregistrés sous une version antérieure ne sont pas réétiquetés.
-
-## latest.json et status.json
-
-[data/latest.json](../../data/latest.json) ne pointe que vers une édition publique revue, jamais vers un brouillon ni vers la dernière exécution réussie. Il vaut `null` aujourd’hui, avec son motif, parce qu’aucune édition n’a encore été revue et publiée.
-
-[data/status.json](../../data/status.json) rend compte de l’état réel avec des données non sensibles seulement : `realtime = false`, les états d’automatisation, l’édition candidate et son état, la dernière revue, `latest_available_data_date` et `next_review_target`. Ce n’est pas un indicateur en temps réel. Lorsqu’une source fait défaut, la dernière édition valide est conservée et l’indisponibilité est affichée ; les séries ne sont jamais remplacées par des zéros et la date des données n’avance pas.
-
-## Fenêtres glissantes
-
-Une vue `rolling_30d` (les 30 derniers jours clos) pourra s’ajouter plus tard comme produit secondaire, à partir de l’agrégat quotidien conjoint qualifié ; elle n’est pas produite dans cette édition. Les fenêtres glissantes se chevauchent : leurs totaux ne sont jamais additionnés pour construire une tendance. Les comparaisons principales utilisent les éditions mensuelles, qui ne se chevauchent pas.
+La revue hebdomadaire du lundi à 13 h 17 UTC et la préparation mensuelle sont des **gabarits inactifs**, sans garantie de service. La CI manuelle hors ligne valide les fichiers publics existants sans recueillir de données. [status.json](../../data/status.json) distingue code prêt, essai synthétique, disponibilité réelle, planification et approbation. Les événements publics dans [operations.json](../../config/operations.json) portent des dates ou bornes étayées ; leur annotation ne prouve aucune causalité.

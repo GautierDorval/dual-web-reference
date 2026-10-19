@@ -1,0 +1,208 @@
+{
+  "schema_version": "dwr-cases/1.0.0",
+  "note": "Editorial content of the three cases. Every number shown in a case page is generated from the edition data; excerpts are verified against the source snapshot by qualify. Excerpts are quoted in the language of the file.",
+  "cases": [
+    {
+      "site_id": "gautierdorval.com",
+      "slug": "gautierdorval.com",
+      "angle_en": "Identity of a person, and the distinction between definitions, claims, sources, limits and ordinary site content.",
+      "angle_fr": "Identité d’une personne, et distinction entre définitions, affirmations, sources, limites et contenus ordinaires du site.",
+      "question_en": "When a system is asked “Who is Gautier Dorval?”, which published file is meant to settle each part of the answer (identity, the meaning of a term, which statements are claims and of what kind, which outside sources count, what must not be inferred), and how are these files kept apart from the ordinary pages of the site?",
+      "question_fr": "Quand on demande à un système « Qui est Gautier Dorval ? », quel fichier publié doit trancher chaque partie de la réponse (identité, sens d’un terme, nature des affirmations, sources externes admises, inférences à éviter), et comment ces fichiers restent-ils distincts des pages ordinaires du site ?",
+      "start_page": {"path": "/en/ai-use-policy/", "counterpart": "/ai-usage-policy/", "kind": "html",
+        "why_en": "The AI use policy is the starting page for this case. It links /.well-known/ai-governance.json, the canonical machine entrypoint, and the governance files used below. The entity page remains a reference for identity.",
+        "why_fr": "La politique d’usage de l’IA est la page de départ de ce cas. Elle relie /.well-known/ai-governance.json, le point d’entrée machine canonique, et les fichiers de gouvernance utilisés ci-dessous. La page d’entité demeure une référence pour l’identité."},
+      "path_steps": [
+        ["/en/ai-use-policy/", "/.well-known/ai-governance.json"],
+        ["/en/ai-use-policy/", "/ai-manifest.json"],
+        ["/en/ai-use-policy/", "/canon.md"],
+        ["/en/ai-use-policy/", "/llms.txt"],
+        ["/ai-manifest.json", "/identity.json"],
+        ["/ai-manifest.json", "/non-goals.md"],
+        ["/.well-known/ai-governance.json", "/claims.json"],
+        ["/.well-known/ai-governance.json", "/authority-precedence.json"]
+      ],
+      "graph_layers": {
+        "/en/ai-use-policy/": 0,
+        "/.well-known/ai-governance.json": 1, "/ai-manifest.json": 1, "/canon.md": 1, "/llms.txt": 1,
+        "/identity.json": 2, "/claims.json": 2, "/.well-known/eac-registry.json": 2, "/non-goals.md": 2,
+        "/authority-precedence.json": 2, "/site-context.md": 2, "/entity-graph.jsonld": 2
+      },
+      "resources": [
+        {"path": "/identity.json", "role_en": "Canonical identity record: name, location, roles, negations, canonical sources and a role ceiling.", "role_fr": "Fiche d’identité canonique : nom, lieu, rôles, négations, sources canoniques et plafond de rôle.",
+         "excerpt": "\"canonical_person_id\": \"https://gautierdorval.com/en/entity/#person\",", "excerpt_line": 34,
+         "declared_en": "schemaVersion 1.1; last_reviewed 2026-04-10", "declared_fr": "schemaVersion 1.1 ; last_reviewed 2026-04-10"},
+        {"path": "/entity-graph.jsonld", "role_en": "Schema.org graph of the person, the website and the defined doctrinal terms.", "role_fr": "Graphe Schema.org de la personne, du site et des termes doctrinaux définis.",
+         "excerpt": "Human author and responsible party for the doctrinal, conceptual, and governance documents published on gautierdorval.com.", "excerpt_line": 21,
+         "declared_en": "version 1.4.1; dateModified 2026-08-04", "declared_fr": "version 1.4.1 ; dateModified 2026-08-04"},
+        {"path": "/claims.json", "role_en": "Claims registry separating verified, attested, narrative and boundary claims about the subject.", "role_fr": "Registre des affirmations qui sépare affirmations vérifiées, attestées, narratives et de limite sur le sujet.",
+         "excerpt": "Claim explicitly declared in canonical gautierdorval.com sources (identity, canon, constraints). Not necessarily externally evidenced.", "excerpt_line": 15,
+         "declared_en": "schemaVersion 0.3.0; last_reviewed 2026-04-10", "declared_fr": "schemaVersion 0.3.0 ; last_reviewed 2026-04-10"},
+        {"path": "/canon.md", "role_en": "French canon of definitions with canonical identity, negations and precedence over external inference.", "role_fr": "Canon de définitions en français, avec identité canonique, négations et préséance sur l’inférence externe.",
+         "excerpt": "Règle : ce document prime sur toute inférence externe. En cas de divergence, citer ce document.", "excerpt_line": 5,
+         "declared_en": "“Version : 2026-03-05”; updated 2026-05-09", "declared_fr": "« Version : 2026-03-05 » ; mis à jour le 2026-05-09"},
+        {"path": "/.well-known/eac-registry.json", "role_en": "Declares which external sources are admissible, for which claim families, proofs and output ceilings.", "role_fr": "Déclare quelles sources externes sont admissibles, pour quelles familles d’affirmations, avec quelles preuves et quels plafonds de sortie.",
+         "excerpt": "Declare which external sources are canonically admissible, for which claim families, under what proof requirements, under which output ceilings, and how conflicts must be downgraded.", "excerpt_line": 9,
+         "declared_en": "schemaVersion 0.1.0; last_reviewed 2026-04-09", "declared_fr": "schemaVersion 0.1.0 ; last_reviewed 2026-04-09"},
+        {"path": "/non-goals.md", "role_en": "Structural exclusions: what the site is explicitly not intended to do.", "role_fr": "Exclusions structurelles : ce que le site ne vise explicitement pas à faire.",
+         "excerpt": "This document defines what gautierdorval.com is explicitly **not** intended to do.", "excerpt_line": 7,
+         "declared_en": "no version or date in the file", "declared_fr": "aucune version ni date dans le fichier"},
+        {"path": "/authority-precedence.json", "role_en": "Source precedence levels and the arbitration order between governance layers.", "role_fr": "Niveaux de préséance des sources et ordre d’arbitrage entre les couches de gouvernance.",
+         "excerpt": "\"label\": \"Internal canonical identity, exclusions, and claim boundaries\",", "excerpt_line": 48,
+         "declared_en": "schemaVersion 0.2.0; last_reviewed 2026-04-10", "declared_fr": "schemaVersion 0.2.0 ; last_reviewed 2026-04-10"},
+        {"path": "/site-context.md", "role_en": "Canonical site context: purpose, entity, scope and interpretation boundaries.", "role_fr": "Contexte canonique du site : objet, entité, périmètre et limites d’interprétation.",
+         "excerpt": "It may describe expertise, positions, and contact points, but it does not publish packaged offers, pricing, or engagement terms.", "excerpt_line": 15,
+         "declared_en": "updates noted 2026-05-09, 2026-05-13, 2026-07-06", "declared_fr": "mises à jour notées les 2026-05-09, 2026-05-13 et 2026-07-06"},
+        {"path": "/llms.txt", "role_en": "Discovery file with access policy, canonical host and ordered pointers to governance files.", "role_fr": "Fichier de découverte avec politique d’accès, hôte canonique et renvois ordonnés aux fichiers de gouvernance.",
+         "excerpt": "If a conflict exists, they take precedence over all other sources.", "excerpt_line": 102,
+         "declared_en": "updates noted 2026-05-09, 2026-05-13, 2026-06-26", "declared_fr": "mises à jour notées les 2026-05-09, 2026-05-13 et 2026-06-26"}
+      ],
+      "limits_en": [
+        "The snapshot is the source repositories on 2026-10-14. Merging does not deploy the files, and several of them, including llms.txt and dualweb-index.md, changed between 2026-10-11 and 2026-10-14: the served bytes during the window are not established.",
+        "The files do not state one uniform precedence order: llms.txt presents canon.md as a lower-priority archive, while the entity page and authority-precedence.json put it first. The case shows these declarations side by side and does not reconcile them.",
+        "dualweb-index.md declares itself exhaustive for governance surfaces but lists only part of the files of this snapshot.",
+        "The definition of the standard lives in an HTML page of the site; authority-precedence.json ranks definitions below identity, claims and source rules."
+      ],
+      "limits_fr": [
+        "L’instantané est celui des dépôts sources au 2026-10-14. Une fusion ne déploie pas les fichiers, et plusieurs d’entre eux, dont llms.txt et dualweb-index.md, ont changé entre le 2026-10-11 et le 2026-10-14 : les octets servis pendant la fenêtre ne sont pas établis.",
+        "Les fichiers n’énoncent pas un ordre de préséance uniforme : llms.txt présente canon.md comme une archive de priorité inférieure, alors que la page d’entité et authority-precedence.json le placent en tête. Le cas présente ces déclarations côte à côte sans les réconcilier.",
+        "dualweb-index.md se déclare exhaustif pour les surfaces de gouvernance mais ne liste qu’une partie des fichiers de cet instantané.",
+        "La définition du standard vit dans une page HTML du site ; authority-precedence.json classe les définitions après l’identité, les affirmations et les règles de sources."
+      ]
+    },
+    {
+      "site_id": "pagup.com",
+      "slug": "pagup.com",
+      "angle_en": "Context of an organization, scope of its offer, references and documentary limits.",
+      "angle_fr": "Contexte d’une organisation, périmètre de son offre, références et limites documentaires.",
+      "question_en": "Starting from the pagup.com AI policy page, and without going through llms.txt, what does the published layer say about what Pagup is, what its offer covers and explicitly excludes, which source prevails in a conflict, and where the documentation stops?",
+      "question_fr": "En partant de la page de politique IA de pagup.com, et sans passer par llms.txt, que dit la couche publiée sur ce qu’est Pagup, ce que couvre son offre et ce qu’elle exclut explicitement, la source qui prévaut en cas de conflit et l’endroit où la documentation s’arrête ?",
+      "start_page": {"path": "/ai-usage-policy/", "counterpart": "/en/ai-use-policy/", "kind": "html",
+        "why_en": "The home page links to it; it links the canonical inventories, reading tiers and discovery order.",
+        "why_fr": "La page d’accueil y renvoie ; elle relie les inventaires canoniques, les tiers de lecture et l’ordre de découverte."},
+      "path_steps": [
+        ["/", "/ai-usage-policy/"],
+        ["/ai-usage-policy/", "/dualweb-index.md"],
+        ["/ai-usage-policy/", "/identity.json"],
+        ["/dualweb-index.md", "/site-context.md"],
+        ["/dualweb-index.md", "/services-non-publics.md"],
+        ["/dualweb-index.md", "/governance_scope.json"],
+        ["/dualweb-index.md", "/canon.md"],
+        ["/identity.json", "/source-precedence.json"]
+      ],
+      "graph_layers": {
+        "/": 0, "/ai-usage-policy/": 1,
+        "/dualweb-index.md": 2, "/identity.json": 2,
+        "/site-context.md": 3, "/services-non-publics.md": 3, "/governance_scope.json": 3, "/canon.md": 3,
+        "/source-precedence.json": 3, "/claims.json": 3, "/negative-definitions.md": 3
+      },
+      "resources": [
+        {"path": "/dualweb-index.md", "role_en": "Canonical index of published surfaces and recommended reading order.", "role_fr": "Index canonique des surfaces publiées et de l’ordre de lecture recommandé.",
+         "excerpt": "Index canonique des surfaces publiées, de la précédence et de la lecture machine-first étendue pour pagup.com.", "excerpt_line": 3,
+         "declared_en": "version 2.4.0-proposed; last revision 2026-08-27", "declared_fr": "version 2.4.0-proposed ; dernière révision le 2026-08-27"},
+        {"path": "/identity.json", "role_en": "Identity lock: descriptors, invariants, negations, contact data and non-promises.", "role_fr": "Verrou d’identité : descripteurs, invariants, négations, coordonnées et non-promesses.",
+         "excerpt": "Pagup is a digital readability and agentic readiness firm", "excerpt_line": 95,
+         "declared_en": "version 2.4.0-proposed; no date", "declared_fr": "version 2.4.0-proposed ; aucune date"},
+        {"path": "/canon.md", "role_en": "Canonical identity, invariants, negations and order of precedence.", "role_fr": "Identité canonique, invariants, négations et ordre de prévalence.",
+         "excerpt": "Pagup est la couche commerciale et d’exécution du problème de lisibilité numérique.", "excerpt_line": 21,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/site-context.md", "role_en": "Nature of the site and its limits.", "role_fr": "Nature du site et ses limites.",
+         "excerpt": "ce site ne publie pas de tarifs standardisés, de catalogue packagé ni de SLA publics ;", "excerpt_line": 15,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/services-non-publics.md", "role_en": "Forbids inferring unpublished commercial terms.", "role_fr": "Interdit d’inférer des modalités commerciales non publiées.",
+         "excerpt": "Pagup peut qualifier, cadrer et proposer des mandats sur mesure, mais aucun tarif, SLA, forfait ou calendrier standard n’est canonisé ici par défaut.", "excerpt_line": 3,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/governance_scope.json", "role_en": "Perimeter of the published rules and its exclusions.", "role_fr": "Périmètre des règles publiées et ses exclusions.",
+         "excerpt": "\"non-published commercial terms\"", "excerpt_line": 17,
+         "declared_en": "version 2.4.0-proposed; no date", "declared_fr": "version 2.4.0-proposed ; aucune date"},
+        {"path": "/source-precedence.json", "role_en": "Ranked source hierarchy and conflict rule.", "role_fr": "Hiérarchie classée des sources et règle de conflit.",
+         "excerpt": "En cas de conflit entre sources, le rang le plus bas (chiffre le plus petit) prévaut", "excerpt_line": 125,
+         "declared_en": "version 1.1.0; lastUpdated 2026-08-09", "declared_fr": "version 1.1.0 ; lastUpdated 2026-08-09"},
+        {"path": "/claims.json", "role_en": "Verifiable claims, each with a verification URL.", "role_fr": "Affirmations vérifiables, chacune avec une URL de vérification.",
+         "excerpt": "Ces affirmations sont vérifiables aux URLs indiquées.", "excerpt_line": 98,
+         "declared_en": "version 1.1.0; lastVerified 2026-08-09", "declared_fr": "version 1.1.0 ; lastVerified 2026-08-09"},
+        {"path": "/negative-definitions.md", "role_en": "What Pagup and its governance files are not.", "role_fr": "Ce que Pagup et ses fichiers de gouvernance ne sont pas.",
+         "excerpt": "Les artefacts de gouvernance ne constituent pas à eux seuls une preuve d’exécution runtime.", "excerpt_line": 9,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"}
+      ],
+      "limits_en": [
+        "The snapshot is a build of the source repository on 2026-10-06, not the live state during the window; generated dates and sitemap lastmod values come from the build.",
+        "Two root files described as aliases of their /.well-known/ versions differ from them (older French versions at the root).",
+        "Several core files carry no version or date; their freshness can only be inferred from the bundle date.",
+        "The English path is incomplete: there is no English site-context.md, among others."
+      ],
+      "limits_fr": [
+        "L’instantané est un build du dépôt source au 2026-10-06, pas l’état servi pendant la fenêtre ; les dates générées et les lastmod des sitemaps proviennent du build.",
+        "Deux fichiers racine présentés comme alias de leur version /.well-known/ en diffèrent (versions françaises plus anciennes à la racine).",
+        "Plusieurs fichiers centraux ne portent ni version ni date ; leur fraîcheur ne peut être inférée que de la date du lot.",
+        "Le parcours anglais est incomplet : il n’existe pas de site-context.md anglais, entre autres."
+      ]
+    },
+    {
+      "site_id": "better-robots.com",
+      "slug": "better-robots.com",
+      "angle_en": "Context of a product, declared capabilities, limits, and the difference between publishing a rule and how a robot actually behaves.",
+      "angle_fr": "Contexte d’un produit, capacités déclarées, limites, et différence entre la publication d’une règle et le comportement effectif d’un robot.",
+      "question_en": "According to better-robots.com’s own governance files, what does the Better Robots.txt plugin let a site owner publish, and what may a reader not conclude, from a published rule alone, about how a given crawler actually behaves?",
+      "question_fr": "Selon les fichiers de gouvernance de better-robots.com, que permet de publier le plugin Better Robots.txt, et que ne peut-on pas conclure, à partir d’une règle publiée seule, sur le comportement effectif d’un robot donné ?",
+      "start_page": {"path": "/governance/ai-usage-policy", "counterpart": "/fr/governance/ai-usage-policy", "kind": "html",
+        "why_en": "The home page links to it; its level-3 section links the product-context and limits files.",
+        "why_fr": "La page d’accueil y renvoie ; sa section de niveau 3 relie les fichiers de contexte produit et de limites."},
+      "path_steps": [
+        ["/", "/governance/ai-usage-policy"],
+        ["/governance/ai-usage-policy", "/plugin-context.md"],
+        ["/governance/ai-usage-policy", "/plugin-scope.md"],
+        ["/governance/ai-usage-policy", "/robots-txt-context.md"],
+        ["/governance/ai-usage-policy", "/limitations-context.md"],
+        ["/governance/ai-usage-policy", "/robots.txt"]
+      ],
+      "graph_layers": {
+        "/": 0, "/governance/ai-usage-policy": 1,
+        "/plugin-context.md": 2, "/plugin-scope.md": 2, "/limitations-context.md": 2, "/robots-txt-context.md": 2,
+        "/robots.txt": 2, "/.well-known/ai-governance.json": 2, "/.well-known/anti-plausibility.json": 2, "/llms.txt": 2,
+        "/ai-manifest.json": 2
+      },
+      "resources": [
+        {"path": "/plugin-context.md", "role_en": "Product context: what the plugin is for and what it does not guarantee.", "role_fr": "Contexte produit : ce à quoi sert le plugin et ce qu’il ne garantit pas.",
+         "excerpt": "It does not guarantee crawler compliance, technical enforcement, or live-site configuration state without inspection.", "excerpt_line": 11,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/plugin-scope.md", "role_en": "Declared in-scope and out-of-scope capabilities, and the boundary between the plugin and the /check audit.", "role_fr": "Capacités déclarées dans et hors du périmètre, et frontière entre le plugin et l’audit /check.",
+         "excerpt": "is not proof that the plugin was installed or configured on the audited site.", "excerpt_line": 27,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/limitations-context.md", "role_en": "Public limits of the product as a publishing tool.", "role_fr": "Limites publiques du produit comme outil de publication.",
+         "excerpt": "It cannot, by itself, guarantee obedience, indexing outcomes, legal force, or security enforcement.", "excerpt_line": 11,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/robots-txt-context.md", "role_en": "Defines robots.txt as a statement of intent, not proof of crawler behaviour.", "role_fr": "Définit robots.txt comme une déclaration d’intention, pas une preuve du comportement des robots.",
+         "excerpt": "It is not proof of blocking, proof of compliance, or a security control.", "excerpt_line": 10,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"},
+        {"path": "/robots.txt", "role_en": "The site’s own published crawl rule, an instance of the rule layer (control resource, outside the main population).", "role_fr": "Règle d’exploration publiée par le site lui-même, exemple de la couche de règles (ressource de contrôle, hors population principale).",
+         "excerpt": "User-agent: GPTBot", "excerpt_line": 38,
+         "declared_en": "“last updated 2026-05-16”", "declared_fr": "« last updated 2026-05-16 »"},
+        {"path": "/ai-usage-policy.md", "role_en": "Markdown policy text, including the declared usage preference on model training.", "role_fr": "Texte de la politique en Markdown, dont la préférence d’usage déclarée sur l’entraînement de modèles.",
+         "excerpt": "Not permitted without explicit written permission.", "excerpt_line": 233,
+         "declared_en": "mirror of the policy page dated 2026-03-19", "declared_fr": "miroir de la page de politique datée du 2026-03-19"},
+        {"path": "/.well-known/anti-plausibility.json", "role_en": "Completions a reader must not invent about the product.", "role_fr": "Complétions qu’un lecteur ne doit pas inventer au sujet du produit.",
+         "excerpt": "claiming the plugin enforces or verifies compliance", "excerpt_line": 8,
+         "declared_en": "schema_version 1.1", "declared_fr": "schema_version 1.1"},
+        {"path": "/.well-known/ai-governance.json", "role_en": "Entrypoint stating usage intent and that it replaces no real control.", "role_fr": "Point d’entrée qui déclare l’intention d’usage et ne remplace aucun contrôle réel.",
+         "excerpt": "They do not replace infrastructure controls, private contracts, or human verification.", "excerpt_line": 290,
+         "declared_en": "schema_version 2.4", "declared_fr": "schema_version 2.4"},
+        {"path": "/llms.txt", "role_en": "Discovery index routing plugin questions to the context and scope files.", "role_fr": "Index de découverte qui oriente les questions sur le plugin vers les fichiers de contexte et de périmètre.",
+         "excerpt": "is not the plugin runtime.", "excerpt_line": 266,
+         "declared_en": "none declared", "declared_fr": "aucune déclarée"}
+      ],
+      "limits_en": [
+        "Requests for these files are accesses to product documentation. They are not plugin installations, activations or plugin events: the plugin runs on other WordPress sites.",
+        "The site’s robots.txt grants crawl access (Allow) to the listed crawlers, while the usage policy states a separate preference on training. Both are declarations; neither shows what a crawler does with the content.",
+        "The snapshot is the source repository on 2026-10-06; deployment of these exact bytes during the window is assumed, not established. Edge features such as a CDN-managed robots.txt cannot be ruled out from the repository.",
+        "robots.txt is a control resource: it is reported in its own section and never added to the main documentary population."
+      ],
+      "limits_fr": [
+        "Les requêtes vers ces fichiers sont des accès à la documentation du produit. Ce ne sont ni des installations, ni des activations, ni des événements du plugin : le plugin fonctionne sur d’autres sites WordPress.",
+        "Le robots.txt du site accorde l’accès d’exploration (Allow) aux robots listés, alors que la politique d’usage énonce une préférence distincte sur l’entraînement. Les deux sont des déclarations ; aucune ne montre ce qu’un robot fait du contenu.",
+        "L’instantané est celui du dépôt source au 2026-10-06 ; le déploiement de ces octets exacts pendant la fenêtre est supposé, pas établi. Des fonctions de périphérie, comme un robots.txt géré par le CDN, ne peuvent pas être exclues à partir du dépôt.",
+        "robots.txt est une ressource de contrôle : il est présenté dans sa propre section et n’est jamais ajouté à la population documentaire principale."
+      ]
+    }
+  ]
+}

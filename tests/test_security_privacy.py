@@ -79,7 +79,8 @@ class PrivacyTests(unittest.TestCase):
 
     def test_small_cell_policy_forbids_daily_path_and_actor(self):
         policy = load_json(REPO_ROOT / "config" / "small-cell-policy.json")
-        self.assertTrue(policy["fixed_before_results"])
+        self.assertFalse(policy["fixed_before_results"])
+        self.assertEqual(policy["policy_id"], "small-cell-policy/2.0.0")
         self.assertIn("day x path", policy["forbidden_combinations"])
         self.assertIn("day x actor_name", policy["forbidden_combinations"])
         daily = next(g for g in policy["grains"] if g["grain_id"] == "daily_site_population")

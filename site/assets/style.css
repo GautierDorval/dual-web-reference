@@ -93,3 +93,18 @@ footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px
   h2 { font-size: 19px; }
   .lang { margin-left: 0; }
 }
+
+/* Two-dimensional figures remain legible; page prose reflows at 320 CSS pixels. */
+.plot-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+.plot-wrap img { border: 0; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.skip { position: absolute; top: -8rem; left: 1rem; padding: .75rem; z-index: 10; background: var(--surface); }
+.skip:focus { top: .5rem; }
+@media (max-width: 640px) {
+  .plot-wrap img { min-width: 420px; width: 420px; max-width: none; }
+  nav a, .lang { min-height: 32px; display: inline-flex; align-items: center; }
+  h1 { overflow-wrap: normal; word-break: normal; }
+}
+
+form.filters button { font: inherit; color: var(--ink); background: var(--surface); padding: .45rem .6rem; border: 1px solid var(--muted); border-radius: 4px; }
+button:disabled { cursor: default; }

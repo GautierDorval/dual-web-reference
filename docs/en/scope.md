@@ -51,7 +51,7 @@ Files that describe a runtime, an MCP server, an API or a service are classed `o
 
 ## Mirrors and language versions
 
-A resource is a site-path pair. A file served at `/.well-known/name` and at `/name`, a French and an English version, or the same content in two formats are separate pairs, counted separately. The column `snapshot_sha256` of [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv) gives the digest of each file in its source snapshot, so byte-identical mirrors can be recognized without merging their counts. A family view may group them later under its own name and method, without presenting them as independent documents.
+A resource is a site-path pair. A file served at `/.well-known/name` and at `/name`, a French and an English version, or the same content in two formats are separate pairs, counted separately. The column `snapshot_sha256` of [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv) gives the digest of each file in its source snapshot, so byte-identical mirrors can be recognized without merging their counts. A family view may group them later under its own name and method, without presenting them as independent documents.
 
 ## Historical version status
 
@@ -71,7 +71,7 @@ The registry is built from source snapshots, one per site, dated `graph_snapshot
 Main documentary population: 245 requests on 174 pairs. Initial report scope: 372 on 259. Removed by the scope review: 127. Extended layer with supporting documentation (secondary reading): 356 on 247 pairs. robots.txt and the undeclared bucket were already outside the initial report scope.
 <!-- dwr:end scope-delta -->
 
-How to read this block. Each row is a scope class outside the main population, with the site-path pairs that have rows in the window, all requests for every actor, and the provider-origin AI `GET 200` (the same stratum as the main result). The summary line compares the main population with the initial report scope: the requests "removed by the scope review" are the provider-origin AI `GET 200` of the initial report scope that fall in `supporting_documentation`, `operational_descriptor`, `technical_resource` or `unresolved_scope`. The `control_resource` and `undeclared_bucket` rows were already outside the initial report scope; they are shown for completeness, not as part of the delta. The source table is [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r1/exclusions.csv), which also lists the identification levels left out of the main stratum ([attribution](attribution.md)).
+How to read this block. Each row is a scope class outside the main population, with the site-path pairs that have rows in the window, all requests for every actor, and the provider-origin AI `GET 200` (the same stratum as the main result). The summary line compares the main population with the initial report scope: the requests "removed by the scope review" are the provider-origin AI `GET 200` of the initial report scope that fall in `supporting_documentation`, `operational_descriptor`, `technical_resource` or `unresolved_scope`. The `control_resource` and `undeclared_bucket` rows were already outside the initial report scope; they are shown for completeness, not as part of the delta. The source table is [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r2/exclusions.csv), which also lists the identification levels left out of the main stratum ([attribution](attribution.md)).
 
 ## The extended layer
 

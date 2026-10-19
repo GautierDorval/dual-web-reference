@@ -28,7 +28,8 @@ class EditionRuleTests(unittest.TestCase):
             {"edition_id": "2026-10-15_2026-11-15-r1", "status": "candidate_not_reviewed", "published_at": None,
              "period_end_exclusive": "2026-11-15"},
         ]
-        self.assertEqual(rules.latest_pointer(editions), "2026-09-15_2026-10-15-r2")
+        # Legacy published/reviewed booleans are insufficient without a content-bound receipt.
+        self.assertIsNone(rules.latest_pointer(editions))
         self.assertIsNone(rules.latest_pointer([editions[2]]))
         unreviewed = dict(editions[1], reviewed=False)
         self.assertIsNone(rules.latest_pointer([unreviewed]))
@@ -71,7 +72,7 @@ class EditionRuleTests(unittest.TestCase):
         ok, reasons = rules.comparable(a, b)
         self.assertFalse(ok)
         self.assertTrue(any("classifier_recorded" in reason for reason in reasons))
-        self.assertTrue(rules.comparable(a, dict(a))[0])
+        self.assertFalse(rules.comparable(a, dict(a))[0])
         self.assertEqual(rules.growth(0, 5, True)["status"], "not_calculable")
         self.assertEqual(rules.growth(None, 5, True)["status"], "not_calculable")
         self.assertEqual(rules.growth(4, 5, False)["status"], "not_calculable")

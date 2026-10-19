@@ -1,22 +1,78 @@
 {
-  "schema_version": "dwr-editions/1.0.0",
-  "candidate": "2026-09-15_2026-10-15-r1",
+  "candidate": "2026-09-15_2026-10-15-r2",
   "editions": [
     {
+      "approval_receipt": null,
+      "approved_release_at": null,
+      "availability_status": "publicly_accessible",
       "edition_id": "2026-09-15_2026-10-15-r1",
       "edition_type": "monthly_reference",
-      "period_start_inclusive": "2026-09-15",
-      "period_end_exclusive": "2026-10-15",
-      "revision": 1,
-      "status": "candidate_not_reviewed",
-      "published_at": null,
-      "revised_at": null,
       "generated_at": "2026-10-16",
       "generated_at_rule": "date of preparation of this candidate; fixed so that a rebuild of the same inputs gives the same bytes",
-      "supersedes": null,
-      "superseded_by": null,
+      "historical_payload_frozen": true,
+      "observation_provenance": "historical-r1",
+      "period_end_exclusive": "2026-10-15",
+      "period_start_inclusive": "2026-09-15",
+      "public_availability_evidence": {
+        "earliest_bound_utc": "2026-10-18T23:45:37.9798885Z",
+        "evidence": "Owner-authorized repository visibility mutation log and anonymous readback; retained privately. Commit time and repository creation time are not used.",
+        "latest_bound_utc": "2026-10-18T23:45:40.7151037Z",
+        "precision": "bounded_interval_exact_time_unknown"
+      },
+      "published_at": null,
+      "reference_release_status": "not_approved",
+      "review_status": {
+        "distribution": "corrections_in_progress",
+        "editorial": "corrections_in_progress",
+        "evidence": [],
+        "technical": "corrections_in_progress"
+      },
+      "revised_at": null,
+      "revision": 1,
+      "scientific_review_status": "no_independent_scientific_review_documented",
       "source_mode": "joint_acquisition",
-      "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status."
+      "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status.",
+      "status": "candidate_not_reviewed",
+      "superseded_by": null,
+      "supersedes": null
+    },
+    {
+      "approval_receipt": null,
+      "approved_release_at": null,
+      "availability_status": "local_candidate",
+      "delta_types": [
+        "presentation",
+        "metadata",
+        "derived_metrics",
+        "disclosure_policy"
+      ],
+      "edition_id": "2026-09-15_2026-10-15-r2",
+      "edition_type": "monthly_reference",
+      "generated_at": "2026-10-19",
+      "generated_at_rule": "date of preparation of this candidate; fixed so that a rebuild of the same inputs gives the same bytes",
+      "historical_payload_frozen": false,
+      "observation_provenance": "historical-r1",
+      "observations_changed": false,
+      "period_end_exclusive": "2026-10-15",
+      "period_start_inclusive": "2026-09-15",
+      "public_availability_evidence": null,
+      "published_at": null,
+      "reference_release_status": "not_approved",
+      "review_status": {
+        "distribution": "corrections_in_progress",
+        "editorial": "corrections_in_progress",
+        "evidence": [],
+        "technical": "corrections_in_progress"
+      },
+      "revised_at": "2026-10-19",
+      "revision": 2,
+      "scientific_review_status": "no_independent_scientific_review_documented",
+      "source_mode": "joint_acquisition",
+      "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status.",
+      "status": "candidate_not_reviewed",
+      "superseded_by": null,
+      "supersedes": "2026-09-15_2026-10-15-r1"
     }
-  ]
+  ],
+  "schema_version": "dwr-editions/2.0.0"
 }

@@ -1,18 +1,22 @@
-# Updates
+# Editions, reviews and updates
 
 [Français](../fr/mises-a-jour.md) · [Repository home](../../README.md)
 
-This repository follows an ongoing operation, not a timeless report. Each edition states when its data were measured, read, generated, published and revised, and these dates are kept distinct. The calendar is [config/edition-calendar.json](../../config/edition-calendar.json), the editions are listed in [config/editions.json](../../config/editions.json) and the reviews actually carried out in [config/operations.json](../../config/operations.json).
+**r1 is publicly accessible and frozen; r2 is a local privacy correction candidate. Neither is an approved reference release. No independent scientific review is documented.** A public repository, passing tests, a technical review and a scientific review are different facts.
 
-Current state: **Periodic update planned; manual preparation.** No automation is activated.
+## Four distinct states
 
-## Dates of the current edition
+[config/editions.json](../../config/editions.json) records availability, review progress, reference approval and scientific review separately, outside the immutable payload. r1 became public within the interval recorded in `public_availability_evidence`, bounded by the existing mutation and anonymous readback receipts. A repository creation date or a commit timestamp is not its exact public-availability time.
+
+The old r1 `catalog.json` remains byte-for-byte unchanged, including its historical `candidate_not_reviewed` and null `published_at` fields. Those fields describe the original preparation; they do not deny today's public availability. `approved_release_at` is a separate approval date; it remains null. `revised_at` dates a correction candidate and need not imply publication.
 
 <!-- dwr:begin dates -->
 | Date or state | Value |
 |---|---|
-| Edition | `2026-09-15_2026-10-15-r1` |
-| Status | candidate, not reviewed, not published |
+| Edition | `2026-09-15_2026-10-15-r2` |
+| Status | local candidate; reference not approved; no independent scientific review documented |
+| Availability | `local_candidate` |
+| Reference approval | `not_approved` |
 | Measured period | September 15 to October 14, 2026 inclusive, UTC |
 | period_start_inclusive | `2026-09-15` |
 | period_end_exclusive | `2026-10-15` |
@@ -20,60 +24,34 @@ Current state: **Periodic update planned; manual preparation.** No automation is
 | extracted_at | `2026-10-16T22:57:16.784712Z / 2026-10-16T22:58:54.949414Z` |
 | source_snapshot_at | `2026-10-16T12:30:48Z` |
 | graph_snapshot_at | better-robots.com `2026-10-06`, gautierdorval.com `2026-10-14`, pagup.com `2026-10-06` |
-| generated_at | `2026-10-16` |
-| published_at | `null` (not published) |
-| revised_at | `null` |
+| generated_at | `2026-10-19` |
+| published_at | `null` (legacy approval field, not public availability) |
+| revised_at | `2026-10-19` |
 | latest_available_data_date | `2026-10-14` |
 | next_review_target | weekly review `2026-10-19T13:17:00Z`, not guaranteed |
 | Updates | periodic update planned; manual preparation (automation not activated) |
 <!-- dwr:end dates -->
 
-| Field | Meaning |
-|---|---|
-| `period_start_inclusive` | first UTC day of the measured window, included |
-| `period_end_exclusive` | exclusive end of the window: the first day not included, which is not the last day counted |
-| `last_included_date` | last UTC day actually included in the counts |
-| `extracted_at` | interval (start and end, UTC) during which the joint aggregate was read from the producer; the earlier reading of the exports is in `exports_extracted_at` of `catalog.json` |
-| `source_snapshot_at` | date of the pinned commit of the private archive used for coverage |
-| `graph_snapshot_at` | per site, date of the source snapshot from which `links.csv` and the registry were built |
-| `generated_at` | date on which this candidate was prepared; fixed in `config/editions.json` so that a rebuild of the same inputs gives the same bytes |
-| `published_at` | first real public publication of the edition; `null` until then and never changed by a rebuild |
-| `revised_at` | date of a published correction; `null` when there is none |
-| `latest_available_data_date` | last day available and interpretable, not the date of the last successful run |
-| `next_review_target` | next planned weekly review and next monthly window, explicitly without guarantee |
+## Approval without changing the cited catalog
 
-A rendering regenerated today from September data does not become an observation of today. A historical figure keeps its own period even when the home page points to a newer edition.
+A review receipt in the external edition configuration identifies the edition, reviewer, evidence, review time and separate technical, editorial and distribution decisions. Its `content_digest` is the deterministic SHA-256 of the ordered path-to-SHA-256 manifest of all files under the edition data and figures directories, including PNG fallbacks, excluding only the derived `SHA256SUMS.txt`. Receipts, operational pointers and repository landing pages are outside that payload scope. Their text must not claim a wider approval. This avoids a circular hash; changing a payload byte invalidates the receipt.
 
-## Monthly windows anchored on the 15th
+The shared `latest_pointer` function checks actual bytes, receipt completeness and public availability, then orders eligible editions by window end and revision. An unapproved superseding candidate cannot hide a valid approved release. [latest.json](../../data/latest.json) remains null because no matching reference-approval receipt exists, even though r1 is public.
 
-Reference editions use consecutive monthly windows in UTC, from the 15th (included) to the 15th of the next month (excluded) (`analysis/dwr/dates.py`). The first window is `[2026-09-15, 2026-10-15)`: 30 days, from September 15 to October 14 inclusive. The next one is `[2026-10-15, 2026-11-15)`: 31 days, from October 15 to November 14 inclusive. Editions are therefore not all "30 days". The current UTC day is never included, and an acquisition refuses a window that is not closed.
+## Immutable observations and privacy revision
 
-## Weekly preparation and manual dispatch
+The original five revision causes remain: late observations, classifier correction, scope change, transformation correction and privacy revision. r2 uses **privacy revision**: protected daily rows and coverage complements are withheld together. Metadata, derived metrics and presentation accompany that change. The [delta report](../../data/editions/2026-09-15_2026-10-15-r2/delta-report.json) states that observations did not change. This is not temporal growth. Reverse links and operational changes live outside the frozen r1 catalog.
 
-The calendar plans a weekly review on Monday at 13:17 UTC and a monthly edition. Both are templates with `activation_status = template_not_activated`, kept outside the automatic workflow folder. The offline CI workflow also accepts manual `workflow_dispatch` runs. It checks the existing public projection; it neither acquires new data nor publishes an edition.
+Historical payload, figures, schemas and rule bytes are checked by [historical-editions.json](../../config/historical-editions.json). `analyze` and `render --edition ...-r1` check those bytes without rewriting them; projection and preparation into r1 are refused. The [public history inventory](../../config/publication-inventory.json) includes superseded accessible states. An earlier graph presentation differs; its canonical count tables do not. See [privacy](privacy.md) for the limited combined-release contract.
 
-What the preparation does: check that sources are available, prepare a candidate edition and a difference report, and record the operation state. What it never does: publish automatically, publish private data or an unreviewed candidate, or run the authenticated private acquisition. That acquisition runs only in the private environment, never in a public CI job; public jobs have no access to the producer database or to private sources.
+## Manual next-window preparation
 
-GitHub documentation ([Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows), consulted 2026-10-16) states that scheduled runs can be delayed during periods of high load and that some queued jobs may be dropped; schedules run only from the default branch, and in public repositories they are disabled after 60 days without activity. No time of update is promised here.
+Windows run from the 15th included to the next 15th excluded, in UTC. The historical window has 30 days; `[2026-10-15, 2026-11-15)` has 31. Preparation waits 48 hours after close. Calendar tests include February with 28 and 29 days, 30 and 31 days, year boundaries and UTC consolidation. Rolling windows cannot be added.
 
-## Consolidation delay
+Run `python -I scripts/dwr.py prepare-next --private-root <existing-private-directory>` after the existing offline normalization and qualification stages have produced the matching window's local inputs. This command selects the **next missing window**, never jumps over it, validates the local inputs, computes provenance and coverage, writes a private candidate, regenerates metrics and all figure variants, prepares the delta and combined-disclosure report, and stops at `awaiting_review`. A blocked disclosure report remains blocked; a private candidate is not a publishable projection.
 
-A monthly edition is prepared no earlier than 48 hours after the window closes (`consolidation_delay_hours`). The wait gives late counts a chance to arrive; it guarantees nothing. If the source is still partial, the edition says so. Freshness thresholds (a weekly review overdue after 10 days, a monthly edition overdue 21 days after consolidation) are operating rules, not commitments.
+The receipt authenticates inputs and outputs. An identical retry returns `unchanged`; changed inputs require a separate revision, and an interrupted partial candidate requires inspection. Missing sources return `source_unavailable`; invalid inputs return `validation_failed`. Neither state advances data freshness or the latest approved reference. The private status file records the actual UTC run time. A synthetic full rehearsal passed; no new real observations were acquired and the real next window is not yet available.
 
-## Operation states and retries
+## Planning remains inactive
 
-Each run ends in one of six states: `new_data`, `unchanged`, `source_unavailable`, `validation_failed`, `awaiting_review` and `published`. A successful run does not prove that new data arrived: a run that finds nothing new is `unchanged` and never advances the data date. Retries are bounded (at most 3 attempts) and idempotent. A late or retried run never moves the window to a more convenient one, and an incomplete or missed window stays visible.
-
-## Frozen editions and revisions
-
-An edition is identified as `<start>_<end>-r<n>`, for example `2026-09-15_2026-10-15-r1`. Code version, schema version, rule versions and edition identifier are separate (see `versions` in `catalog.json`). Once published, an edition is frozen. A correction creates `r2`, with its reason, the numeric delta, the author and reviewer of the correction, and links in both directions (`supersedes`, `superseded_by`). The cause is one of: late observations, classifier correction, scope change, transformation correction, privacy revision. None of these causes is growth. A removal required for privacy or rights is handled as a documented exception, not hidden by rewriting history. A classifier correction also opens a new measurement epoch (`measurement_epoch_id`); labels recorded under an earlier version are not relabelled.
-
-## latest.json and status.json
-
-[data/latest.json](../../data/latest.json) points only to a reviewed public edition, never to a draft or to the last successful run. It is `null` today, with its reason, because no edition has been reviewed and published.
-
-[data/status.json](../../data/status.json) reports the real state with non-sensitive data only: `realtime = false`, the automation states, the candidate edition and its state, the last review, `latest_available_data_date` and `next_review_target`. It is not a real-time indicator. When a source fails, the last valid edition is kept and the unavailability is shown; series are never replaced by zeros and the data date does not advance.
-
-## Rolling windows
-
-A `rolling_30d` view (the last 30 closed days) may be added later as a secondary product, from the qualified joint daily aggregate; it is not produced in this edition. Rolling windows overlap: their totals are never added to build a trend. Main comparisons use non-overlapping monthly editions.
+The Monday 13:17 UTC weekly review and monthly preparation are **inactive templates**, not a service guarantee. Manual offline CI validates existing public files; it does not collect data. [status.json](../../data/status.json) distinguishes code readiness, synthetic execution, real-source availability, planning and approval. Public events in [operations.json](../../config/operations.json) use dates or evidence bounds; a publication annotation does not prove causality.

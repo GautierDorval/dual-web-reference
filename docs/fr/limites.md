@@ -16,7 +16,7 @@ Restreint : à qui les requêtes peuvent être attribuées.
 
 Restreint : la manière dont un fichier a été trouvé.
 
-- **Établi** : les références écrites dans les fichiers de l’instantané, par type, fichier et ligne ([links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv)).
+- **Établi** : les références écrites dans les fichiers de l’instantané, par type, fichier et ligne ([links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv)).
 - **Non établi** : la voie empruntée par un client ; les relations de lien de la section `<head>` et les en-têtes HTTP `Link`, qui ne sont pas extraits ; les références situées sur d’autres sites ; les adresses connues d’avance.
 - **Ne permet pas de nier** : qu’un fichier ait été trouvé par llms.txt, par une page externe ou par une URL déjà connue ; ni que llms.txt ait joué un rôle les jours sans requête vers lui. Voir [decouverte-et-maillage.md](decouverte-et-maillage.md).
 
@@ -33,7 +33,7 @@ Restreint : le contenu qui a été servi.
 Restreint : l’intégralité des comptes.
 
 <!-- dwr:begin coverage -->
-30 jours sur 30 ont des lignes archivées ; les 30 rapports d’archive sont partiels (déclarés), 28 sans attestation de fenêtre du collecteur et 2 avec un écart agrégat/V3 d’une requête (2026-10-06, 2026-10-13). Somme agrégée archivée 24 815, somme V3 24 813. Des lignes sur 30 jours ne prouvent pas une couverture intégrale.
+30 jours sur 30 ont des lignes archivées ; 30 sont déclarés partiels. Les marges agrégées et V3 quotidiennes sont retenues, pas égales à zéro. r1 conserve ses deux écarts d’une requête (6 et 13 octobre). Les observations restent les mêmes ; la couverture partielle n’est pas requalifiée.
 <!-- dwr:end coverage -->
 
 - **Établi** : des lignes archivées pour les jours de la fenêtre, et la concordance des exports et de l’agrégat conjoint avec l’archive.
@@ -84,6 +84,6 @@ Restreint : ce que signifie un succès.
 
 Restreint : le niveau de détail publié.
 
-- **Établi** : les tables suivent les grains fixés avant les résultats dans [small-cell-policy.json](../../config/small-cell-policy.json). Aucune adresse IP, aucun agent utilisateur, témoin (cookie), identifiant de session ou d’appareil, jeton, référent libre, chaîne de requête, transcription, ni date de premier ou de dernier accès par cellule ou par chemin. Les sorties quotidiennes ne portent jamais de chemin ni de nom d’acteur.
-- **Non établi** : tout ce qui exigerait de croiser un jour avec un chemin, ou un jour avec un acteur ; le propriétaire a validé cette politique le 2026-10-17.
+- **Établi** : r1 conserve ses grains historiques ; r2 applique une révision de confidentialité définie après les résultats, documentée dans [small-cell-policy.json](../../config/small-cell-policy.json). Aucune adresse IP, aucun agent utilisateur, témoin (cookie), identifiant de session ou d’appareil, jeton, référent libre, chaîne de requête, transcription, ni date de premier ou de dernier accès par cellule ou par chemin. Les sorties quotidiennes ne portent jamais de chemin ni de nom d’acteur.
+- **Non établi** : une non-reconstruction universelle. Le croisement de marges ou de révisions peut révéler du détail agrégé. La politique historique a été approuvée le 2026-10-17 ; la politique corrigée reste une candidate locale.
 - **Ne permet pas de nier** : des régularités qui n’apparaîtraient qu’à un grain plus fin. Voir [confidentialite.md](confidentialite.md).

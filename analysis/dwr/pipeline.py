@@ -4,7 +4,7 @@ public stages read and write repository files only and never touch the network.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from . import archive, importer, reconcile
@@ -17,9 +17,10 @@ RULE_FILES = {"scope_rules": ("scope-rules.json", "rules_id"),
               "small_cell_policy": ("small-cell-policy.json", "policy_id")}
 
 
-def rule_versions() -> dict:
+def rule_versions(edition_id=None) -> dict:
     """Versions of the rules applied to an edition, read from their configuration files."""
-    return {key: load_json(REPO_ROOT / "config" / name)[field] for key, (name, field) in RULE_FILES.items()}
+    from .frozen import rule_path
+    return {key: load_json(rule_path(edition_id, name))[field] for key, (name, field) in RULE_FILES.items()}
 
 
 def editions_config() -> dict:
@@ -111,6 +112,7 @@ def cmd_normalize(private: Path, edition_id: str | None) -> dict:
         "joint_rows": joint_rows,
         "joint_cross_check": cross,
         "deployment_timeline": timeline,
+        "measurement_provenance": sources.get("measurement_provenance", {}),
         "marginals": marginals,
         "archive_inventory": inventory,
         "normalized_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
@@ -154,6 +156,8 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     from . import project
     from .common import csv_text, write_text
     entry = edition_entry(edition_id)
+    from .frozen import refuse_write
+    refuse_write(entry["edition_id"])
     work = working_dir(private, entry["edition_id"])
     normalized = load_json(work / "normalized.json")
     qualified = load_json(work / "qualified.json")
@@ -161,6 +165,11 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     imports = sorted((private / "import").glob("imp-*/receipt.json"))
     import_id = load_json(imports[0])["import_id"]
     result = project.project(qualified, normalized, entry, import_id)
+    from . import disclosure
+    policy = load_json(REPO_ROOT / "config/small-cell-policy.json")
+    candidate = disclosure.coarsen({k: result[k] for k in disclosure.TABLES}, policy)
+    decision = disclosure.enforce(candidate, disclosure.inventory(), policy)
+    result.update(candidate)
     target = edition_dir(entry["edition_id"])
     tables = {
         "resources.csv": (project.RESOURCE_FIELDS, result["resources"]),
@@ -187,6 +196,7 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
         "checks": qualified["case_checks"],
         "all_verified": all(check["verified"] for check in qualified["case_checks"]),
     })
+    write_json(target / "disclosure.json", decision)
     write_json(target / "catalog.json", build_catalog(entry, normalized, result, tables, target, private))
     return {"edition_id": entry["edition_id"], "rows": {name: len(rows) for name, (_, rows) in tables.items()}}
 
@@ -195,6 +205,10 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
     from .common import sha256_file
     from . import SCHEMA_VERSION, CODE_VERSION
     window = entry["window"]
+    from .dates import next_monthly_window
+    calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
+    following = next_monthly_window(window, calendar["monthly_anchor_day"])
+    ready = datetime.combine(following.end_exclusive, datetime.min.time(), tzinfo=timezone.utc) + timedelta(hours=calendar["consolidation_delay_hours"])
     exports_extracted = sorted(normalized["marginals"]["extracted_at"])
     joint_extracted = normalized["joint_extracted_at"]
     timeline = normalized.get("deployment_timeline") or {}
@@ -218,7 +232,13 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
         "source_mode": entry["source_mode"],
         "source_mode_note": entry["source_mode_note"],
         "versions": {"code": CODE_VERSION, "public_schema": SCHEMA_VERSION, **rule_versions(),
-                     "classifier_recorded": "2026-08-24.1", "measurement_epoch_id": "classifier-2026-08-24.1"},
+                     "classifier_recorded": result.get("measurement", {}).get("epochs", []),
+                     "measurement_epoch_id": result.get("measurement", {}).get("measurement_epoch_id", "unknown"),
+                     "scope_registry_sha256": sha256_file(REPO_ROOT / "config/scope-registry.csv")},
+        "metrics_version": "dwr-metrics/2.0.0",
+        "coverage_status": result.get("measurement", {}).get("coverage_status", "coverage_unknown"),
+        "source_provenance": normalized.get("source_provenance_contract", "unknown"),
+        "time_granularity": "edition",
         "dates": {
             "period_start_inclusive": window.start.isoformat(),
             "period_end_exclusive": window.end_exclusive.isoformat(),
@@ -234,9 +254,9 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
             "revised_at": entry["revised_at"],
             "latest_available_data_date": window.last_included.isoformat(),
             "next_review_target": {
-                "weekly_review": "2026-10-19T13:17:00Z",
-                "next_monthly_window": {"start_inclusive": "2026-10-15", "end_exclusive": "2026-11-15", "days": 31},
-                "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
+                "weekly_review": None,
+                "next_monthly_window": {"start_inclusive": following.start.isoformat(), "end_exclusive": following.end_exclusive.isoformat(), "days": following.days},
+                "earliest_monthly_preparation": ready.isoformat().replace("+00:00", "Z"),
                 "guarantee": "none: planned target; manual preparation until automation is authorized and proven",
             },
         },
@@ -248,7 +268,7 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
         "method_status_split": "joint_exact; the split deduced from the exports by zero mass was confirmed on every path",
         "source_snapshot_id": result["source_snapshot_id"],
         "provenance_public": [
-            "Producer: private collector (Cloudflare Worker) writing daily aggregate counters; classifier 2026-08-24.1.",
+            "Producer: private collector writing daily aggregate counters; classifier provenance is recorded in versions, never inferred from current code.",
             "Joint aggregate: bounded read-only SELECT of the producer daily aggregate table (day x site x path x method x status x actor x tier), read between the extraction times above, checksums identical before and after, zero rows written.",
             "Exports of the initial internal report (read earlier the same day, exports_extracted_at): used for reconciliation; the joint aggregate reproduces them exactly.",
             "Producer deployment history: captured by the producer from the Cloudflare control plane; deployment labels replace private identifiers.",
@@ -273,6 +293,10 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
 def cmd_render(edition_id: str | None) -> dict:
     from . import render
     entry = edition_entry(edition_id)
+    from .frozen import verify as verify_frozen
+    historical = verify_frozen(entry["edition_id"])
+    if historical:
+        return historical
     return render.cmd(entry["edition_id"])
 
 
@@ -293,16 +317,22 @@ def cmd_prepare_edition(edition_id: str | None) -> dict:
     """Candidate package: SHA256SUMS.txt over the edition files (never itself) and a delta report."""
     from .common import sha256_file, write_text
     entry = edition_entry(edition_id)
+    from .frozen import refuse_write
+    refuse_write(entry["edition_id"])
     target = edition_dir(entry["edition_id"])
     figure_dir = REPO_ROOT / "figures" / entry["edition_id"]
     figure_files = sorted(p for p in figure_dir.iterdir() if p.is_file())
-    previous = [e for e in editions_config()["editions"] if e["edition_id"] != entry["edition_id"]
-                and e["status"] == "published"]
-    delta = {"schema_version": "dwr-delta/1.0.0", "edition_id": entry["edition_id"],
-             "compared_with": previous[-1]["edition_id"] if previous else None,
-             "status": "no_previous_edition" if not previous else "comparison_required",
-             "rule": "two editions are compared only when windows, definitions, coverage, registries, classifications and scope rules allow it; causes of change are classified (late observations, classifier correction, scope change, transformation correction, privacy revision) and none is presented as growth"}
-    write_json(target / "delta-report.json", delta)
+    from .edition_rules import latest_pointer
+    if entry.get("supersedes"):
+        delta = load_json(target / "delta-report.json")
+        if delta.get("cause") != "privacy_revision" or delta.get("is_growth") is not False:
+            raise DwrError("revision_delta_missing_or_inconsistent")
+    else:
+        previous = latest_pointer(editions_config()["editions"])
+        delta = {"schema_version": "dwr-delta/2.0.0", "edition_id": entry["edition_id"],
+                 "compared_with": previous, "status": "no_previous_approved_edition" if previous is None else "comparison_required",
+                 "is_growth": False}
+        write_json(target / "delta-report.json", delta)
     lines =[f"{sha256_file(p)}  data/editions/{entry['edition_id']}/{p.name}" for p in sorted(
         p for p in target.iterdir() if p.is_file() and p.name != "SHA256SUMS.txt")] + [
         f"{sha256_file(p)}  figures/{entry['edition_id']}/{p.name}" for p in figure_files]
@@ -311,7 +341,7 @@ def cmd_prepare_edition(edition_id: str | None) -> dict:
     from .common import sha256_bytes
     return {"edition_id": entry["edition_id"], "files": len(lines), "sha256sums_digest": sha256_bytes(text.encode("utf-8")),
             "excluded": ["SHA256SUMS.txt (does not include itself)", "figures/<edition>/png/* (optional, not bit-reproducible)"],
-            "delta": delta["status"], "note": "a review approves this digest; any later change invalidates the approval"}
+            "delta": delta.get("status", delta.get("cause")), "note": "archive checksum manifest; approval uses edition_rules.payload_manifest and its external receipt, including PNG bytes"}
 
 
 def cmd_status(edition_id: str | None) -> dict:
@@ -337,6 +367,10 @@ def cmd_build_site(edition_id: str | None) -> dict:
 def cmd_analyze(edition_id: str | None) -> dict:
     from . import metrics
     entry = edition_entry(edition_id)
+    from .frozen import verify as verify_frozen
+    historical = verify_frozen(entry["edition_id"])
+    if historical:
+        return historical
     target = edition_dir(entry["edition_id"])
     result = {"schema_version": "dwr-metrics/1.0.0", "edition_id": entry["edition_id"], **metrics.compute(target)}
     write_json(target / "metrics.json", result)

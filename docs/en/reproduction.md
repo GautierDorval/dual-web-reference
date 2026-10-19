@@ -4,6 +4,17 @@
 
 This page lists the commands of the calculation chain, what each one reads and writes, which ones work offline, and what a public reader can and cannot redo. The stages themselves are described in [methodology](methodology.md).
 
+## Corrected and historical reproduction
+
+Default commands select r2. Run `revise-public`, `analyze`, `render`, `prepare-edition`, `build-site`, then `verify`. `revise-public` is an explicit privacy transformer of the inventoried r1 tables: it changes the edition key, withholds protected daily rows and coverage complements, and regenerates the candidate catalog. It makes no acquisition. Running it again with identical inputs is deterministic.
+
+For r1, `analyze` and `render` verify the complete frozen payload and original rule/schema hashes instead of applying current styles. `verify --edition 2026-09-15_2026-10-15-r1` replays its sealed rules. r1 is never a target of `project-public`, `prepare-edition` or PNG rendering.
+
+`prepare-next --private-root <directory>` uses existing local normalized and qualified inputs and writes only under the private root. Its full synthetic rehearsal uses the actual projection, measurement, metrics and figure functions. It does not acquire D1 data, activate a schedule or promote a reference. See [updates](updates.md).
+
+The new consultation primary key adds `measurement_epoch_id` so separately recorded versions are not merged. Historical schemas remain sealed under `config/history/`. The metric structure remains compatible; `metrics_version` identifies the version 2 definitions. [metrics.schema.json](../../schemas/metrics.schema.json) describes values, null states, filters, numerator, denominator, provenance and bilingual labels.
+
+
 ## Environment
 
 - Python standard library only, no package to install. Python 3.12 or later is required; the chain was developed and tested only with Python 3.14.6 (earlier versions are untested), and `.python-version` and the CI use Python 3.14.
@@ -30,7 +41,7 @@ This page lists the commands of the calculation chain, what each one reads and w
 | `prepare-edition` | edition files and figures | `delta-report.json`, `SHA256SUMS.txt` | none, publishes nothing |
 | `status` | `data/status.json`, calendar | nothing (standard output) | none |
 
-Every command accepts `--edition <id>`; the default is the candidate named in `config/editions.json`. Results are printed as JSON. A failure prints `FAIL <code>: <detail>` on standard error and exits with code 2; `verify` exits with code 1 when a check fails, and a check that crashes counts as failed. `acquire-readonly` refuses a window that is not closed and any `--confirm-scope` other than the exact window. Dry run remains its default; for this edition it was executed once, with `--execute` and the exact `--confirm-scope 2026-09-15..2026-10-15`, in the private environment, never in CI.
+`prepare-next` derives its next window from private status and ignores no missing window; the other edition commands accept `--edition <id>`; the default is the candidate named in `config/editions.json`. Results are printed as JSON. A failure prints `FAIL <code>: <detail>` on standard error and exits with code 2; `verify` exits with code 1 when a check fails, and a check that crashes counts as failed. `acquire-readonly` refuses a window that is not closed and any `--confirm-scope` other than the exact window. Dry run remains its default; for this edition it was executed once, with `--execute` and the exact `--confirm-scope 2026-09-15..2026-10-15`, in the private environment, never in CI.
 
 The public stages (`analyze`, `render`, `verify`, `build-site`, `prepare-edition`, `status`) are offline and never contact the measured sites. `verify` checks that no module of the chain other than `acquire.py` imports network code.
 
@@ -91,7 +102,7 @@ A matching digest shows that the files are those that were reviewed; it does not
 
 ## CSV conventions
 
-UTF-8 without byte order mark, LF line endings, comma separator, header row, RFC 4180 quoting where needed, decimal point, ISO 8601 dates, booleans written `true` and `false`, and an empty cell meaning null, never zero. Column types, primary keys and the minimum of 0 for counts are in [schemas](../../schemas/).
+UTF-8 without byte order mark, LF line endings, comma separator, header row, RFC 4180 quoting where needed, decimal point, ISO 8601 dates, booleans written `true` and `false`, and an empty cell meaning null, never zero. Column types, primary keys and the minimum of 0 for counts are in the JSON schemas, including the [consultation schema](../../schemas/consultations.schema.json).
 
 A spreadsheet-safe variant (`*.spreadsheet.csv`) is defined for copies meant to be opened in a spreadsheet: any cell starting with `=`, `+`, `-`, `@`, a tab or a carriage return is prefixed with an apostrophe, so that it is never read as a formula. The canonical CSV files keep the exact values and are the ones to use for any calculation.
 
@@ -110,4 +121,4 @@ Dual Web Reference, edition 2026-09-15_2026-10-15-r1 (September 15 to October 14
 catalog.json SHA-256 <64 hexadecimal characters>, consulted <date>.
 ```
 
-The digest is computed with `sha256sum data/editions/<edition>/catalog.json` or `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, and it also appears in `SHA256SUMS.txt`. The current edition is a candidate, not reviewed and not published: its digest can still change, and only a published edition should be cited. A revision such as `r2` has its own identifier and digest ([updates](updates.md)).
+The digest is computed with `sha256sum data/editions/<edition>/catalog.json` or `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, and it also appears in `SHA256SUMS.txt`. r1 is public and frozen but not an approved reference: cite its edition and catalog digest with that explicit status. r2 remains a local candidate and must not be cited as an approved release. A revision such as `r2` has its own identifier and digest ([updates](updates.md)).

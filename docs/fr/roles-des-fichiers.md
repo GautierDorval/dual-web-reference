@@ -23,7 +23,7 @@ Seule une courte liste de chemins techniques ou propres au collecteur est class�
 - `/doctrine/ssa-e-a2-dual-web.md` est la référence Markdown de la définition sur gautierdorval.com (`core_governance`), et une description explicative, non contractuelle, sur pagup.com (`supporting_documentation`).
 - `humans.txt`, `llms.txt`, `robots.txt` et `security.txt` partagent la même extension et relèvent de quatre classes différentes.
 
-Un fichier peut remplir plusieurs fonctions ; sa classe suit sa fonction principale, telle qu’elle a été examinée. Chaque décision est consignée avec sa règle, son état de revue et sa justification dans [scope-registry.csv](../../config/scope-registry.csv), puis publiée pour l’édition dans [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). La colonne `family` de ces tables est plus fine que les groupes ci-dessous.
+Un fichier peut remplir plusieurs fonctions ; sa classe suit sa fonction principale, telle qu’elle a été examinée. Chaque décision est consignée avec sa règle, son état de revue et sa justification dans [scope-registry.csv](../../config/scope-registry.csv), puis publiée pour l’édition dans [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). La colonne `family` de ces tables est plus fine que les groupes ci-dessous.
 
 ## Groupes et rôles
 
@@ -51,7 +51,7 @@ Une requête vers un descripteur opérationnel est une requête du document, jam
 - **Population documentaire principale** : les couples classés `core_governance` ou `discovery_index`. Le résultat principal y retient les requêtes GET de statut 200 dont le niveau enregistré est `provider_origin_verified_actor`, pour les rôles `ai_training`, `ai_search` et `user_initiated_fetch`.
 - **llms.txt** fait partie de la population principale et est toujours présenté à part. L’isoler ne retire jamais aucune autre ressource de la population.
 - **Couche documentaire élargie** : la population principale, plus `supporting_documentation`. C’est une lecture secondaire, publiée à côté du résultat principal et jamais fusionnée avec lui.
-- **Hors de l’une et de l’autre** : `operational_descriptor`, `control_resource`, `technical_resource`, `undeclared_bucket` et `unresolved_scope`. Chaque classe tenue hors de la population principale qui a des requêtes dans la fenêtre, `supporting_documentation` comprise, a sa propre ligne dans [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r1/exclusions.csv).
+- **Hors de l’une et de l’autre** : `operational_descriptor`, `control_resource`, `technical_resource`, `undeclared_bucket` et `unresolved_scope`. Chaque classe tenue hors de la population principale qui a des requêtes dans la fenêtre, `supporting_documentation` comprise, a sa propre ligne dans [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r2/exclusions.csv).
 
 L’unité est le couple site-chemin. Les miroirs (par exemple `/ai-governance.json` et `/.well-known/ai-governance.json`), les langues et les formats (un fichier Markdown et sa variante JSON ou YAML) sont des ressources distinctes. Une vue par famille peut les regrouper, sans les présenter comme des documents indépendants.
 

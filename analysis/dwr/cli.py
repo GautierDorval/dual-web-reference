@@ -1,5 +1,6 @@
 """Command-line interface. Network-free commands: verify, analyze, render, build-site,
-project-public, qualify, normalize, status, prepare-edition, import-existing, publication-gate.
+project-public, revise-public, qualify, normalize, status, prepare-edition, prepare-next,
+import-existing, publication-gate.
 acquire-readonly is the only command able to contact the producer database; it is
 a dry run unless --execute and an exact --confirm-scope are given.
 """
@@ -35,9 +36,11 @@ def build_parser() -> argparse.ArgumentParser:
     command = add("acquire-readonly", "bounded read-only SELECT extraction (dry run by default)", private=True)
     command.add_argument("--execute", action="store_true")
     command.add_argument("--confirm-scope", default=None)
+    command = add("prepare-next", "prepare the next consolidated window privately, offline", private=True)
     add("normalize", "typed working representation (private)", private=True)
     add("qualify", "apply scope, attribution and coverage rules (private)", private=True)
     add("project-public", "write the minimized public projection of an edition", private=True)
+    add("revise-public", "prepare a local privacy revision from frozen public observations")
     add("analyze", "recompute metrics.json from the public projection only")
     add("render", "figures, generated README/doc blocks from public data")
     add("verify", "replay all offline checks")
@@ -63,11 +66,19 @@ def _dispatch(args) -> int:
     from . import pipeline
 
     command = args.command
-    if command == "import-existing":
+    if command == "prepare-next":
+        from . import maintenance
+        result = maintenance.prepare(private_root(args.private_root))
+        _print(result)
+        return 1 if result["outcome"] in ("validation_failed", "source_unavailable") else 0
+    elif command == "import-existing":
         _print(pipeline.cmd_import(Path(args.package), private_root(args.private_root), args.edition))
     elif command == "acquire-readonly":
         _print(pipeline.cmd_acquire(private_root(args.private_root) if args.execute else None,
                                     args.edition, args.execute, args.confirm_scope))
+    elif command == "revise-public":
+        from . import revisions
+        _print(revisions.prepare(args.edition))
     elif command == "publication-gate":
         from . import gate
         from .common import REPO_ROOT

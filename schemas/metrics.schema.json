@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dual Web Reference metrics, shared structure; definition version recorded in catalog",
+  "type": "object",
+  "required": [
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "dwr-metrics/1.0.0"
+    },
+    "edition_id": {
+      "type": "string"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "metric_id",
+          "value",
+          "unit",
+          "status",
+          "numerator",
+          "denominator",
+          "filters",
+          "source_files",
+          "label_en",
+          "label_fr"
+        ],
+        "properties": {
+          "metric_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "calculated",
+              "not_calculable",
+              "not_available",
+              "withheld"
+            ]
+          },
+          "numerator": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "denominator": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "filters": {
+            "type": "string"
+          },
+          "source_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "label_en": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label_fr": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attribution_quality": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "withheld",
+                    "not_calculable",
+                    "not_available"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "reason"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

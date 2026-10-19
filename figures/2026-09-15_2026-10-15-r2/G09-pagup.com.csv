@@ -1,0 +1,12 @@
+source_path,target_path,relation_type
+/,/ai-usage-policy/,html_anchor
+/ai-usage-policy/,/dualweb-index.md,html_anchor
+/ai-usage-policy/,/identity.json,html_anchor
+/dualweb-index.md,/canon.md,markdown_link
+/dualweb-index.md,/claims.json,markdown_link
+/dualweb-index.md,/governance_scope.json,markdown_link
+/dualweb-index.md,/negative-definitions.md,markdown_link
+/dualweb-index.md,/services-non-publics.md,markdown_link
+/dualweb-index.md,/site-context.md,markdown_link
+/dualweb-index.md,/source-precedence.json,markdown_link
+/identity.json,/source-precedence.json,json_reference

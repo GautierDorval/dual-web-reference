@@ -82,6 +82,7 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
     root = relative(page, "index.html").rsplit("index.html", 1)[0]
     nav = [
         (t(lang, "Home", "Accueil"), f"{lang}/index.html"),
+        (t(lang, "Understand", "Comprendre"), f"{lang}/docs/{'file-roles' if lang == 'en' else 'roles-des-fichiers'}.html"),
         (t(lang, "Explorer", "Explorateur"), f"{lang}/explorer.html"),
         (t(lang, "Figures", "Figures"), f"{lang}/figures.html"),
         (t(lang, "Cases", "Cas"), f"{lang}/cases.html"),
@@ -93,20 +94,20 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
                     for label, href in nav)
     switch = (f'<a class="lang" href="{esc(relative(page, counterpart))}" hreflang="{"fr" if lang == "en" else "en"}">'
               f'{"Français" if lang == "en" else "English"}</a>') if counterpart else ""
-    banner = t(lang, f"Candidate edition {edition_id}: not reviewed, not published. Historical data, not real time.",
-               f"Édition candidate {edition_id} : non revue, non publiée. Données historiques, pas en temps réel.")
+    banner = t(lang, f"Public frozen r1 · local r2 candidate · reference not approved.",
+               f"r1 publique figée · r2 candidate locale · référence non approuvée.")
     if lang == "fr":
         banner = typo.fr(banner)
     return (f'<!doctype html>\n<html lang="{lang}"><head><meta charset="utf-8">'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">'
-            f'<meta name="robots" content="noindex">'
+            f'<meta name="robots" content="noindex"><meta name="referrer" content="no-referrer">'
             f'<title>{esc(title)} · Dual Web Reference</title>'
             f'<link rel="stylesheet" href="{esc(root)}assets/style.css"></head>'
-            f'<body><header class="site"><div class="wrap"><a class="brand" href="{esc(relative(page, lang + "/index.html"))}">Dual Web Reference</a>'
+            f'<body><a class="skip" href="#main">{esc(t(lang, "Skip to content", "Aller au contenu"))}</a><header class="site"><div class="wrap"><a class="brand" href="{esc(relative(page, lang + "/index.html"))}">Dual Web Reference</a>'
             f'<nav aria-label="{esc(t(lang, "Main", "Principale"))}">{links}</nav>{switch}</div>'
             f'<p class="banner wrap">{esc(banner)}</p></header>'
-            f'<main class="wrap">{body}</main>'
-            f'<footer class="wrap"><p>{esc(t(lang, "Static presentation built offline from the public edition files. No tracking, no external resources.", "Présentation statique construite hors ligne à partir des fichiers publics de l’édition. Aucun traçage, aucune ressource externe."))}</p></footer>'
+            f'<main id="main" class="wrap" tabindex="-1">{body}</main>'
+            f'<footer class="wrap"><p><a href="{esc(root)}CITATION.cff">Citation</a> · <a href="{esc(root)}CONTRIBUTING.md">Contribution</a> · <a href="{esc(root)}SECURITY.md">{esc(t(lang, "Security", "Sécurité"))}</a></p><p>{esc(t(lang, "Static local build. Historical r1 is public; this r2 presentation awaits review. No tracking or external assets.", "Build statique local. r1 historique est publique ; cette présentation r2 attend sa revue. Aucun traçage ni actif externe."))}</p></footer>'
             f'<script src="{esc(root)}assets/explorer.js" defer></script></body></html>\n')
 
 
@@ -118,7 +119,7 @@ def markdown_page(source_rel: str, page: str, lang: str, counterpart: str | None
 
 
 def table_html(columns, rows, *, table_id, filters=()) -> str:
-    head = "".join(f'<th scope="col" data-key="{esc(key)}"><button type="button" class="sort">{esc(label)}</button></th>'
+    head = "".join(f'<th scope="col" data-key="{esc(key)}"><button type="button" class="sort" disabled>{esc(label)}</button></th>'
                    for key, label, _ in columns)
     body = []
     for row in rows:
@@ -126,14 +127,14 @@ def table_html(columns, rows, *, table_id, filters=()) -> str:
         cells = "".join(f'<td class="{"num" if numeric else ""}" data-value="{esc(row.get(key, ""))}">{esc(row.get(key + "__display", row.get(key, "")))}</td>'
                         for key, _, numeric in columns)
         body.append(f"<tr{attrs}>{cells}</tr>")
-    return (f'<div class="table-wrap"><table id="{esc(table_id)}" class="data"><thead><tr>{head}</tr></thead>'
+    return (f'<div class="table-wrap" tabindex="0" role="region" aria-label="{esc(table_id)}"><table id="{esc(table_id)}" class="data"><thead><tr>{head}</tr></thead>'
             f'<tbody>{"".join(body)}</tbody></table></div>')
 
 
 def select(name, label, values, lang) -> str:
     options = f'<option value="">{esc(t(lang, "all", "tous"))}</option>' + "".join(
         f'<option value="{esc(value)}">{esc(value)}</option>' for value in values)
-    return f'<label>{esc(label)} <select data-filter="{esc(name)}">{options}</select></label>'
+    return f'<label>{esc(label)} <select disabled data-filter="{esc(name)}">{options}</select></label>'
 
 
 def explorer_page(edition_id: str, lang: str) -> None:
@@ -182,6 +183,10 @@ def explorer_page(edition_id: str, lang: str) -> None:
         select("role", t(lang, "Actor role", "Rôle d’acteur"), sorted({r["role"] for r in actor_rows}), lang),
         select("tier", t(lang, "Identification level", "Niveau d’identification"), sorted({r["tier"] for r in actor_rows}), lang),
     ])
+    actions = (f'<button type="button" class="reset" disabled>{esc(t(lang, "Reset filters", "Réinitialiser"))}</button>'
+               f'<button type="button" class="export" disabled>{esc(t(lang, "Export visible rows (spreadsheet-safe CSV)", "Exporter les lignes visibles (CSV pour tableur)"))}</button>')
+    controls += actions
+    actor_controls += actions
     intro = t(lang,
               "Every table below is complete without JavaScript. Filters and sorting only hide or reorder rows; the filter state is kept in the address so it can be shared. Counts are those of the edition files; paths are shown as text and never fetched.",
               "Chaque tableau ci-dessous est complet sans JavaScript. Les filtres et le tri ne font que masquer ou réordonner des lignes ; l’état des filtres est conservé dans l’adresse et peut être partagé. Les comptes sont ceux des fichiers de l’édition ; les chemins sont affichés comme texte et jamais consultés.")
@@ -189,12 +194,12 @@ def explorer_page(edition_id: str, lang: str) -> None:
             f"<p>{esc(intro)}</p>"
             f"<p>{esc(t(lang, 'Edition', 'Édition'))} <code>{esc(edition_id)}</code> · "
             f"{esc(load_json(edition / 'catalog.json')['labels']['period_' + lang])}</p>"
-            f'<h2 id="resources">{esc(t(lang, "Resources", "Ressources"))}</h2>'
+            f'<h2 id="resources-section">{esc(t(lang, "Resources", "Ressources"))}</h2>'
             f'<form class="filters" data-table="resources" onsubmit="return false">{controls}<output data-count="resources"></output></form>'
             + table_html(columns, rows, table_id="resources", filters=filters)
             + f'<p>{esc(t(lang, "Source:", "Source :"))} <a href="{esc(relative(page, f"data/editions/{edition_id}/resources.csv"))}">resources.csv</a>, '
               f'<a href="{esc(relative(page, f"data/editions/{edition_id}/resource-summary.csv"))}">resource-summary.csv</a></p>'
-            + f'<h2 id="actors">{esc(t(lang, "Recorded actors (scope of the initial report)", "Acteurs enregistrés (périmètre du relevé initial)"))}</h2>'
+            + f'<h2 id="actors-section">{esc(t(lang, "Recorded actors (scope of the initial report)", "Acteurs enregistrés (périmètre du relevé initial)"))}</h2>'
             + f'<p>{esc(t(lang, "Levels under review are shown as recorded; they are never merged with the provider-origin level.", "Les niveaux en revue sont présentés tels qu’enregistrés ; ils ne sont jamais fusionnés avec le niveau à origine fournisseur."))}</p>'
             + f'<form class="filters" data-table="actors" onsubmit="return false">{actor_controls}<output data-count="actors"></output></form>'
             + table_html(actor_columns, actor_rows, table_id="actors", filters=("site", "role", "tier"))
@@ -217,8 +222,8 @@ def figures_page(edition_id: str, lang: str) -> None:
         rows = read_csv(REPO_ROOT / "figures" / edition_id / f"{fid}.csv")
         columns = [(key, key, all(r[key].lstrip("-").replace(".", "", 1).isdigit() for r in rows if r[key])) for key in rows[0].keys()] if rows else []
         parts.append(f'<section class="figure" id="{esc(fid)}"><h2>{esc(fid)}. {esc(figure["title_" + lang])}</h2>'
-                     f'<figure><picture><source media="(max-width: 640px)" srcset="{esc(compact)}">'
-                     f'<img src="{esc(wide)}" alt="{esc(figure["alt_" + lang])}" loading="lazy" width="960"></picture>'
+                     f'<figure><div class="plot-wrap" tabindex="0" role="region" aria-label="{esc(fid)}"><picture><source media="(max-width: 640px)" srcset="{esc(compact)}">'
+                     f'<img src="{esc(wide)}" alt="{esc(figure["alt_" + lang])}" loading="lazy" width="960"></picture></div>'
                      f'<figcaption>{esc(figure["alt_" + lang])}</figcaption></figure>'
                      f'<details><summary>{esc(t(lang, "Data table", "Tableau de données"))}</summary>'
                      + table_html(columns, rows, table_id=f"table-{fid}")
@@ -246,20 +251,21 @@ def editions_page(edition_id: str, lang: str) -> None:
     index = load_json(REPO_ROOT / "data" / "index.json")
     latest = load_json(REPO_ROOT / "data" / "latest.json")
     status = load_json(REPO_ROOT / "data" / "status.json")
-    rows = [{"edition": e["edition_id"], "type": e["edition_type"], "status": e["status"],
+    rows = [{"edition": e["edition_id"], "type": e["edition_type"], "status": e["availability_status"], "reference": e["reference_release_status"], "review": e["review_status"],
              "start": e["period_start_inclusive"], "end": e["period_end_exclusive"], "revision": e["revision"],
              "published": e["published_at"] or "null", "revised": e["revised_at"] or "null"} for e in index["editions"]]
     columns = [("edition", t(lang, "Edition", "Édition"), False), ("type", "Type", False), ("status", t(lang, "Status", "Statut"), False),
+               ("reference", t(lang, "Reference", "Référence"), False), ("review", t(lang, "Review", "Revue"), False),
                ("start", "period_start_inclusive", False), ("end", "period_end_exclusive", False), ("revision", "Revision", True),
                ("published", "published_at", False), ("revised", "revised_at", False)]
     body = (f"<h1>{esc(t(lang, 'Editions', 'Éditions'))}</h1>"
-            f"<p>{esc(t(lang, 'Latest published edition: ', 'Dernière édition publiée : '))}<code>{esc(latest['latest_published_edition'] or 'null')}</code> "
+            f"<p>{esc(t(lang, 'Latest approved reference: ', 'Dernière référence approuvée : '))}<code>{esc(latest['latest_published_edition'] or 'null')}</code> "
             f"({esc(latest['reason'] or '')})</p>"
             f"<p>{esc(status['automation']['label_' + lang])} "
             f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(status['last_review']['state'])}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
             + table_html(columns, rows, table_id="editions")
-            + f"<p>{esc(t(lang, 'A single edition exists: no trend between periods is computed.', 'Une seule édition existe : aucune tendance entre périodes n’est calculée.'))}</p>")
+            + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a local privacy revision. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision locale de confidentialité. Aucune tendance entre périodes n’est calculée.'))}</p>")
     if lang == "fr":
         body = typo.fr(body)
     write_text(DIST / page, layout(page, lang, t(lang, "Editions", "Éditions"), body, f"{'fr' if lang == 'en' else 'en'}/editions.html", edition_id))
@@ -296,7 +302,7 @@ def cmd(edition_id: str) -> dict:
                '<meta name="robots" content="noindex"><title>Dual Web Reference</title><link rel="stylesheet" href="assets/style.css"></head>'
                '<body><main class="wrap landing"><h1>Dual Web Reference</h1>'
                '<p><a href="en/index.html" hreflang="en">English</a> · <a href="fr/index.html" hreflang="fr">Français</a></p>'
-               f'<p>{esc("Candidate edition " + edition_id + ", not published.")}</p></main></body></html>\n')
+               f'<p>{esc("Public historical r1; local candidate " + edition_id + "; no approved reference.")}</p></main></body></html>\n')
     write_text(DIST / "index.html", landing)
     pages = sorted(str(p.relative_to(DIST)).replace("\\", "/") for p in DIST.rglob("*.html"))
     return {"output": "site/dist", "pages": len(pages)}

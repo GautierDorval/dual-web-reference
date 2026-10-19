@@ -20,6 +20,7 @@ def cell(rid, site, path, role, tier, n, method="GET", status="200", name="GPTBo
 
 
 def build_edition(directory: Path, *, resources, cells, days, scope_rows=()):
+    (directory / "catalog.json").write_text('{"metrics_version":"dwr-metrics/1.0.0"}', encoding="utf-8")
     write(directory, "resources.csv", ["resource_id", "site_id", "path", "scope_class", "main_population", "llms_txt",
                                        "window_rows_status"],
           [{"resource_id": rid, "site_id": site, "path": path, "scope_class": scope, "main_population": main,

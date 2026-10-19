@@ -52,11 +52,11 @@ Deployment labels replace private identifiers, which are kept in the internal lo
 
 The deployment history is recorded by the producer from the Cloudflare control plane and was read with the joint aggregate (`producer_deployment_history` in `catalog.json`: number of observations, first and last observation, longest gap). It shows which deployment was active on each day of the window; the classifier file of the version it serves is the same file version that carries the predicate, which was introduced on 2026-08-24 and has not changed since. A deployment shorter than the longest gap between two observations cannot be excluded. The commit identifiers attached to the archived daily reports are not deployed versions and are not used to establish incidence.
 
-One observation is compatible with the defect without proving it: in this window, no request is recorded as `unknown_automation` or `claimed_actor_unverified` (see [actor-summary.csv](../../data/editions/2026-09-15_2026-10-15-r1/actor-summary.csv)).
+One observation is compatible with the defect without proving it: in this window, no request is recorded as `unknown_automation` or `claimed_actor_unverified` (see [actor-summary.csv](../../data/editions/2026-09-15_2026-10-15-r2/actor-summary.csv)).
 
 ## Why the two dependent levels cannot be re-evaluated
 
-The collector does not store raw Cloudflare signals: only the tier, the role and rule identifiers. The value of `verifiedBot` or of the category received for a past request is therefore unknown, and the two levels that depend on the predicate cannot be recomputed after the fact. They keep their stored labels, with `attribution_assessment = recorded_classification_reliability_under_review`. Nothing is moved between monitoring, AI, browser or false positive. They are left out of the main stratum and published separately in [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r1/exclusions.csv) and `actor-summary.csv`.
+The collector does not store raw Cloudflare signals: only the tier, the role and rule identifiers. The value of `verifiedBot` or of the category received for a past request is therefore unknown, and the two levels that depend on the predicate cannot be recomputed after the fact. They keep their stored labels, with `attribution_assessment = recorded_classification_reliability_under_review`. Nothing is moved between monitoring, AI, browser or false positive. They are left out of the main stratum and published separately in [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r2/exclusions.csv) and `actor-summary.csv`.
 
 ## The provider-origin branch
 

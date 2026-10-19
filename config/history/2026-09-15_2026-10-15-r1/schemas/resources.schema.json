@@ -1,0 +1,139 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "resource_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "site_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "path",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "url",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "format",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "language",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "scope_class",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "main_population",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "llms_txt",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "family",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "role_en",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "role_fr",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "declares_canonical_source",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "mentions_runtime_or_mcp",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "window_rows_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "producer_category",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "scope_rule_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "review_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "found_in_snapshot",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "graph_snapshot_id",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "outbound_relations",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "inbound_relations",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "historical_version_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "snapshot_sha256",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "justification",
+      "type": "string"
+    }
+  ],
+  "name": "resources.csv",
+  "primaryKey": [
+    "resource_id"
+  ],
+  "schema_version": "dwr-public/1.0.0"
+}

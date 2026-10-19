@@ -7,7 +7,7 @@ Plain-language definitions of the labels, codes and acronyms that appear in the 
 ## Units and time
 
 - **Site-path pair**: one path on one site, for example pagup.com with `/llms.txt`. It is the unit of every distinct count. It counts URLs, never consumers, and distinct counts per actor are never added together.
-- **Edition**: a frozen set of public tables for one window, identified as `<start>_<end>-r<n>`, for example `2026-09-15_2026-10-15-r1`. A candidate edition is prepared but not yet reviewed or published.
+- **Edition**: a frozen set of public tables for one window, identified as `<start>_<end>-r<n>`, for example `2026-09-15_2026-10-15-r1`. Candidate status means reference approval is pending; it does not determine public availability. r1 is a publicly accessible, unapproved candidate; r2 is local.
 - **Revision**: the `r<n>` suffix. A correction creates a new revision (`r2`) with its reason, numeric delta, author, reviewer and a link to the previous revision; the earlier revision is never edited ([updates.md](updates.md)).
 - **Window**: the measured period of an edition. Monthly reference windows start on the 15th, in UTC.
 - **Exclusive end**: the end date is not included. The window `[2026-09-15, 2026-10-15)` covers September 15 to October 14 inclusive, that is 30 days; the next one, `[2026-10-15, 2026-11-15)`, has 31 days.
@@ -69,8 +69,8 @@ The main result keeps the first three roles.
 
 - `coverage_status` = `partial_declared`: the producer archive declares the report of the day partial; rows exist, but completeness is not attested ([quality-and-coverage.md](quality-and-coverage.md)).
 - `observed`: the cell is recorded with a count above zero. `observed_zero`: an explicit zero, written only in `daily-family-summary.csv`, for a day, family and role without any such request in the producer table; under partial coverage, this is not proof of absence. An empty cell (null) means not available or not calculable, never zero.
-- Absent row: a combination without any row in `consultations.csv` or `daily-summary.csv` had no recorded request in the producer table; it is not a measured absence on the web.
-- `protected_strata`, with `http_method` and `http_status` = `ANY`: in `daily-summary.csv`, the single daily row per site and population that combines every request of the protected strata, whatever their role, stored tier, method or status ([privacy.md](privacy.md)).
+- Absent row: in the frozen r1 tables, no row indicates no recorded request at the specified grain. In r2 daily tables, protected rows are withheld: their absence never means zero.
+- `protected_strata`, with `http_method` and `http_status` = `ANY`: in frozen r1 `daily-summary.csv`, the single daily row per site and population that combines every request of the protected strata, whatever their role, stored tier, method or status ([privacy.md](privacy.md)).
 - `cell_derivation` = `joint_exact`: the cell is an exact sum of rows of the joint aggregate ([methodology.md](methodology.md)).
 - `initiation_provenance` = `unknown`, `initiation_evidence_status` = `not_established`: who triggered the request is not established.
 - `source_mode` = `joint_acquisition`: the edition was built from a bounded read-only extraction of the producer's joint aggregate (day, site, path, method, status, actor and tier crossed together), checked against the exports of the internal report.

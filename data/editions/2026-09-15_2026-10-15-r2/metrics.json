@@ -1,0 +1,1693 @@
+{
+  "edition_id": "2026-09-15_2026-10-15-r2",
+  "metrics": [
+    {
+      "denominator": null,
+      "filters": "all paths recorded by the collector on the three sites, all methods, statuses and actors",
+      "label_en": "All requests recorded by the collector",
+      "label_fr": "Toutes les requêtes enregistrées par le collecteur",
+      "metric_id": "collector.requests",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 24815
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Sum of archived aggregate counts",
+      "label_fr": "Somme des comptes agrégés archivés",
+      "metric_id": "coverage.aggregate_sum",
+      "numerator": null,
+      "reason": "daily_coverage_complement_withheld_by_disclosure_policy",
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "withheld",
+      "unit": "requests",
+      "value": null
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days with an aggregate/V3 count gap",
+      "label_fr": "Jours avec écart entre agrégats et V3",
+      "metric_id": "coverage.aggregate_v3_mismatch_days",
+      "numerator": null,
+      "reason": "daily_coverage_complement_withheld_by_disclosure_policy",
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "withheld",
+      "unit": "days",
+      "value": null
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days with missing collector window attestation",
+      "label_fr": "Jours sans attestation de fenêtre du collecteur",
+      "metric_id": "coverage.days_attestation_missing",
+      "numerator": null,
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 28
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days in the window",
+      "label_fr": "Jours de la fenêtre",
+      "metric_id": "coverage.days_in_window",
+      "numerator": null,
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 30
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days with archived rows",
+      "label_fr": "Jours avec lignes archivées",
+      "metric_id": "coverage.days_observed",
+      "numerator": null,
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 30
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days whose archive report is partial",
+      "label_fr": "Jours dont le rapport d’archive est partiel",
+      "metric_id": "coverage.days_partial_declared",
+      "numerator": null,
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 30
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Days whose joint total equals the archived aggregate",
+      "label_fr": "Jours dont le total conjoint égale l’agrégat archivé",
+      "metric_id": "coverage.joint_matches_archive_days",
+      "numerator": null,
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 30
+    },
+    {
+      "denominator": null,
+      "filters": "",
+      "label_en": "Sum of archived V3 counts",
+      "label_fr": "Somme des comptes V3 archivés",
+      "metric_id": "coverage.v3_sum",
+      "numerator": null,
+      "reason": "daily_coverage_complement_withheld_by_disclosure_policy",
+      "source_files": [
+        "coverage.csv"
+      ],
+      "status": "withheld",
+      "unit": "requests",
+      "value": null
+    },
+    {
+      "denominator": null,
+      "filters": "scope class control_resource",
+      "label_en": "control_resource",
+      "label_fr": "control_resource",
+      "metric_id": "exclusion.scope:control_resource.requests",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 4167
+    },
+    {
+      "denominator": null,
+      "filters": "scope class operational_descriptor",
+      "label_en": "operational_descriptor",
+      "label_fr": "operational_descriptor",
+      "metric_id": "exclusion.scope:operational_descriptor.requests",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 617
+    },
+    {
+      "denominator": null,
+      "filters": "scope class supporting_documentation",
+      "label_en": "supporting_documentation",
+      "label_fr": "supporting_documentation",
+      "metric_id": "exclusion.scope:supporting_documentation.requests",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 4589
+    },
+    {
+      "denominator": null,
+      "filters": "scope class technical_resource",
+      "label_en": "technical_resource",
+      "label_fr": "technical_resource",
+      "metric_id": "exclusion.scope:technical_resource.requests",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 201
+    },
+    {
+      "denominator": null,
+      "filters": "scope class undeclared_bucket",
+      "label_en": "undeclared_bucket",
+      "label_fr": "undeclared_bucket",
+      "metric_id": "exclusion.scope:undeclared_bucket.requests",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 1061
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population plus supporting_documentation (extended documentary layer); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch",
+      "label_en": "Extended documentary layer (secondary reading)",
+      "label_fr": "Couche documentaire élargie (lecture secondaire)",
+      "metric_id": "extended.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 356
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "extended documentary layer; pairs with at least one provider-origin AI GET 200",
+      "label_en": "Extended layer pairs",
+      "label_fr": "Couples de la couche élargie",
+      "metric_id": "extended.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 247
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; GET 200; all stored tiers",
+      "label_en": "Historical scope GET 200, all classifications",
+      "label_fr": "GET 200 du périmètre historique, toutes classifications",
+      "metric_id": "historical.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 14126
+    },
+    {
+      "attribution_quality": "recorded_classification_reliability_under_review",
+      "denominator": null,
+      "filters": "historical report scope; stored tier network_verified_claimed_actor; AI roles; GET 200",
+      "label_en": "Declared AI names with a network signal under review (never added to the provider tier)",
+      "label_fr": "Noms IA déclarés avec signal réseau en revue (jamais ajoutés au niveau fournisseur)",
+      "metric_id": "historical.network_claimed_ai.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 561
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "historical report scope; provider-origin AI roles; GET 200",
+      "label_en": "Historical provider-origin AI GET 200",
+      "label_fr": "GET 200 IA à origine fournisseur, périmètre historique",
+      "metric_id": "historical.provider_ai.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 372
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "historical report scope; provider-origin; role ai_search; GET 200",
+      "label_en": "ai_search",
+      "label_fr": "ai_search",
+      "metric_id": "historical.provider_ai.role.ai_search.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 44
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "historical report scope; provider-origin; role ai_training; GET 200",
+      "label_en": "ai_training",
+      "label_fr": "ai_training",
+      "metric_id": "historical.provider_ai.role.ai_training.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 302
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "historical report scope; provider-origin; role user_initiated_fetch; GET 200",
+      "label_en": "user_initiated_fetch",
+      "label_fr": "user_initiated_fetch",
+      "metric_id": "historical.provider_ai.role.user_initiated_fetch.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 26
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; provider-origin AI roles; GET 200",
+      "label_en": "Historical provider-origin AI pairs",
+      "label_fr": "Couples IA à origine fournisseur, périmètre historique",
+      "metric_id": "historical.provider_ai.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 259
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope",
+      "label_en": "Historical scope pairs",
+      "label_fr": "Couples du périmètre historique",
+      "metric_id": "historical.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 386
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; stored tier cloudflare_verified_unattributed; GET 200; all roles",
+      "label_en": "cloudflare_verified_unattributed",
+      "label_fr": "cloudflare_verified_unattributed",
+      "metric_id": "historical.tier.cloudflare_verified_unattributed.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 12476
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; stored tier network_verified_claimed_actor; GET 200; all roles",
+      "label_en": "network_verified_claimed_actor",
+      "label_fr": "network_verified_claimed_actor",
+      "metric_id": "historical.tier.network_verified_claimed_actor.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 1123
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; stored tier provider_origin_verified_actor; GET 200; all roles",
+      "label_en": "provider_origin_verified_actor",
+      "label_fr": "provider_origin_verified_actor",
+      "metric_id": "historical.tier.provider_origin_verified_actor.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 505
+    },
+    {
+      "denominator": null,
+      "filters": "historical report scope; stored tier spoofed_or_failed_verification; GET 200; all roles",
+      "label_en": "spoofed_or_failed_verification",
+      "label_fr": "spoofed_or_failed_verification",
+      "metric_id": "historical.tier.spoofed_or_failed_verification.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 22
+    },
+    {
+      "attribution_quality": "recorded_classification_reliability_under_review",
+      "denominator": null,
+      "filters": "historical report scope; stored tier cloudflare_verified_unattributed; GET 200",
+      "label_en": "Recorded as Cloudflare-verified, unattributed (under review)",
+      "label_fr": "Enregistrées comme vérifiées par Cloudflare, non attribuées (en revue)",
+      "metric_id": "historical.unattributed.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 12476
+    },
+    {
+      "attribution_quality": "recorded_classification_reliability_under_review",
+      "denominator": 14126,
+      "filters": "historical report scope; GET 200",
+      "label_en": "Share of historical GET 200 recorded as unattributed",
+      "label_fr": "Part des GET 200 historiques enregistrée non attribuée",
+      "metric_id": "historical.unattributed.share_of_get200",
+      "numerator": 12476,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.883194
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_family=openai",
+      "label_en": "Provider family openai: requests",
+      "label_fr": "Famille de fournisseur openai : requêtes",
+      "metric_id": "main.actor_family.openai.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 229
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_family=openai",
+      "label_en": "Provider family openai: share of main selection",
+      "label_fr": "Famille de fournisseur openai : part de la sélection principale",
+      "metric_id": "main.actor_family.openai.share",
+      "numerator": 229,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.934694
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_family=perplexity",
+      "label_en": "Provider family perplexity: requests",
+      "label_fr": "Famille de fournisseur perplexity : requêtes",
+      "metric_id": "main.actor_family.perplexity.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 16
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_family=perplexity",
+      "label_en": "Provider family perplexity: share of main selection",
+      "label_fr": "Famille de fournisseur perplexity : part de la sélection principale",
+      "metric_id": "main.actor_family.perplexity.share",
+      "numerator": 16,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.065306
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=ChatGPT-User",
+      "label_en": "Recorded agent ChatGPT-User: requests",
+      "label_fr": "Agent enregistré ChatGPT-User : requêtes",
+      "metric_id": "main.actor_name.ChatGPT-User.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 15
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=ChatGPT-User",
+      "label_en": "Recorded agent ChatGPT-User: share of main selection",
+      "label_fr": "Agent enregistré ChatGPT-User : part de la sélection principale",
+      "metric_id": "main.actor_name.ChatGPT-User.share",
+      "numerator": 15,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.061224
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=GPTBot",
+      "label_en": "Recorded agent GPTBot: requests",
+      "label_fr": "Agent enregistré GPTBot : requêtes",
+      "metric_id": "main.actor_name.GPTBot.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 200
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=GPTBot",
+      "label_en": "Recorded agent GPTBot: share of main selection",
+      "label_fr": "Agent enregistré GPTBot : part de la sélection principale",
+      "metric_id": "main.actor_name.GPTBot.share",
+      "numerator": 200,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.816327
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=OAI-SearchBot",
+      "label_en": "Recorded agent OAI-SearchBot: requests",
+      "label_fr": "Agent enregistré OAI-SearchBot : requêtes",
+      "metric_id": "main.actor_name.OAI-SearchBot.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 14
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=OAI-SearchBot",
+      "label_en": "Recorded agent OAI-SearchBot: share of main selection",
+      "label_fr": "Agent enregistré OAI-SearchBot : part de la sélection principale",
+      "metric_id": "main.actor_name.OAI-SearchBot.share",
+      "numerator": 14,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.057143
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=PerplexityBot",
+      "label_en": "Recorded agent PerplexityBot: requests",
+      "label_fr": "Agent enregistré PerplexityBot : requêtes",
+      "metric_id": "main.actor_name.PerplexityBot.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 16
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; actor_name=PerplexityBot",
+      "label_en": "Recorded agent PerplexityBot: share of main selection",
+      "label_fr": "Agent enregistré PerplexityBot : part de la sélection principale",
+      "metric_id": "main.actor_name.PerplexityBot.share",
+      "numerator": 16,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.065306
+    },
+    {
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series)",
+      "label_en": "Automated requests on the three busiest days",
+      "label_fr": "Requêtes automatisées des trois journées les plus actives",
+      "metric_id": "main.automated.top3_days_get200",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 185
+    },
+    {
+      "denominator": 230,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series)",
+      "label_en": "Share of automated requests on the three busiest days",
+      "label_fr": "Part des requêtes automatisées sur les trois journées les plus actives",
+      "metric_id": "main.automated.top3_days_share",
+      "numerator": 185,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.804348
+    },
+    {
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); date=2026-10-09",
+      "label_en": "Automated requests on ranked day 1",
+      "label_fr": "Requêtes automatisées de la journée au rang 1",
+      "metric_id": "main.automated.top_day_1.get200",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 101
+    },
+    {
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); date=2026-09-19",
+      "label_en": "Automated requests on ranked day 2",
+      "label_fr": "Requêtes automatisées de la journée au rang 2",
+      "metric_id": "main.automated.top_day_2.get200",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 56
+    },
+    {
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); date=2026-09-22",
+      "label_en": "Automated requests on ranked day 3",
+      "label_fr": "Requêtes automatisées de la journée au rang 3",
+      "metric_id": "main.automated.top_day_3.get200",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 28
+    },
+    {
+      "denominator": 269,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; denominator: main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory",
+      "label_en": "Conditional share of resources with recorded rows",
+      "label_fr": "Part conditionnelle des ressources avec lignes",
+      "metric_id": "main.conditional_pair_share",
+      "numerator": 174,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.64684
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); any site",
+      "label_en": "Days with requests, any site",
+      "label_fr": "Jours avec requêtes, tous sites",
+      "metric_id": "main.daily.days_with_requests",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 12
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); site better-robots.com",
+      "label_en": "Days with requests on better-robots.com",
+      "label_fr": "Jours avec requêtes sur better-robots.com",
+      "metric_id": "main.daily.site.better-robots.com.days_with_requests",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 4
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); site gautierdorval.com",
+      "label_en": "Days with requests on gautierdorval.com",
+      "label_fr": "Jours avec requêtes sur gautierdorval.com",
+      "metric_id": "main.daily.site.gautierdorval.com.days_with_requests",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 9
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); site pagup.com",
+      "label_en": "Days with requests on pagup.com",
+      "label_fr": "Jours avec requêtes sur pagup.com",
+      "metric_id": "main.daily.site.pagup.com.days_with_requests",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 3
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; automated roles ai_training and ai_search only (the small-cell policy keeps user-initiated fetches out of daily series); sum of the daily series (equals main.get200 minus user-initiated fetches)",
+      "label_en": "Sum of the daily series",
+      "label_fr": "Somme de la série quotidienne",
+      "metric_id": "main.daily.sum_check",
+      "numerator": null,
+      "source_files": [
+        "daily-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 230
+    },
+    {
+      "denominator": null,
+      "filters": "main population; GET 200; AI roles; exact names GPTBot, OAI-SearchBot, PerplexityBot, ChatGPT-User; failed tier spoofed_or_failed_verification; denominator matched provider-origin plus failed tier only; not proven spoofing",
+      "label_en": "Failed origin verification for four selected names",
+      "label_fr": "Vérification d’origine échouée pour quatre noms retenus",
+      "metric_id": "main.failed_origin_selected.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 17
+    },
+    {
+      "denominator": 262,
+      "filters": "main population; GET 200; AI roles; exact names GPTBot, OAI-SearchBot, PerplexityBot, ChatGPT-User; failed tier spoofed_or_failed_verification; denominator matched provider-origin plus failed tier only; not proven spoofing",
+      "label_en": "Failed-origin share among selected verified and failed tiers",
+      "label_fr": "Part à origine non vérifiée parmi les niveaux vérifiés et échoués retenus",
+      "metric_id": "main.failed_origin_selected.share",
+      "numerator": 17,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.064885
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch",
+      "label_en": "GET 200 requests, main documentary population, provider-origin AI roles",
+      "label_fr": "Requêtes GET 200, population documentaire principale, rôles IA à origine fournisseur",
+      "metric_id": "main.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 245
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; path /llms.txt",
+      "label_en": "Of which /llms.txt",
+      "label_fr": "Dont /llms.txt",
+      "metric_id": "main.llms_get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 6
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; /llms.txt",
+      "label_en": "llms.txt resources with recorded rows",
+      "label_fr": "Ressources llms.txt avec lignes enregistrées",
+      "metric_id": "main.llms_recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 3
+    },
+    {
+      "denominator": 3,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; denominator: main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; no exposure adjustment",
+      "label_en": "llms.txt requests per resource with rows, unadjusted exposure",
+      "label_fr": "Requêtes llms.txt par ressource avec lignes, exposition non ajustée",
+      "metric_id": "main.llms_requests_per_recorded_url",
+      "numerator": 6,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests per resource with recorded rows",
+      "value": 2.0
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; path other than /llms.txt",
+      "label_en": "Of which other resources",
+      "label_fr": "Dont autres ressources",
+      "metric_id": "main.other_get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 239
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; other resources",
+      "label_en": "Other resources with recorded rows",
+      "label_fr": "Autres ressources avec lignes enregistrées",
+      "metric_id": "main.other_recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 266
+    },
+    {
+      "denominator": 266,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; denominator: main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; no exposure adjustment",
+      "label_en": "Other requests per resource with rows, unadjusted exposure",
+      "label_fr": "Autres requêtes par ressource avec lignes, exposition non ajustée",
+      "metric_id": "main.other_requests_per_recorded_url",
+      "numerator": 239,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests per resource with recorded rows",
+      "value": 0.898496
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 245,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch",
+      "label_en": "Share of these requests going to resources other than /llms.txt",
+      "label_fr": "Part de ces requêtes vers des ressources autres que /llms.txt",
+      "metric_id": "main.other_share",
+      "numerator": 239,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.97551
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; other than /llms.txt",
+      "label_en": "Site-path pairs other than /llms.txt",
+      "label_fr": "Couples site-chemin autres que /llms.txt",
+      "metric_id": "main.other_site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 172
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory",
+      "label_en": "Main resources with recorded rows",
+      "label_fr": "Ressources principales avec lignes enregistrées",
+      "metric_id": "main.recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 269
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch",
+      "label_en": "Most days for one pair",
+      "label_fr": "Nombre maximal de jours pour un couple",
+      "metric_id": "main.recurrence.max_days",
+      "numerator": null,
+      "source_files": [
+        "resource-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "days",
+      "value": 5
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; days with requests: 1",
+      "label_en": "Pairs requested on 1 days",
+      "label_fr": "Couples demandés 1 jours",
+      "metric_id": "main.recurrence.pairs_with_1_days",
+      "numerator": null,
+      "source_files": [
+        "resource-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 133
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; days with requests: 2-3",
+      "label_en": "Pairs requested on 2-3 days",
+      "label_fr": "Couples demandés 2-3 jours",
+      "metric_id": "main.recurrence.pairs_with_2_to_3_days",
+      "numerator": null,
+      "source_files": [
+        "resource-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 38
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; days with requests: 4-7",
+      "label_en": "Pairs requested on 4-7 days",
+      "label_fr": "Couples demandés 4-7 jours",
+      "metric_id": "main.recurrence.pairs_with_4_to_7_days",
+      "numerator": null,
+      "source_files": [
+        "resource-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 3
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; days with requests: 8+",
+      "label_en": "Pairs requested on 8+ days",
+      "label_fr": "Couples demandés 8+ jours",
+      "metric_id": "main.recurrence.pairs_with_8_or_more_days",
+      "numerator": null,
+      "source_files": [
+        "resource-summary.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 0
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_search",
+      "label_en": "Role ai_search",
+      "label_fr": "Rôle ai_search",
+      "metric_id": "main.role.ai_search.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 30
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_search; site better-robots.com",
+      "label_en": "ai_search on better-robots.com",
+      "label_fr": "ai_search sur better-robots.com",
+      "metric_id": "main.role.ai_search.site.better-robots.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 20
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_search; site gautierdorval.com",
+      "label_en": "ai_search on gautierdorval.com",
+      "label_fr": "ai_search sur gautierdorval.com",
+      "metric_id": "main.role.ai_search.site.gautierdorval.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 10
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_search; site pagup.com",
+      "label_en": "ai_search on pagup.com",
+      "label_fr": "ai_search sur pagup.com",
+      "metric_id": "main.role.ai_search.site.pagup.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 0
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_training",
+      "label_en": "Role ai_training",
+      "label_fr": "Rôle ai_training",
+      "metric_id": "main.role.ai_training.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 200
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_training; site better-robots.com",
+      "label_en": "ai_training on better-robots.com",
+      "label_fr": "ai_training sur better-robots.com",
+      "metric_id": "main.role.ai_training.site.better-robots.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 101
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_training; site gautierdorval.com",
+      "label_en": "ai_training on gautierdorval.com",
+      "label_fr": "ai_training sur gautierdorval.com",
+      "metric_id": "main.role.ai_training.site.gautierdorval.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 38
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role ai_training; site pagup.com",
+      "label_en": "ai_training on pagup.com",
+      "label_fr": "ai_training sur pagup.com",
+      "metric_id": "main.role.ai_training.site.pagup.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 61
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role user_initiated_fetch",
+      "label_en": "Role user_initiated_fetch",
+      "label_fr": "Rôle user_initiated_fetch",
+      "metric_id": "main.role.user_initiated_fetch.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 15
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role user_initiated_fetch; site better-robots.com",
+      "label_en": "user_initiated_fetch on better-robots.com",
+      "label_fr": "user_initiated_fetch sur better-robots.com",
+      "metric_id": "main.role.user_initiated_fetch.site.better-robots.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 1
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role user_initiated_fetch; site gautierdorval.com",
+      "label_en": "user_initiated_fetch on gautierdorval.com",
+      "label_fr": "user_initiated_fetch sur gautierdorval.com",
+      "metric_id": "main.role.user_initiated_fetch.site.gautierdorval.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 14
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; role user_initiated_fetch; site pagup.com",
+      "label_en": "user_initiated_fetch on pagup.com",
+      "label_fr": "user_initiated_fetch sur pagup.com",
+      "metric_id": "main.role.user_initiated_fetch.site.pagup.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 0
+    },
+    {
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on historical-scope pairs outside the main documentary population",
+      "label_en": "Removed by the editorial scope review",
+      "label_fr": "Retirées par la revue éditoriale du périmètre",
+      "metric_id": "main.scope_delta.provider_ai_get200_excluded",
+      "numerator": 372,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 127
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; excluding role user_initiated_fetch (sensitivity analysis, not evidence of independence)",
+      "label_en": "Sensitivity: without user-initiated fetches",
+      "label_fr": "Sensibilité : sans récupérations à la demande",
+      "metric_id": "main.sensitivity.without_user_fetch.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 230
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; excluding role user_initiated_fetch",
+      "label_en": "Pairs without user-initiated fetches",
+      "label_fr": "Couples sans récupérations à la demande",
+      "metric_id": "main.sensitivity.without_user_fetch.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 172
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site better-robots.com",
+      "label_en": "better-robots.com",
+      "label_fr": "better-robots.com",
+      "metric_id": "main.site.better-robots.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 122
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site better-robots.com; /llms.txt",
+      "label_en": "better-robots.com /llms.txt",
+      "label_fr": "better-robots.com /llms.txt",
+      "metric_id": "main.site.better-robots.com.llms_get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 3
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 122,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site better-robots.com",
+      "label_en": "better-robots.com share other than /llms.txt",
+      "label_fr": "better-robots.com, part hors /llms.txt",
+      "metric_id": "main.site.better-robots.com.other_share",
+      "numerator": 119,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.97541
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; better-robots.com",
+      "label_en": "better-robots.com: resources with recorded rows",
+      "label_fr": "better-robots.com : ressources avec lignes enregistrées",
+      "metric_id": "main.site.better-robots.com.recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 95
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site better-robots.com",
+      "label_en": "better-robots.com pairs",
+      "label_fr": "Couples better-robots.com",
+      "metric_id": "main.site.better-robots.com.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 90
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site gautierdorval.com",
+      "label_en": "gautierdorval.com",
+      "label_fr": "gautierdorval.com",
+      "metric_id": "main.site.gautierdorval.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 62
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site gautierdorval.com; /llms.txt",
+      "label_en": "gautierdorval.com /llms.txt",
+      "label_fr": "gautierdorval.com /llms.txt",
+      "metric_id": "main.site.gautierdorval.com.llms_get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 3
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 62,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site gautierdorval.com",
+      "label_en": "gautierdorval.com share other than /llms.txt",
+      "label_fr": "gautierdorval.com, part hors /llms.txt",
+      "metric_id": "main.site.gautierdorval.com.other_share",
+      "numerator": 59,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 0.951613
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; gautierdorval.com",
+      "label_en": "gautierdorval.com: resources with recorded rows",
+      "label_fr": "gautierdorval.com : ressources avec lignes enregistrées",
+      "metric_id": "main.site.gautierdorval.com.recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 113
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site gautierdorval.com",
+      "label_en": "gautierdorval.com pairs",
+      "label_fr": "Couples gautierdorval.com",
+      "metric_id": "main.site.gautierdorval.com.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 43
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site pagup.com",
+      "label_en": "pagup.com",
+      "label_fr": "pagup.com",
+      "metric_id": "main.site.pagup.com.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 61
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site pagup.com; /llms.txt",
+      "label_en": "pagup.com /llms.txt",
+      "label_fr": "pagup.com /llms.txt",
+      "metric_id": "main.site.pagup.com.llms_get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 0
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": 61,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site pagup.com",
+      "label_en": "pagup.com share other than /llms.txt",
+      "label_fr": "pagup.com, part hors /llms.txt",
+      "metric_id": "main.site.pagup.com.other_share",
+      "numerator": 61,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "ratio",
+      "value": 1.0
+    },
+    {
+      "denominator": null,
+      "filters": "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory; pagup.com",
+      "label_en": "pagup.com: resources with recorded rows",
+      "label_fr": "pagup.com : ressources avec lignes enregistrées",
+      "metric_id": "main.site.pagup.com.recorded_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 61
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; site pagup.com",
+      "label_en": "pagup.com pairs",
+      "label_fr": "Couples pagup.com",
+      "metric_id": "main.site.pagup.com.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 41
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "site-path pairs of the main documentary population (scope classes core_governance and discovery_index); GET with status 200; stored tier provider_origin_verified_actor; roles ai_training, ai_search, user_initiated_fetch; pairs with at least one request",
+      "label_en": "Distinct site-path pairs receiving these requests",
+      "label_fr": "Couples site-chemin distincts recevant ces requêtes",
+      "metric_id": "main.site_path_pairs",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "site-path pairs",
+      "value": 174
+    },
+    {
+      "denominator": null,
+      "filters": "main documentary population; GET 200; stored tier cloudflare_verified_unattributed; all roles",
+      "label_en": "cloudflare_verified_unattributed",
+      "label_fr": "cloudflare_verified_unattributed",
+      "metric_id": "main_population.tier.cloudflare_verified_unattributed.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 9186
+    },
+    {
+      "denominator": null,
+      "filters": "main documentary population; GET 200; stored tier network_verified_claimed_actor; all roles",
+      "label_en": "network_verified_claimed_actor",
+      "label_fr": "network_verified_claimed_actor",
+      "metric_id": "main_population.tier.network_verified_claimed_actor.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 827
+    },
+    {
+      "denominator": null,
+      "filters": "main documentary population; GET 200; stored tier provider_origin_verified_actor; all roles",
+      "label_en": "provider_origin_verified_actor",
+      "label_fr": "provider_origin_verified_actor",
+      "metric_id": "main_population.tier.provider_origin_verified_actor.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 335
+    },
+    {
+      "denominator": null,
+      "filters": "main documentary population; GET 200; stored tier spoofed_or_failed_verification; all roles",
+      "label_en": "spoofed_or_failed_verification",
+      "label_fr": "spoofed_or_failed_verification",
+      "metric_id": "main_population.tier.spoofed_or_failed_verification.get200",
+      "numerator": null,
+      "source_files": [
+        "consultations.csv",
+        "resources.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 18
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on pairs of scope class control_resource",
+      "label_en": "control_resource",
+      "label_fr": "control_resource",
+      "metric_id": "scope_delta.control_resource.provider_ai_get200",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 419
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on pairs of scope class operational_descriptor",
+      "label_en": "operational_descriptor",
+      "label_fr": "operational_descriptor",
+      "metric_id": "scope_delta.operational_descriptor.provider_ai_get200",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 12
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on pairs of scope class supporting_documentation",
+      "label_en": "supporting_documentation",
+      "label_fr": "supporting_documentation",
+      "metric_id": "scope_delta.supporting_documentation.provider_ai_get200",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 111
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on pairs of scope class technical_resource",
+      "label_en": "technical_resource",
+      "label_fr": "technical_resource",
+      "metric_id": "scope_delta.technical_resource.provider_ai_get200",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 4
+    },
+    {
+      "attribution_quality": "provider_origin_registry_match",
+      "denominator": null,
+      "filters": "provider-origin AI-role GET 200 on pairs of scope class undeclared_bucket",
+      "label_en": "undeclared_bucket",
+      "label_fr": "undeclared_bucket",
+      "metric_id": "scope_delta.undeclared_bucket.provider_ai_get200",
+      "numerator": null,
+      "source_files": [
+        "exclusions.csv"
+      ],
+      "status": "calculated",
+      "unit": "requests",
+      "value": 1
+    }
+  ],
+  "schema_version": "dwr-metrics/1.0.0"
+}

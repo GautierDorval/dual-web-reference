@@ -1,0 +1,16 @@
+{
+  "additional_changes": [
+    "presentation",
+    "metadata",
+    "derived_metrics"
+  ],
+  "cause": "privacy_revision",
+  "compared_with": "2026-09-15_2026-10-15-r1",
+  "coverage_daily_margins": "withheld_not_zero",
+  "edition_id": "2026-09-15_2026-10-15-r2",
+  "is_growth": false,
+  "observations_changed": false,
+  "protected_daily": "withheld_not_zero",
+  "schema_version": "dwr-delta/2.0.0",
+  "source_payload_status": "frozen_original_bytes_preserved"
+}

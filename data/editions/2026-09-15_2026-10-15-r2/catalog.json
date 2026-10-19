@@ -1,0 +1,212 @@
+{
+  "availability_status": "local_candidate",
+  "dates": {
+    "calendar_days": 30,
+    "exports_extracted_at": {
+      "end": "2026-10-16T14:29:20.485Z",
+      "start": "2026-10-16T14:18:23.403Z"
+    },
+    "extracted_at": {
+      "end": "2026-10-16T22:58:54.949414Z",
+      "start": "2026-10-16T22:57:16.784712Z"
+    },
+    "generated_at": "2026-10-19",
+    "graph_snapshot_at": {
+      "better-robots.com": "2026-10-06",
+      "gautierdorval.com": "2026-10-14",
+      "pagup.com": "2026-10-06"
+    },
+    "last_included_date": "2026-10-14",
+    "latest_available_data_date": "2026-10-14",
+    "next_review_target": {
+      "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
+      "guarantee": "none: planned target; manual preparation until automation is authorized and proven",
+      "next_monthly_window": {
+        "days": 31,
+        "end_exclusive": "2026-11-15",
+        "start_inclusive": "2026-10-15"
+      },
+      "weekly_review": "2026-10-19T13:17:00Z"
+    },
+    "period_end_exclusive": "2026-10-15",
+    "period_start_inclusive": "2026-09-15",
+    "published_at": null,
+    "revised_at": "2026-10-19",
+    "source_snapshot_at": "2026-10-16T12:30:48Z",
+    "timezone": "UTC"
+  },
+  "edition_id": "2026-09-15_2026-10-15-r2",
+  "edition_type": "monthly_reference",
+  "files": [
+    {
+      "bytes": 25179,
+      "empty_reason": null,
+      "path": "actor-summary.csv",
+      "rows": 141,
+      "sha256": "5d18d5568b8653c256908c1acd66eb268b0ee663d15657495807e72e369693ee",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 881583,
+      "empty_reason": null,
+      "path": "consultations.csv",
+      "rows": 2049,
+      "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 4717,
+      "empty_reason": null,
+      "path": "coverage.csv",
+      "rows": 30,
+      "sha256": "bc2411cd0fa055947297e78a8363e8f54eb2a8fb267221125722b1107921c255",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 146160,
+      "empty_reason": null,
+      "path": "daily-family-summary.csv",
+      "rows": 1980,
+      "sha256": "c25ee9dd3a183542d2c647c7c3a10b53c335c6a1d5f11994003ae3318474bbc7",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 20514,
+      "empty_reason": null,
+      "path": "daily-summary.csv",
+      "rows": 136,
+      "sha256": "c9d1324be5c4798e06ac9d592d6cd9cd915cf4654b84d4d6c58d7074e9fac3a6",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 3445,
+      "empty_reason": null,
+      "path": "exclusions.csv",
+      "rows": 8,
+      "sha256": "827cf7576a4799fbc7e5d0430303305dfe504dc658c6548b9b2e9689e9673219",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 3579619,
+      "empty_reason": null,
+      "path": "links.csv",
+      "rows": 17862,
+      "sha256": "255dddb38f2423a3d7d40a37fc18a4f705117412917a1737da4ccf8d424cf29f",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 66552,
+      "empty_reason": null,
+      "path": "resource-summary.csv",
+      "rows": 390,
+      "sha256": "4984cda02a473330bda29d698ccf15299e2774c314a28946a683e048a2952f49",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 279411,
+      "empty_reason": null,
+      "path": "resources.csv",
+      "rows": 411,
+      "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 3775,
+      "empty_reason": null,
+      "path": "reconciliation.json",
+      "rows": null,
+      "sha256": "1ce6755b8709d95c1ff3b6583682c05c0f65d58b15850d64b871c86b16599f31",
+      "status": "published_candidate"
+    },
+    {
+      "bytes": 10670,
+      "empty_reason": null,
+      "path": "case-checks.json",
+      "rows": null,
+      "sha256": "6716163e82ee4c549889f7900a95eba7284b44fb49e4e03f5616add7bf081ed0",
+      "status": "published_candidate"
+    }
+  ],
+  "files_not_listed_here": [
+    "catalog.json (this file)",
+    "metrics.json and figures.json (derived after the catalog)",
+    "SHA256SUMS.txt (does not include itself)"
+  ],
+  "graph_snapshots": {
+    "better-robots.com": {
+      "graph_snapshot_at": "2026-10-06",
+      "graph_snapshot_id": "graph-br-20261006-d7330f09",
+      "status": "extracted"
+    },
+    "gautierdorval.com": {
+      "graph_snapshot_at": "2026-10-14",
+      "graph_snapshot_id": "graph-gd-20261014-2b4997bf",
+      "status": "extracted"
+    },
+    "pagup.com": {
+      "graph_snapshot_at": "2026-10-06",
+      "graph_snapshot_id": "graph-pg-20261006-f8126bdf",
+      "status": "extracted"
+    }
+  },
+  "labels": {
+    "period_en": "September 15 to October 14, 2026 inclusive, UTC",
+    "period_fr": "du 15 septembre au 14 octobre 2026 inclusivement, en UTC"
+  },
+  "method_status_split": "joint_exact; the split deduced from the exports by zero mass was confirmed on every path",
+  "metrics_version": "dwr-metrics/2.0.0",
+  "not_reproducible_from_public_files": [
+    "The collection itself (requests received by the sites) and the producer classification.",
+    "The joint aggregate, the exports and the archive (private): a reader can recompute every published number from the public tables, not re-run the extraction.",
+    "The graph snapshots (private repositories): links.csv records each relation with its file and line."
+  ],
+  "observation_source_edition": "2026-09-15_2026-10-15-r1",
+  "private_lock_sha256": "038bc0b001f9bc278e4543e820589df6d8ec08cb0f3ac85411af357b465fe758",
+  "producer_deployment_history": {
+    "first_observed_at": "2026-09-15T01:04:40.158Z",
+    "last_observed_at": "2026-10-16T18:36:57.571Z",
+    "max_gap_hours": 11.5,
+    "observations": 127,
+    "status": "observed"
+  },
+  "producer_deployments": [
+    {
+      "effective_at": "2026-09-13T17:18:49.924Z",
+      "label": "pd01",
+      "versions": [
+        {
+          "percentage": 100
+        }
+      ]
+    }
+  ],
+  "provenance_public": [
+    "Producer: private collector (Cloudflare Worker) writing daily aggregate counters; classifier 2026-08-24.1.",
+    "Joint aggregate: bounded read-only SELECT of the producer daily aggregate table (day x site x path x method x status x actor x tier), read between the extraction times above, checksums identical before and after, zero rows written.",
+    "Exports of the initial internal report (read earlier the same day, exports_extracted_at): used for reconciliation; the joint aggregate reproduces them exactly.",
+    "Producer deployment history: captured by the producer from the Cloudflare control plane; deployment labels replace private identifiers.",
+    "Archive: private daily-report archive, read at a pinned commit dated source_snapshot_at.",
+    "Graphs: private source repositories of the three sites, read at pinned commits dated graph_snapshot_at."
+  ],
+  "reference_release_status": "not_approved",
+  "revision": 2,
+  "revision_kind": "privacy_revision_same_observations",
+  "schema_version": "dwr-catalog/1.0.0",
+  "scientific_review_status": "no_independent_scientific_review_documented",
+  "source_mode": "joint_acquisition",
+  "source_mode_note": "Built from a bounded read-only extraction of the producer's joint daily aggregate (day x site x path x method x status x actor x tier) on 2026-10-16, cross-checked against the exports of the internal report read the same day; the two agree on every path, actor group, day and method/status.",
+  "source_snapshot_id": "d1-joint-20261016t225716z",
+  "status": "candidate_not_reviewed",
+  "superseded_by": null,
+  "supersedes": "2026-09-15_2026-10-15-r1",
+  "versions": {
+    "attribution_rules": "attribution-assessment/1.0.0",
+    "classifier_recorded": "2026-08-24.1",
+    "code": "0.1.0",
+    "measurement_epoch_id": "classifier-2026-08-24.1",
+    "public_schema": "dwr-public/1.0.0",
+    "scope_registry_sha256": "955698c863f8002e4d80cd5ea6fbfd2f2fd6a116dd6b1a5832774bba862f04da",
+    "scope_rules": "scope-rules/1.0.0",
+    "small_cell_policy": "small-cell-policy/2.0.0"
+  }
+}

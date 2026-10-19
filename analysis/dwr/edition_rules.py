@@ -19,7 +19,7 @@ EDITION_ID = re.compile(r"^(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})-r(\d+)$")
 CORRECTION_CAUSES = ("late_observations", "classifier_correction", "scope_change", "transformation_correction",
                      "privacy_revision")
 COMPARABILITY_KEYS = ("edition_type", "source_mode", "scope_rules", "attribution_rules", "small_cell_policy",
-                      "classifier_recorded", "measurement_epoch_id")
+                      "classifier_recorded", "measurement_epoch_id", "scope_registry_sha256", "source_provenance", "time_granularity")
 
 
 def parse_edition_id(edition_id: str) -> tuple[str, str, int]:
@@ -42,22 +42,78 @@ def correction(previous: dict, cause: str, delta: dict, author: str, reviewer: s
             "published_at": None, "is_growth": False}
 
 
-def latest_pointer(editions: list[dict]) -> str | None:
-    published = [e for e in editions if e.get("status") == "published" and e.get("published_at") and e.get("reviewed")]
-    if not published:
+def payload_manifest(edition_id: str, root=None) -> dict:
+    """Seal edition payload and figure bytes. Receipts/pointers are outside this scope.
+
+    SHA256SUMS is a derived manifest, not signed content. Operational states and
+    repository landing pages are not included and must not claim payload approval.
+    """
+    from .common import REPO_ROOT, sha256_file, canonical_json, sha256_bytes
+    root = root or REPO_ROOT
+    parse_edition_id(edition_id)
+    files = {}
+    for prefix in (f"data/editions/{edition_id}", f"figures/{edition_id}"):
+        directory = root / prefix
+        if not directory.is_dir():
+            raise DwrError("approval_payload_missing")
+        for path in sorted(directory.rglob("*")):
+            if path.is_symlink():
+                raise DwrError("approval_symlink_refused")
+            if path.is_file() and path.name != "SHA256SUMS.txt":
+                files[path.relative_to(root).as_posix()] = sha256_file(path)
+    if not files:
+        raise DwrError("approval_payload_empty")
+    return {"scope": "edition_payload_and_figures", "files": files,
+            "digest": sha256_bytes(canonical_json(files).encode("utf-8"))}
+
+
+def approved(entry: dict, digest_of=None) -> bool:
+    if not isinstance(entry, dict):
+        return False
+    receipt = entry.get("approval_receipt")
+    if not isinstance(receipt, dict) or entry.get("reference_release_status") != "approved":
+        return False
+    if entry.get("availability_status") != "publicly_accessible" or not entry.get("approved_release_at"):
+        return False
+    if not isinstance(receipt.get("decisions"), dict):
+        return False
+    if (receipt.get("edition_id") != entry.get("edition_id") or
+            receipt.get("scope") != "edition_payload_and_figures" or not receipt.get("reviewer") or
+            not receipt.get("evidence") or not receipt.get("reviewed_at") or
+            any(receipt.get("decisions", {}).get(k) != "approved" for k in ("technical", "editorial", "distribution"))):
+        return False
+    try:
+        start, end, revision = parse_edition_id(entry["edition_id"])
+        from .dates import window_from_strings
+        window_from_strings(start, end)
+        if revision < 1 or entry.get("period_end_exclusive") != end:
+            return False
+        actual = digest_of(entry["edition_id"]) if digest_of else payload_manifest(entry["edition_id"])["digest"]
+        return receipt_valid(receipt.get("content_digest"), actual)
+    except (DwrError, OSError, KeyError):
+        return False
+
+
+def latest_pointer(editions: list[dict], digest_of=None) -> str | None:
+    eligible = [e for e in editions if approved(e, digest_of)]
+    if not eligible:
         return None
-    current = [e for e in published if not e.get("superseded_by")]
-    chosen = sorted(current or published, key=lambda e: (e["period_end_exclusive"], parse_edition_id(e["edition_id"])[2]))
-    return chosen[-1]["edition_id"]
+    # A proposed superseding candidate does not hide the last valid approved edition.
+    superseded = {e.get("supersedes") for e in eligible}
+    current = [e for e in eligible if e["edition_id"] not in superseded]
+    chosen = max(current or eligible, key=lambda e: (e["period_end_exclusive"], parse_edition_id(e["edition_id"])[2]))
+    return chosen["edition_id"]
 
 
-def apply_run(status: dict, outcome: str, *, new_data_date: str | None = None) -> dict:
+def apply_run(status: dict, outcome: str, *, new_data_date: str | None = None, run_at: str | None = None) -> dict:
     """Return the new operation status after a preparation run."""
     allowed = ("new_data", "unchanged", "source_unavailable", "validation_failed", "awaiting_review")
     if outcome not in allowed:
         raise DwrError("operation_state_unknown", outcome)
     updated = dict(status)
     updated["last_run_state"] = outcome
+    if run_at:
+        updated["last_run_at"] = run_at
     if outcome == "new_data":
         if not new_data_date or new_data_date <= (status.get("latest_available_data_date") or ""):
             raise DwrError("new_data_without_newer_date")
@@ -88,23 +144,38 @@ def add_windows(windows: list[dict]) -> int:
 
 
 def comparable(first: dict, second: dict) -> tuple[bool, list[str]]:
+    """Missing metadata are not equality evidence. Raw unequal-duration counts differ."""
+    from .dates import window_from_strings
     reasons = []
     for key in COMPARABILITY_KEYS:
         a = first.get("versions", {}).get(key, first.get(key))
         b = second.get("versions", {}).get(key, second.get(key))
-        if a != b:
-            reasons.append(f"{key}: {a} vs {b}")
+        unresolved = lambda value: value in (None, "", "unknown", "mixed_epoch_unresolved") or (isinstance(value, list) and (not value or any(v in (None, "", "unknown", "mixed_epoch_unresolved") for v in value)))
+        if unresolved(a) or unresolved(b):
+            reasons.append(f"missing_or_unresolved:{key}")
+        elif a != b:
+            reasons.append(f"changed:{key}")
+    lengths = []
     for edition in (first, second):
-        if edition.get("coverage_status") not in (None, "partial_declared", "complete_declared"):
-            reasons.append(f"coverage {edition.get('coverage_status')}")
-    return not reasons, reasons
+        if edition.get("coverage_status") != "complete_declared":
+            reasons.append("coverage_not_complete:raw_comparison_not_qualified")
+        dates = edition.get("dates", edition)
+        try:
+            lengths.append(window_from_strings(dates["period_start_inclusive"], dates["period_end_exclusive"]).days)
+        except (KeyError, DwrError, TypeError):
+            reasons.append("window_missing_or_invalid")
+    if len(lengths) == 2 and lengths[0] != lengths[1]:
+        reasons.append("unequal_calendar_days:raw_counts_not_equal_exposure")
+    if first.get("edition_id") and first.get("edition_id") != second.get("edition_id") and first.get("dates", first).get("period_start_inclusive") == second.get("dates", second).get("period_start_inclusive"):
+        reasons.append("revision_not_temporal_growth")
+    return not reasons, sorted(set(reasons))
 
 
 def growth(previous_count, current_count, comparable_editions: bool):
-    if previous_count in (None, 0) or not comparable_editions:
+    if previous_count in (None, 0) or current_count is None or not comparable_editions:
         return {"value": None, "status": "not_calculable"}
     return {"value": (current_count - previous_count) / previous_count, "status": "calculated"}
 
 
 def receipt_valid(approved_digest: str, candidate_digest: str) -> bool:
-    return bool(approved_digest) and approved_digest == candidate_digest
+    return bool(isinstance(approved_digest, str) and re.fullmatch(r"[0-9a-f]{64}", approved_digest)) and approved_digest == candidate_digest

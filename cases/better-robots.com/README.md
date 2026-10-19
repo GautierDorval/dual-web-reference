@@ -2,9 +2,11 @@
 
 [Français](README.fr.md) · [Repository home](../../README.md)
 
-> Edition `2026-09-15_2026-10-15-r1` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-06` · candidate, not published
+> Edition `2026-09-15_2026-10-15-r2` · September 15 to October 14, 2026 inclusive, UTC · graph snapshot `2026-10-06` · local candidate; reference not approved
 
-## Angle
+**90 documentary URLs; 122 provider-origin AI GET 200 on this site.** Partial coverage; one of three cases in the same author's ecosystem, not an independent replication.
+
+## Question and scope
 
 Context of a product, declared capabilities, limits, and the difference between publishing a rule and how a robot actually behaves.
 
@@ -18,7 +20,21 @@ According to better-robots.com’s own governance files, what does the Better Ro
 
 ## Available documentary path
 
-Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv). It shows what a reader can follow; it is not an observed robot path.
+Each step is a reference written in a file of the source snapshot, verified in [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv). It shows what a reader can follow; it is not an observed robot path.
+
+Copyable paths only. A manually visited online resource may differ from the dated snapshot; full private snapshot bytes are not distributed.
+
+## Read by function
+
+- `/plugin-context.md` : Product context: what the plugin is for and what it does not guarantee.
+- `/plugin-scope.md` : Declared in-scope and out-of-scope capabilities, and the boundary between the plugin and the /check audit.
+- `/limitations-context.md` : Public limits of the product as a publishing tool.
+- `/robots-txt-context.md` : Defines robots.txt as a statement of intent, not proof of crawler behaviour.
+- `/robots.txt` : The site’s own published crawl rule, an instance of the rule layer (control resource, outside the main population).
+- `/ai-usage-policy.md` : Markdown policy text, including the declared usage preference on model training.
+- `/.well-known/anti-plausibility.json` : Completions a reader must not invent about the product.
+
+These seven reading landmarks introduce the full source and count tables below; no observation or scope is removed.
 
 - `/` → `/governance/ai-usage-policy`
 - `/governance/ai-usage-policy` → `/plugin-context.md`
@@ -33,7 +49,7 @@ No qualified execution trace is part of this edition. None is reconstructed from
 
 ## Documentary graph
 
-<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r1/G09-better-robots.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r1/G09-better-robots.com.en.svg" alt="Documentary relations between the case resources of better-robots.com in the source snapshot" width="960"></picture>
+<picture><source media="(max-width: 640px)" srcset="../../figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.compact.svg"><img src="../../figures/2026-09-15_2026-10-15-r2/G09-better-robots.com.en.svg" alt="Documentary relations between the case resources of better-robots.com in the source snapshot" width="960"></picture>
 
 ## Representative resources
 
@@ -49,11 +65,11 @@ No qualified execution trace is part of this edition. None is reconstructed from
 | `/.well-known/ai-governance.json` | `core_governance` | Entrypoint stating usage intent and that it replaces no real control. | “They do not replace infrastructure controls, private contracts, or human verification.” (290) | schema\_version 2.4 |
 | `/llms.txt` | `discovery_index` | Discovery index routing plugin questions to the context and scope files. | “is not the plugin runtime.” (266) | none declared |
 
-Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r1/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
+Excerpts are quoted in the language of the file and verified verbatim against the snapshot ([case-checks.json](../../data/editions/2026-09-15_2026-10-15-r2/case-checks.json)). Declared dates are those written in the files; they are not deployment dates.
 
 ## Aggregated accesses
 
-September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not allow any path to be reconstructed.
+September 15 to October 14, 2026 inclusive, UTC. Monthly totals per URL; they do not establish an executed session or navigation order.
 
 | Resource | Provider-origin AI GET 200 | Days with these requests | GET 200, all recorded classifications | HEAD | 304 |
 |---|---:|---:|---:|---:|---:|
@@ -78,4 +94,4 @@ Filters: GET 200 counts use the recorded method and status. The provider-origin 
 
 ## Reproduce
 
-All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r1/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r1/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). See [reproduction](../../docs/en/reproduction.md).
+All counts above come from [resource-summary.csv](../../data/editions/2026-09-15_2026-10-15-r2/resource-summary.csv) and [consultations.csv](../../data/editions/2026-09-15_2026-10-15-r2/consultations.csv); relations from [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv); roles and scope classes from [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). See [reproduction](../../docs/en/reproduction.md).

@@ -85,7 +85,25 @@ def _main_provider(ctx):
 def _hbars(svg, x0, y, width, items, maximum, lang, label_width, bar_h=18, gap=10, fill_of=None):
     """Horizontal bars with category labels on the left and values at the tip."""
     top, grid = S.axis(maximum)
-    plot_w = width - label_width - 60
+    if svg.width <= 420:
+        for label, value, fill, note in items:
+            for line in S.wrap(label, 12.5, width - 30):
+                svg.text(x0, y + 13, line, "lb"); y += 16
+            y += 4
+            plot = width - 75
+            svg.rect(x0, y, plot, bar_h, "var(--band)")
+            if value is None:
+                svg.rect(x0, y, plot, bar_h, svg.hatch("na"))
+            else:
+                svg.bar_h(x0, y, plot * value / top, bar_h, fill, title=f"{label}: {value}")
+            svg.text(x0 + plot + 6, y + 13, number(value, lang) if value is not None else "n/a", "vl")
+            y += bar_h + 8
+            if note:
+                for line in S.wrap(note, 12, width - 30):
+                    svg.text(x0, y + 12, line, "ax"); y += 15
+            y += 12
+        return y + 6
+    plot_w = width - label_width - 90
     for value in grid:
         gx = x0 + label_width + plot_w * value / top
         svg.line(gx, y - 4, gx, y + len(items) * (bar_h + gap), "grid")
@@ -147,9 +165,11 @@ def figure_g01(ctx, lang, compact):
             svg.line(left, gy, width - right, gy, "grid")
             svg.text(left - 6, gy + 4, number(value, lang), "ax", "end")
         for index, day in enumerate(days):
-            value = values.get((day, site), 0)
+            value = (None if coverage[day].get("observation_status") == "observation_unavailable" else values.get((day, site), 0))
             x = left + index * slot + (slot - col) / 2
-            if value:
+            if value is None:
+                svg.rect(x, base - panel_h, col, panel_h, svg.hatch("na"), title=f"{day}: unavailable")
+            elif value:
                 svg.bar_v(x, base, col, panel_h * value / top, SITE_COLOR[site], title=f"{site} {day}: {value}")
             else:
                 svg.rect(x, base - 1.5, col, 1.5, "var(--neutral2)", title=f"{site} {day}: 0")
@@ -172,15 +192,15 @@ def figure_g01(ctx, lang, compact):
         if index % every == 0 or last:
             svg.text(left + index * slot + slot / 2, strip_y + 30, short_date(date.fromisoformat(day), lang), "ax", "middle")
     y = strip_y + 44
-    legend = t(lang, "Hatched strip: archive report partial (declared) for the day. Triangle: one-request gap between aggregate and V3 counts. A flat tick is a recorded zero: no such request in the producer table that day.",
-               "Bande hachurée : rapport d’archive partiel (déclaré) pour la journée. Triangle : écart d’une requête entre comptes agrégés et V3. Un trait plat est un zéro enregistré : aucune requête de ce type dans la table du producteur ce jour-là.")
+    legend = t(lang, "Hatched strip: partial archive report. Hatched column: unavailable observation. Daily coverage count gaps are withheld in the revised projection. A flat tick is a recorded zero: no such request in the producer table that day.",
+               "Bande hachurée : rapport d’archive partiel (déclaré). Colonne hachurée : observation indisponible. Les écarts quotidiens de couverture sont retenus dans la projection révisée. Un trait plat est un zéro enregistré : aucune requête de ce type dans la table du producteur ce jour-là.")
     for line in S.wrap(legend, 12, width - 40):
         svg.text(20, y, line, "ax")
         y += 15
     y = S.footer(svg, y, ctx.footer(lang, ["daily-summary.csv", "coverage.csv"]), width)
     svg.desc = t(lang,
-                 f"Three column charts, one per site, of daily GET 200 requests to the main documentary population from provider-origin automated AI roles over {len(days)} UTC days; requests occur on {ctx.m('main.daily.days_with_requests')} of these days; all days carry a partial archive report.",
-                 f"Trois histogrammes, un par site, des requêtes GET 200 quotidiennes vers la population documentaire principale par des rôles IA automatisés à origine fournisseur sur {len(days)} jours UTC ; des requêtes apparaissent {ctx.m('main.daily.days_with_requests')} de ces jours ; tous les jours portent un rapport d’archive partiel.")
+                 f"Three column charts, one per site, of daily GET 200 requests to the main documentary population from provider-origin automated AI roles over {len(days)} UTC days; requests occur on {ctx.m('main.daily.days_with_requests')} of these days; {ctx.m('coverage.days_partial_declared')} days carry a partial archive report.",
+                 f"Trois histogrammes, un par site, des requêtes GET 200 quotidiennes vers la population documentaire principale par des rôles IA automatisés à origine fournisseur sur {len(days)} jours UTC ; des requêtes apparaissent {ctx.m('main.daily.days_with_requests')} de ces jours ; {ctx.m('coverage.days_partial_declared')} jours portent un rapport d’archive partiel.")
     return svg.render(y), table
 
 
@@ -212,7 +232,7 @@ def figure_g02(ctx, lang, compact):
     for index, (site, llms, other) in enumerate(rows):
         total = llms + other
         name = t(lang, "Three sites", "Trois sites") if site is None else site
-        pitch = 78 if compact else 58
+        pitch = 112 if compact else 58
         by = y + index * pitch
         svg.text(20, by + 14, name, "lb")
         x = 20 + (0 if compact else label_w)
@@ -227,14 +247,17 @@ def figure_g02(ctx, lang, compact):
         label = (f"llms.txt {number(llms, lang)} · " + t(lang, "other ", "autres ") + number(other, lang)
                  + " · " + t(lang, "total ", "total ") + number(total, lang) + " · " + t(lang, "other share ", "part hors llms.txt ")
                  + percent(share, lang))
-        svg.text(x, by + bar_h + 15, label, "ax")
+        for li, line in enumerate(S.wrap(label, 12, avail)):
+            svg.text(x, by + bar_h + 15 + li * 15, line, "ax")
         table.append({"site_id": site or "all_sites", "llms_txt_get200": llms, "other_get200": other,
                       "total_get200": total, "other_share": round(share, 6) if share is not None else None})
-    y += len(rows) * (78 if compact else 58) + 6
+    y += len(rows) * (112 if compact else 58) + 6
     svg.rect(20, y - 9, 12, 10, "var(--s5)")
     svg.text(38, y, "/llms.txt", "lb")
     svg.rect(120, y - 9, 12, 10, "var(--s7)")
-    svg.text(138, y, t(lang, "other main-population resources", "autres ressources de la population principale"), "lb")
+    for li, line in enumerate(S.wrap(t(lang, "other main-population resources", "autres ressources de la population principale"), 12.5, width - 158)):
+        svg.text(138, y + li * 16, line, "lb")
+    y += 20 if compact else 0
     y += 12
     y = S.footer(svg, y, ctx.footer(lang, ["consultations.csv", "resources.csv"]), width)
     svg.desc = t(lang, "Stacked horizontal bars, all sites and per site, splitting provider-origin AI-role GET 200 requests between /llms.txt and the other governance files; counts, totals and shares are written under each bar.",
@@ -244,35 +267,40 @@ def figure_g02(ctx, lang, compact):
 
 def figure_g03(ctx, lang, compact):
     width = 420 if compact else 960
-    title = t(lang, "Provider-origin AI requests by recorded actor role", "Requêtes IA à origine fournisseur selon le rôle enregistré de l’acteur")
-    subtitles = [cap(ctx.period(lang)) + ".",
-                 t(lang, "Panel A: main documentary population. Panel B: scope of the initial report, for reconciliation. Both exact, from the joint aggregate.",
-                   "Panneau A : population documentaire principale. Panneau B : périmètre du relevé initial, pour le rapprochement. Les deux sont exacts, tirés de l’agrégat conjoint."),
-                 t(lang, "Unit: GET 200 requests. Roles stay distinct; a user-initiated fetch can be triggered by anyone, including the site operator.",
-                   "Unité : requêtes GET 200. Les rôles restent distincts ; une récupération à la demande peut être déclenchée par n’importe qui, y compris l’exploitant du site.")]
+    title = t(lang, "Actors, roles and provider families", "Acteurs, rôles et familles de fournisseurs")
+    subtitles = [cap(ctx.period(lang)) + ".", t(lang,
+        "Main documentary population; GET 200; provider-origin registry match. Unit: requests. Software agents, not unique people. User-initiated fetches remain separate.",
+        "Population documentaire principale ; GET 200 ; origine fournisseur rapprochée du registre. Unité : requêtes. Agents logiciels, pas des personnes uniques. Les récupérations à la demande restent distinctes.")]
     svg = S.Svg(width, title, "")
     y = S.header(svg, title, subtitles, width, compact)
-    label_w = 150 if compact else 330
     table = []
-    panels = (("A", "main.role.{}.get200", t(lang, "A. Main documentary population", "A. Population documentaire principale")),
-              ("B", "historical.provider_ai.role.{}.get200", t(lang, "B. Scope of the initial report", "B. Périmètre du relevé initial")))
-    maximum = max(ctx.m(pattern.format(role)) for _, pattern, _ in panels for role in ROLES)
-    for panel, pattern, heading in panels:
+    panels = [("actor_name", t(lang, "A. Named agents", "A. Agents nommés")),
+              ("actor_family", t(lang, "B. Provider families", "B. Familles de fournisseurs"))]
+    for dimension, heading in panels:
+        selected = [(key.split(".")[2], m["value"]) for key, m in ctx.metrics.items()
+                    if key.startswith("main." + dimension + ".") and key.endswith(".get200")]
+        svg.text(20, y, heading, "vl"); y += 14
         items = []
-        for role in ROLES:
-            value = ctx.m(pattern.format(role))
-            items.append((t(lang, *ROLE_LABEL[role]), value, "var(--s1)" if panel == "A" else "var(--neutral)", None))
-            table.append({"panel": panel, "actor_role": role, "get200": value})
-        svg.text(20, y, heading, "vl")
-        y = _hbars(svg, 20, y + 12, width - 20, items, maximum, lang, label_w) + 6
-    note = t(lang, f"Sensitivity without user-initiated fetches (main population): {number(ctx.m('main.sensitivity.without_user_fetch.get200'), lang)} requests on {number(ctx.m('main.sensitivity.without_user_fetch.site_path_pairs'), lang)} pairs. This is a sensitivity analysis, not evidence that the other requests were independent.",
-             f"Sensibilité sans récupérations à la demande (population principale) : {number(ctx.m('main.sensitivity.without_user_fetch.get200'), lang)} requêtes sur {number(ctx.m('main.sensitivity.without_user_fetch.site_path_pairs'), lang)} couples. C’est une analyse de sensibilité, pas une preuve que les autres requêtes étaient indépendantes.")
+        for name, count in sorted(selected, key=lambda item: (-item[1], item[0])):
+            ratio = count / ctx.m("main.get200") if ctx.m("main.get200") else None
+            items.append((name, count, "var(--s1)", percent(ratio, lang)))
+            table.append({"panel": dimension, "category": name, "get200": count, "share": ratio})
+        y = _hbars(svg, 20, y, width - 20, items, max([i[1] for i in items] or [1]), lang, 240) + 12
+    svg.text(20, y, t(lang, "C. Distinct roles", "C. Rôles distincts"), "vl"); y += 14
+    items = [(t(lang, *ROLE_LABEL[role]), ctx.m("main.role." + role + ".get200"), "var(--s7)", None) for role in ROLES]
+    for role, (_, count, _, _) in zip(ROLES, items):
+        table.append({"panel": "role", "category": role, "get200": count, "share": None})
+    y = _hbars(svg, 20, y, width - 20, items, max(i[1] for i in items), lang, 330) + 12
+    failed = ctx.metrics.get("main.failed_origin_selected.get200", {}).get("value")
+    denominator = ctx.metrics.get("main.failed_origin_selected.share", {}).get("denominator")
+    note = t(lang,
+        f"Separate failed-origin selection: {failed} of {denominator} GET 200, for the same four recorded names only. This is not demonstrated spoofing and is not added to the verified-origin result. Historical-scope roles remain in metrics.json.",
+        f"Sélection distincte d’origine non vérifiée : {failed} GET 200 sur {denominator}, pour les quatre mêmes noms enregistrés seulement. Ce n’est pas une usurpation démontrée et ce compte n’est pas ajouté au résultat à origine vérifiée. Les rôles du périmètre historique restent dans metrics.json.")
     for line in S.wrap(note, 12, width - 40):
-        svg.text(20, y, line, "ax")
-        y += 15
-    y = S.footer(svg, y, ctx.footer(lang, ["consultations.csv", "resources.csv"]), width)
-    svg.desc = t(lang, "Two panels of horizontal bars of provider-origin AI GET 200 requests per recorded role: main documentary population, then the initial report scope.",
-                 "Deux panneaux de barres horizontales des requêtes GET 200 IA à origine fournisseur par rôle enregistré : population documentaire principale, puis périmètre du relevé initial.")
+        svg.text(20, y, line, "ax"); y += 15
+    y = S.footer(svg, y, ctx.footer(lang, ["metrics.json", "consultations.csv", "resources.csv"]), width)
+    svg.desc = t(lang, "Three panels separate named actors, provider families and roles; failed-origin counts are contextual, not added.",
+                 "Trois panneaux séparent acteurs nommés, familles de fournisseurs et rôles ; les origines non vérifiées restent un contexte distinct.")
     return svg.render(y), table
 
 
@@ -390,8 +418,9 @@ def figure_g05(ctx, lang, compact):
         ranked = everything[:10]
         tied = sum(1 for _, value in everything[10:] if ranked and value == ranked[-1][1])
         svg.add(f'<circle cx="25" cy="{S.f(y - 4)}" r="5" fill="{SITE_COLOR[site]}"/>')
-        svg.text(36, y, site + (t(lang, f" · {tied} more resources tie with the tenth value",
-                                  f" · {tied} autres ressources à égalité avec la dixième valeur") if tied else ""), "vl")
+        label = site + (t(lang, f" · {tied} more resources tie with the tenth value", f" · {tied} autres ressources à égalité avec la dixième valeur") if tied else "")
+        for line in S.wrap(label, 12.5, width - 56):
+            svg.text(36, y, line, "vl"); y += 16
         y += 12
         items = [(resources[rid]["path"], value, SITE_COLOR[site], None) for rid, value in ranked]
         y = _hbars(svg, 20, y, width - 20, items, overall, lang, label_w, bar_h=14, gap=8) + 12
@@ -437,8 +466,13 @@ def figure_g06(ctx, lang, compact):
     svg = S.Svg(width, title, "")
     y = S.header(svg, title, subtitles, width, compact)
     cells = defaultdict(int)
+    missing = set()
     for r in rows:
-        cells[(r["date_utc"], r["family"])] += int(r["request_count"])
+        key = (r["date_utc"], r["family"])
+        if r["request_count"] in (None, "") or r.get("observation_status") == "observation_unavailable":
+            missing.add(key)
+        else:
+            cells[key] += int(r["request_count"])
     days = sorted({r["date_utc"] for r in rows})
     totals = defaultdict(int)
     for (day, family), value in cells.items():
@@ -457,9 +491,11 @@ def figure_g06(ctx, lang, compact):
         label = family if S.text_width(family, 12) < label_w - 10 else family[: int((label_w - 14) / (12 * S.CHAR))] + "…"
         svg.text(20 + label_w - 8, cy + 12, label, "lb", "end")
         for di, day in enumerate(days):
-            value = cells.get((day, family), 0)
+            value = None if (day, family) in missing else cells.get((day, family), 0)
             cx = 20 + label_w + di * cell_w
-            if value:
+            if value is None:
+                fill = svg.hatch("na")
+            elif value:
                 level = min(len(ramp) - 1, int((value - 1) * len(ramp) / maximum))
                 fill = ramp[level]
             else:
@@ -479,10 +515,11 @@ def figure_g06(ctx, lang, compact):
     x += 130
     for level, colour in enumerate(ramp):
         svg.rect(x + level * 16, y - 10, 14, 12, colour)
-    svg.text(x + len(ramp) * 16 + 6, y, t(lang, f"1 to {maximum} requests (linear steps)", f"1 à {maximum} requêtes (paliers linéaires)"), "ax")
+    svg.text(20 if compact else x + len(ramp) * 16 + 6, y + (18 if compact else 0), t(lang, f"1 to {maximum} requests (linear steps)", f"1 à {maximum} requêtes (paliers linéaires)"), "ax")
+    y += 18 if compact else 0
     y += 18
-    note = t(lang, "Every day of the window has rows; no cell is unknown. Families are those of the scope registry; the right-hand number is the family total for the window.",
-             "Chaque jour de la fenêtre a des lignes ; aucune cellule n’est inconnue. Les familles sont celles du registre de périmètre ; le nombre à droite est le total de la famille sur la fenêtre.")
+    note = t(lang, "Hatching marks unavailable observations, never zero. Families are those of the scope registry; the right-hand number is the family total for the window.",
+             "Les hachures indiquent une observation indisponible, jamais un zéro. Les familles sont celles du registre de périmètre ; le nombre à droite est le total de la famille sur la fenêtre.")
     if compact:
         note += t(lang, " Compact view: the twelve largest families.", " Vue compacte : les douze familles les plus importantes.")
     for line in S.wrap(note, 12, width - 40):
@@ -528,8 +565,10 @@ def figure_g07(ctx, lang, compact):
     y = _hbars(svg, 20, y + 12, width - 20, items, max(v for _, v, _, _ in items), lang, label_w) + 6
     svg.text(20, y, t(lang, "C. All requests recorded by the collector, by population", "C. Toutes les requêtes enregistrées par le collecteur, par population"), "vl")
     populations = defaultdict(int)
-    for row in _rows(ctx, "daily-summary.csv"):
-        populations[row["population"]] += int(row["request_count"])
+    for row in _rows(ctx, "consultations.csv"):
+        resource = resources[row["resource_id"]]
+        population = "main_documentary" if _bool(resource["main_population"]) else {"control_resource":"robots_control", "undeclared_bucket":"undeclared_bucket"}.get(resource["scope_class"], "other_documentary")
+        populations[population] += int(row["request_count"])
     names = {"main_documentary": ("main documentary population", "population documentaire principale"),
              "other_documentary": ("other documentary files (supporting, descriptors, technical)", "autres fichiers (soutien, descripteurs, techniques)"),
              "robots_control": ("robots.txt (control)", "robots.txt (contrôle)"),
@@ -551,62 +590,42 @@ def figure_g07(ctx, lang, compact):
 
 def figure_g08(ctx, lang, compact):
     width = 420 if compact else 960
-    coverage = _rows(ctx, "coverage.csv")
-    title = t(lang, "Coverage calendar and measurement versions", "Calendrier de couverture et versions de mesure")
-    subtitles = [cap(ctx.period(lang)) + ".",
-                 t(lang, "Each cell is one UTC day. Status comes from the archived daily report; agreement of counts is not proof of complete coverage.",
-                   "Chaque cellule est un jour UTC. Le statut vient du rapport quotidien archivé ; la concordance des comptes ne prouve pas une couverture complète.")]
+    rows = _rows(ctx, "coverage.csv")
+    title = t(lang, "Coverage and measurement provenance", "Couverture et provenance de la mesure")
     svg = S.Svg(width, title, "")
-    y = S.header(svg, title, subtitles, width, compact)
+    y = S.header(svg, title, [cap(ctx.period(lang)) + ".", t(lang,
+        "Unit: UTC days. Coverage comes from the archived report, not from agreement of counts. Count margins can be withheld without changing historical coverage.",
+        "Unité : jours UTC. La couverture vient du rapport archivé, pas de la concordance des comptes. Les marges numériques peuvent être retenues sans modifier la couverture historique.")], width, compact)
     per_row = 10 if compact else 30
     cell = (width - 40) / per_row
-    table = []
-    for index, row in enumerate(coverage):
-        cx = 20 + (index % per_row) * cell
-        cy = y + (index // per_row) * (cell + 22)
-        status = row["coverage_status"]
-        fill = (svg.hatch("partial") if status == "partial_declared" else "var(--neutral2)" if row["observation_status"] == "observed"
-                else svg.hatch("na"))
-        svg.rect(cx + 1, cy, cell - 2, cell - 2, fill, rx=3, title=f"{row['date_utc']}: {status}; {row['archive_reason_code']}")
-        if row["aggregate_minus_v3"] not in ("", "0"):
-            svg.add(f'<circle cx="{S.f(cx + cell / 2)}" cy="{S.f(cy + cell / 2 - 1)}" r="4" fill="var(--missing)"/>')
-        svg.text(cx + cell / 2, cy + cell + 10, str(date.fromisoformat(row["date_utc"]).day), "ax", "middle")
-        table.append({k: row[k] for k in ("date_utc", "observation_status", "coverage_status", "archive_reason_code",
-                                          "aggregate_minus_v3", "classifier_version", "producer_deployment_label")})
-    rows_used = (len(coverage) + per_row - 1) // per_row
-    y += rows_used * (cell + 22) + 6
-    for line in S.wrap(t(lang, "Producer deployment active during the day (from the producer's deployment history) and classifier version",
-                         "Déploiement du producteur actif pendant la journée (historique de déploiement du producteur) et version du classificateur"), 12.5, width - 40):
-        svg.text(20, y, line, "vl")
-        y += 16
-    segments = []
-    for index, row in enumerate(coverage):
-        label = row["producer_deployment_label"] or t(lang, "unknown", "inconnu")
-        if segments and segments[-1][0] == label:
-            segments[-1][2] = index
-        else:
-            segments.append([label, index, index])
-    band = (width - 40) / len(coverage)
-    for si, (label, first, last) in enumerate(segments):
-        x = 20 + first * band
-        w = (last - first + 1) * band
-        svg.rect(x + 1, y, w - 2, 18, "var(--neutral2)" if si % 2 else "var(--band)", rx=3,
-                 title=f"{label}: {coverage[first]['date_utc']} to {coverage[last]['date_utc']}")
-        if w > 30:
-            svg.text(x + w / 2, y + 13, label + t(lang, " (100%, effective before the window)", " (100 %, effectif avant la fenêtre)") if len(segments) == 1 and not compact else label, "ax", "middle")
-    y += 26
-    svg.rect(21, y, width - 42, 18, "var(--band)", rx=3)
-    svg.text(width / 2, y + 13, t(lang, "classifier 2026-08-24.1 throughout (predicate under review)", "classificateur 2026-08-24.1 sur toute la période (prédicat en revue)"), "ax", "middle")
-    y += 34
-    legend = t(lang, "Hatched cell: archive report partial (declared). Dot: aggregate/V3 gap of one request. No day is missing; every daily total of the joint aggregate equals the archived aggregate count. The deployment history was observed about every 6 hours; a deployment shorter than the longest gap between observations cannot be excluded.",
-               "Cellule hachurée : rapport d’archive partiel (déclaré). Point : écart agrégat/V3 d’une requête. Aucun jour manquant ; chaque total quotidien de l’agrégat conjoint égale le compte agrégé archivé. L’historique de déploiement a été relevé environ toutes les 6 heures ; un déploiement plus court que le plus long intervalle entre deux relevés ne peut pas être exclu.")
-    for line in S.wrap(legend, 12, width - 40):
-        svg.text(20, y, line, "ax")
-        y += 15
+    for i, row in enumerate(rows):
+        x, cy = 20 + (i % per_row) * cell, y + (i // per_row) * (cell + 22)
+        state = row["coverage_status"]
+        fill = "var(--s1)" if state == "complete_declared" else svg.hatch("partial" if state == "partial_declared" else "na")
+        svg.rect(x + 1, cy, cell - 2, cell - 2, fill, title=row["date_utc"] + ": " + state)
+        mark = {"complete_declared":"C", "partial_declared":"P", "observation_unavailable":"?", "coverage_unknown":"?"}.get(state, "?")
+        svg.text(x + cell/2, cy + cell/2 + 4, mark, "vl", "middle")
+        svg.text(x + cell/2, cy + cell + 10, str(date.fromisoformat(row["date_utc"]).day), "ax", "middle")
+    y += ((len(rows) + per_row - 1)//per_row) * (cell + 22) + 12
+    versions = sorted({row["classifier_version"] or "unknown" for row in rows})
+    labels = sorted({row["producer_deployment_label"] or "unknown" for row in rows})
+    withheld = any(row["aggregate_minus_v3"] == "" for row in rows)
+    notes = [t(lang, "C: declared complete. P: declared partial. ?: unavailable or unknown; details in the table.",
+                    "C : complète déclarée. P : partielle déclarée. ? : indisponible ou inconnue ; détails dans le tableau."),
+             t(lang, "Recorded classifier / epoch: ", "Classificateur / époque enregistré : ") + ", ".join(versions),
+             t(lang, "Deployment labels from available evidence: ", "Étiquettes de déploiement selon les preuves disponibles : ") + ", ".join(labels),
+             t(lang, "Aggregate/V3 margins: withheld, not zero.", "Marges agrégées/V3 : retenues, pas zéro.") if withheld else
+             t(lang, "Aggregate/V3 differences are in the data table; agreement does not prove complete coverage.", "Les écarts agrégats/V3 figurent dans le tableau ; leur concordance ne prouve pas une couverture complète."),
+             t(lang, "An intraday change without version on the aggregate stays mixed_epoch_unresolved; it is never split proportionally.",
+                    "Un changement intrajournalier sans version sur l’agrégat reste mixed_epoch_unresolved ; il n’est jamais réparti proportionnellement.")]
+    for note in notes:
+        for line in S.wrap(note, 12.5, width - 40):
+            svg.text(20, y, line, "lb"); y += 16
+        y += 8
     y = S.footer(svg, y, ctx.footer(lang, ["coverage.csv", "catalog.json"]), width)
-    svg.desc = t(lang, "A calendar of 30 day cells, all hatched as partial reports, two marked with an aggregate/V3 gap, above the producer deployment active during the window and the classifier version.",
-                 "Un calendrier de 30 cellules journalières, toutes hachurées comme rapports partiels, deux marquées d’un écart agrégat/V3, au-dessus du déploiement du producteur actif pendant la fenêtre et de la version du classificateur.")
-    return svg.render(y), table
+    svg.desc = t(lang, "Daily coverage calendar with explicit partial, complete and unknown states, followed by recorded measurement versions.",
+                 "Calendrier quotidien à états partiels, complets et inconnus explicites, puis versions de mesure enregistrées.")
+    return svg.render(y), [{k: r[k] for k in ("date_utc", "observation_status", "coverage_status", "archive_reason_code", "aggregate_minus_v3", "classifier_version", "producer_deployment_label")} for r in rows]
 
 
 def figure_g09(ctx, lang, compact, case):
@@ -702,35 +721,35 @@ def figure_g09(ctx, lang, compact, case):
 
 
 def figure_g10(ctx, lang, compact):
+    from .dates import window_from_strings, next_monthly_window
     width = 420 if compact else 960
-    title = t(lang, "Edition history", "Historique des éditions")
-    subtitles = [t(lang, "Monthly reference editions, windows anchored on the 15th (UTC). Only one edition exists: no trend is computed.",
-                   "Éditions mensuelles de référence, fenêtres ancrées le 15 (UTC). Une seule édition existe : aucune tendance n’est calculée.")]
+    title = t(lang, "Observed window and revision history", "Fenêtre observée et historique des révisions")
     svg = S.Svg(width, title, "")
-    y = S.header(svg, title, subtitles, width, compact)
+    y = S.header(svg, title, [t(lang,
+        "One observed window is represented here. A new revision of the same observations is not a second period and never creates growth.",
+        "Une fenêtre observée est représentée ici. Une nouvelle révision des mêmes observations ne constitue pas une deuxième période et ne crée aucune croissance.")], width, compact)
     value = ctx.m("main.get200")
-    svg.line(40, y + 60, width - 30, y + 60, "axis")
-    svg.add(f'<circle cx="{S.f(80)}" cy="{S.f(y + 60)}" r="6" fill="var(--s1)"><title>{ctx.edition_id}: {value}</title></circle>')
-    svg.text(80, y + 40, number(value, lang) + t(lang, " requests", " requêtes"), "vl", "middle")
-    svg.text(80, y + 82, ctx.edition_id, "ax", "start" if compact else "middle")
-    svg.text(width - 30, y + 82, t(lang, "next window: Oct 15 to Nov 14, 2026 (31 days), not yet available",
-                                   "fenêtre suivante : du 15 octobre au 14 novembre 2026 (31 jours), pas encore disponible") if not compact else "",
-             "ax", "end")
-    y += 104
-    note = t(lang, "Value: GET 200 requests, main documentary population, provider-origin AI roles. Two editions are compared only when windows, definitions, coverage, registries, classifications and scope rules allow it.",
-             "Valeur : requêtes GET 200, population documentaire principale, rôles IA à origine fournisseur. Deux éditions ne sont comparées que si fenêtres, définitions, couverture, registres, classifications et règles de périmètre le permettent.")
-    for line in S.wrap(note, 12, width - 40):
-        svg.text(20, y, line, "ax")
-        y += 15
-    y = S.footer(svg, y, ctx.footer(lang, ["metrics.json"]), width)
-    svg.desc = t(lang, "A single point for the only existing edition; no trend.", "Un seul point pour l’unique édition existante ; aucune tendance.")
-    return svg.render(y), [{"edition_id": ctx.edition_id, "main_get200": value, "comparable_previous": None}]
+    svg.text(20, y + 20, number(value, lang) + t(lang, " GET 200 requests", " requêtes GET 200"), "t")
+    y += 50
+    following = next_monthly_window(window_from_strings(ctx.start.isoformat(), ctx.end.isoformat()))
+    notes = [ctx.period(lang), ctx.edition_id,
+             t(lang, f"Next window: {following.label_en()} ({following.days} days). Preparation and availability are separate states.",
+                     f"Fenêtre suivante : {following.label_fr()} ({following.days} jours). Préparation et disponibilité sont des états distincts."),
+             t(lang, "Unit: requests; main documentary population, provider-origin AI roles. No growth is calculated without a second period whose provenance, duration, scope, registries and coverage are comparable.",
+                     "Unité : requêtes ; population documentaire principale, rôles IA à origine fournisseur. Aucune croissance sans deuxième période dont la provenance, la durée, le périmètre, les registres et la couverture sont comparables.")]
+    for note in notes:
+        for line in S.wrap(note, 12.5, width - 40):
+            svg.text(20, y, line, "lb"); y += 16
+        y += 8
+    y = S.footer(svg, y, ctx.footer(lang, ["metrics.json", "catalog.json"]), width)
+    svg.desc = t(lang, "One window, explicitly no temporal growth or trend.", "Une fenêtre, explicitement sans croissance ni tendance temporelle.")
+    return svg.render(y), [{"edition_id": ctx.edition_id, "main_get200": value, "comparable_previous": None, "growth": None}]
 
 
 FIGURES = {
     "G01": (figure_g01, ("daily-summary.csv", "coverage.csv")),
     "G02": (figure_g02, ("consultations.csv", "resources.csv")),
-    "G03": (figure_g03, ("consultations.csv", "resources.csv")),
+    "G03": (figure_g03, ("metrics.json", "consultations.csv", "resources.csv")),
     "G04": (figure_g04, ("resources.csv", "consultations.csv", "resource-summary.csv")),
     "G05": (figure_g05, ("consultations.csv", "resources.csv")),
     "G06": (figure_g06, ("daily-family-summary.csv",)),

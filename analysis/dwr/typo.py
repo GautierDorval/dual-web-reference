@@ -14,6 +14,11 @@ PROTECTED = re.compile(r"(```.*?```|`[^`\n]*`|<[^>\n]+>|https?://\S+|\]\([^)\s]*
 
 
 def _fix(segment: str) -> str:
+    pieces = re.split(r'(«[^»]*»|“[^”]*”|"[^"\n]*")', segment)
+    for index in range(0, len(pieces), 2):
+        pieces[index] = re.sub(r"(?<=\d) (?=\d{3}(?:\D|$))", NNBSP, pieces[index])
+        pieces[index] = re.sub(r"[ \u00a0\u202f]+,", ",", pieces[index])
+    segment = "".join(pieces)
     segment = re.sub(r"«[   ]*", "«" + NNBSP, segment)
     segment = re.sub(r"[   ]*»", NNBSP + "»", segment)
     segment = re.sub(r"[   ]+([;!?])", NNBSP + r"\1", segment)

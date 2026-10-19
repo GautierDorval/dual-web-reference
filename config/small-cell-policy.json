@@ -1,9 +1,27 @@
 {
-  "schema_version": "dwr-small-cell-policy/1.0.0",
-  "policy_id": "small-cell-policy/1.1.0",
-  "status": "validated_by_owner",
-  "validated_on": "2026-10-17",
-  "fixed_before_results": true,
+  "accepted_residual_cases": [
+    "Provider-origin automated role with one named actor reveals that software actor, not a protected stratum.",
+    "Provider-origin automated family with one resource can reveal that resource count.",
+    "Historical robots_control and undeclared_bucket daily exceptions were release decisions, not anonymizing properties; no new protected daily exception applies.",
+    "Already public historical releases remain accessible. No claim of universal anonymity or erasure."
+  ],
+  "actor_names_at_edition_level": {
+    "date": "2026-10-17",
+    "decision": "approved",
+    "scope": "Named software-agent families (for example GPTBot) are published as actor names at edition level only; day-level outputs never carry an actor name."
+  },
+  "amendments": [
+    {
+      "change": "Protected strata combined in the daily grain; the failed-verification tier added to the protected strata, as its definition requires; user-initiated fetches removed from daily series (G01 and the main.daily metrics); undeclared bucket and non-protected single-path strata listed as accepted residual cases; differencing argument corrected.",
+      "date": "2026-10-16",
+      "effect_on_results": "No edition-level count changes; the main result, the role split and the scope delta are unchanged. Daily views now count automated roles only.",
+      "kind": "tightening_after_results",
+      "owner_review": "approved",
+      "owner_review_date": "2026-10-17",
+      "policy_id": "small-cell-policy/1.1.0",
+      "reason": "A crossing check on the candidate edition found three protected daily strata whose edition cells covered a single path, so the day of those requests to that path could be recovered by crossing daily-summary.csv with consultations.csv (one of them a single user-initiated fetch)."
+    }
+  ],
   "applies_to": [
     "data/editions/*/*.csv",
     "data/editions/*/*.json",
@@ -15,33 +33,29 @@
     "cases/**",
     "future editions and their deltas"
   ],
-  "structural_exclusions": [
-    "request IP address",
-    "raw or hashed user-agent string",
-    "cookie, session or device identifier",
-    "token or credential",
-    "free-form referrer",
-    "query string",
-    "conversation transcript",
-    "per-cell first_seen and last_seen timestamps",
-    "per-path first and last access dates"
-  ],
-  "protected_strata": {
-    "description": "Strata that may contain requests initiated by a person: user-initiated fetches, and unattributed, unverified or failed-verification clients whose stored label cannot exclude a browser.",
-    "actor_roles": [
-      "user_initiated_fetch"
-    ],
-    "stored_identity_tiers": [
-      "cloudflare_verified_unattributed",
-      "unknown_automation",
-      "claimed_actor_unverified",
-      "spoofed_or_failed_verification"
+  "complementary_suppression": "coverage daily totals and differences withheld together with protected daily rows",
+  "daily_protected_group": {
+    "any": "ANY",
+    "label": "protected_strata",
+    "minimum_paths": 10,
+    "minimum_paths_rule": "Historical diagnostic only, not a non-reconstruction criterion.",
+    "rule": "Historical grouped rows are retained only in frozen r1. Current projection withholds protected daily rows and coverage complements.",
+    "single_path_populations": [
+      "robots_control",
+      "undeclared_bucket"
     ]
   },
+  "differencing_argument": "The former edition-wide path threshold does not prove non-reconstruction. New fine protected cells require a complete inventoried public history and an assessed combination. Unassessed combinations are blocked; no general anonymity guarantee. Existing public cells may be re-presented exactly, never silently revised.",
+  "fixed_before_results": false,
+  "forbidden_combinations": [
+    "day x path",
+    "day x actor_name",
+    "day x actor_role, stored tier, method or status for any protected stratum",
+    "day x family for any protected stratum",
+    "user_initiated_fetch in any daily series, figure or metric"
+  ],
   "grains": [
     {
-      "grain_id": "edition_resource_actor",
-      "time_resolution": "edition",
       "dimensions": [
         "site_id",
         "path",
@@ -53,16 +67,16 @@
         "stored_identity_tier",
         "attribution_assessment"
       ],
-      "strata": "all",
       "files": [
         "consultations.csv",
         "resource-summary.csv",
         "actor-summary.csv"
-      ]
+      ],
+      "grain_id": "edition_resource_actor",
+      "strata": "all",
+      "time_resolution": "edition"
     },
     {
-      "grain_id": "daily_site_population",
-      "time_resolution": "day",
       "dimensions": [
         "site_id",
         "population",
@@ -71,68 +85,57 @@
         "http_method",
         "http_status"
       ],
-      "strata": "non-protected strata in full detail; protected strata combined into one group per date x site x population (see daily_protected_group)",
       "files": [
         "daily-summary.csv"
-      ]
+      ],
+      "grain_id": "daily_site_population",
+      "strata": "only non-protected strata; protected rows and all coverage complements are withheld",
+      "time_resolution": "day"
     },
     {
-      "grain_id": "daily_family_automated_main",
-      "time_resolution": "day",
       "dimensions": [
         "family",
         "actor_role"
       ],
-      "strata": "main documentary population, provider-origin tier, roles ai_training and ai_search only",
       "files": [
         "daily-family-summary.csv"
-      ]
+      ],
+      "grain_id": "daily_family_automated_main",
+      "strata": "main documentary population, provider-origin tier, roles ai_training and ai_search only",
+      "time_resolution": "day"
     }
-  ],
-  "forbidden_combinations": [
-    "day x path",
-    "day x actor_name",
-    "day x actor_role, stored tier, method or status for any protected stratum",
-    "day x family for any protected stratum",
-    "user_initiated_fetch in any daily series, figure or metric"
   ],
   "minimum_published_count": 1,
-  "numeric_suppression": "none_required_at_the_allowed_grains",
-  "complementary_suppression": "not_applicable_because_no_value_is_suppressed",
-  "differencing_argument": "Every published table is a marginal of one of the three maximal grains above. A marginal can still isolate a cell when crossed with another marginal: if a daily stratum covers a single path at the edition grain, its daily series is path-level. Protected strata are therefore published per day only as one combined group per site and population, which spans at least minimum_paths paths (checked by verify), and user-initiated fetches appear in no daily output. Differences between published tables, filters or editions then yield, for protected strata, no combination finer than date x site x population. Non-protected automated strata keep their daily detail; see accepted_residual_cases.",
-  "accepted_residual_cases": [
-    "The robots_control population contains a single path (/robots.txt); its daily counts, including the combined protected group, are therefore path-level. It is a public crawler-control file, outside the main population.",
-    "The undeclared_bucket population is one collector bucket per site (/.well-known/__undeclared__); its daily counts, including the combined protected group, are therefore bucket-level. The bucket is not a document and aggregates requests to many undeclared names.",
-    "A non-protected automated stratum (a named software agent whose stored tier is provider-origin or network-verified, in a role other than user_initiated_fetch) whose edition cells cover a single path makes its daily row path-level for that software agent. No protected stratum is involved.",
-    "A documentary family that contains a single path on all sites makes a cell of daily-family-summary.csv path-level for automated provider-origin crawlers only. No protected stratum is involved."
+  "numeric_suppression": "protected_daily_and_coverage_margins_withheld",
+  "owner_decisions_pending": [
+    "approval_of_corrected_distribution_policy"
   ],
-  "owner_decisions_pending": [],
-  "actor_names_at_edition_level": {
-    "decision": "approved",
-    "date": "2026-10-17",
-    "scope": "Named software-agent families (for example GPTBot) are published as actor names at edition level only; day-level outputs never carry an actor name."
-  },
-  "daily_protected_group": {
-    "label": "protected_strata",
-    "any": "ANY",
-    "rule": "In daily-summary.csv every request of a protected stratum (protected actor role or protected stored tier) is counted in a single row per date x site x population whose actor_role and stored_identity_tier are 'protected_strata' and whose http_method and http_status are 'ANY'. No daily view, figure or metric carries user-initiated fetches.",
-    "minimum_paths": 10,
-    "minimum_paths_rule": "Outside single_path_populations, each combined group must span at least this many paths with protected requests at the edition grain; otherwise verify fails and the owner chooses a coarser grouping before any publication.",
-    "single_path_populations": [
-      "robots_control",
-      "undeclared_bucket"
+  "policy_id": "small-cell-policy/2.0.0",
+  "protected_strata": {
+    "actor_roles": [
+      "user_initiated_fetch"
+    ],
+    "description": "Strata that may contain requests initiated by a person: user-initiated fetches, and unattributed, unverified or failed-verification clients whose stored label cannot exclude a browser.",
+    "stored_identity_tiers": [
+      "cloudflare_verified_unattributed",
+      "unknown_automation",
+      "claimed_actor_unverified",
+      "spoofed_or_failed_verification",
+      "network_verified_claimed_actor"
     ]
   },
-  "amendments": [
-    {
-      "date": "2026-10-16",
-      "policy_id": "small-cell-policy/1.1.0",
-      "kind": "tightening_after_results",
-      "change": "Protected strata combined in the daily grain; the failed-verification tier added to the protected strata, as its definition requires; user-initiated fetches removed from daily series (G01 and the main.daily metrics); undeclared bucket and non-protected single-path strata listed as accepted residual cases; differencing argument corrected.",
-      "reason": "A crossing check on the candidate edition found three protected daily strata whose edition cells covered a single path, so the day of those requests to that path could be recovered by crossing daily-summary.csv with consultations.csv (one of them a single user-initiated fetch).",
-      "effect_on_results": "No edition-level count changes; the main result, the role split and the scope delta are unchanged. Daily views now count automated roles only.",
-      "owner_review": "approved",
-      "owner_review_date": "2026-10-17"
-    }
-  ]
+  "schema_version": "dwr-small-cell-policy/1.0.0",
+  "status": "local_correction_candidate",
+  "structural_exclusions": [
+    "request IP address",
+    "raw or hashed user-agent string",
+    "cookie, session or device identifier",
+    "token or credential",
+    "free-form referrer",
+    "query string",
+    "conversation transcript",
+    "per-cell first_seen and last_seen timestamps",
+    "per-path first and last access dates"
+  ],
+  "validated_on": null
 }

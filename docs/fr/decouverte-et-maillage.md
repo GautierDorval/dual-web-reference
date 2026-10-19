@@ -2,7 +2,7 @@
 
 [English](../en/discovery-and-linking.md) · [Accueil du dépôt](../../README.fr.md)
 
-Un fichier de la couche peut être atteint de plusieurs façons. Cette page recense ces voies, précise ce que [links.csv](../../data/editions/2026-09-15_2026-10-15-r1/links.csv) en consigne, et distingue trois notions faciles à confondre : un parcours disponible, un parcours exécuté et des accès comptés en agrégat.
+Un fichier de la couche peut être atteint de plusieurs façons. Cette page recense ces voies, précise ce que [links.csv](../../data/editions/2026-09-15_2026-10-15-r2/links.csv) en consigne, et distingue trois notions faciles à confondre : un parcours disponible, un parcours exécuté et des accès comptés en agrégat.
 
 ## Voies d’accès à un fichier
 
@@ -53,4 +53,4 @@ Le graphe est extrait des dépôts sources des sites à une date d’instantané
 
 ## Pourquoi aucun taux de couverture rapporté à l’inventaire actuel
 
-On pourrait diviser le nombre de fichiers demandés par le nombre de fichiers de l’inventaire et appeler le résultat la part de la couche qui a été atteinte. Ce ratio n’est pas calculé. L’inventaire (le registre de périmètre et resources.csv) reflète l’état au moment de l’enregistrement et de l’instantané, après la fenêtre. Certaines ressources sont enregistrées aujourd’hui sans aucune ligne dans la fenêtre (colonne `window_rows_status`), d’autres ont pu exister alors et changer depuis, et la couverture quotidienne est déclarée partielle. Le numérateur et le dénominateur ne décriraient pas le même ensemble de fichiers au même moment. Le dépôt publie plutôt des comptes par couple site-chemin.
+On pourrait diviser le nombre de fichiers demandés par le nombre de fichiers de l’inventaire et appeler le résultat la part de la couche qui a été atteinte. Ce ratio portant sur l’inventaire complet n’est pas calculé. Le ratio distinct 174/269 utilise seulement les couples site-chemin principaux ayant des lignes enregistrées, tous acteurs, méthodes et statuts confondus. Il est conditionnel à ces lignes, pas à l’inventaire historique complet. L’inventaire (le registre de périmètre et resources.csv) reflète l’état au moment de l’enregistrement et de l’instantané, après la fenêtre. Certaines ressources sont enregistrées aujourd’hui sans aucune ligne dans la fenêtre (colonne `window_rows_status`), d’autres ont pu exister alors et changer depuis, et la couverture quotidienne est déclarée partielle. Le numérateur et le dénominateur ne décriraient pas le même ensemble de fichiers au même moment. Le dépôt publie plutôt des comptes par couple site-chemin.

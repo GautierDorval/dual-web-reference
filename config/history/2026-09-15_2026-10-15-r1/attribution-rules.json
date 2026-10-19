@@ -1,0 +1,72 @@
+{
+  "schema_version": "dwr-attribution-rules/1.0.0",
+  "rules_id": "attribution-assessment/1.0.0",
+  "classifier_versions_covered": ["2026-08-24.1"],
+  "method_reference": "docs/en/attribution.md",
+  "principle": "stored_identity_tier is kept exactly as recorded by the producer. attribution_assessment is a separate interpretation with its own method. No stored label is overwritten, redated or redistributed.",
+  "assessments": {
+    "provider_origin_verified_actor": {
+      "attribution_assessment": "registry_match_not_affected_by_predicate",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": true,
+      "label_en": "Provider origin recorded from an official IP-range match; this branch does not use the Cloudflare predicate under review.",
+      "label_fr": "Origine fournisseur enregistrée par correspondance avec des plages IP officielles ; cette branche n’utilise pas le prédicat Cloudflare en revue."
+    },
+    "spoofed_or_failed_verification": {
+      "attribution_assessment": "registry_mismatch_not_affected_by_predicate",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": false,
+      "label_en": "Declared provider name whose request origin did not match the official registry.",
+      "label_fr": "Nom de fournisseur déclaré dont l’origine ne correspondait pas au registre officiel."
+    },
+    "network_verified_claimed_actor": {
+      "attribution_assessment": "recorded_classification_reliability_under_review",
+      "depends_on_cloudflare_predicate": true,
+      "eligible_for_main_population": false,
+      "label_en": "Recorded classification, reliability under review: this label depends on a Cloudflare predicate that also accepts an empty category.",
+      "label_fr": "Classification enregistrée, fiabilité en cours de revue : ce libellé dépend d’un prédicat Cloudflare qui accepte aussi une catégorie vide."
+    },
+    "cloudflare_verified_unattributed": {
+      "attribution_assessment": "recorded_classification_reliability_under_review",
+      "depends_on_cloudflare_predicate": true,
+      "eligible_for_main_population": false,
+      "label_en": "Recorded classification, reliability under review: no provider identity, and the label depends on the predicate under review.",
+      "label_fr": "Classification enregistrée, fiabilité en cours de revue : aucune identité de fournisseur, et le libellé dépend du prédicat en revue."
+    },
+    "claimed_actor_unverified": {
+      "attribution_assessment": "unverified_claim",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": false,
+      "label_en": "Declared name only, without verification.",
+      "label_fr": "Nom déclaré seulement, sans vérification."
+    },
+    "unknown_automation": {
+      "attribution_assessment": "unverified_unknown",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": false,
+      "label_en": "No identification.",
+      "label_fr": "Aucune identification."
+    },
+    "synthetic_probe": {
+      "attribution_assessment": "synthetic_marker",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": false,
+      "label_en": "Signed synthetic control request of the collector.",
+      "label_fr": "Requête de contrôle synthétique signée du collecteur."
+    },
+    "cryptographically_verified_actor": {
+      "attribution_assessment": "not_observed_in_covered_versions",
+      "depends_on_cloudflare_predicate": false,
+      "eligible_for_main_population": false,
+      "label_en": "Tier defined by the producer contract; not produced by classifier 2026-08-24.1.",
+      "label_fr": "Niveau défini par le contrat du producteur ; non produit par le classificateur 2026-08-24.1."
+    }
+  },
+  "main_population_actor_roles": ["ai_training", "ai_search", "user_initiated_fetch"],
+  "sensitivity_without_roles": ["user_initiated_fetch"],
+  "initiation_provenance": {
+    "default": "unknown",
+    "evidence_status_default": "not_established",
+    "rule": "Initiation provenance is never inferred from the actor role, the provider or the identity tier. A provider-origin request may have been triggered by the site operator."
+  }
+}

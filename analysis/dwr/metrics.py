@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 
-from .common import SITE_IDS, read_csv
+from .common import SITE_IDS, read_csv, load_json
 
 PROVIDER = "provider_origin_verified_actor"
 UNATTRIBUTED = "cloudflare_verified_unattributed"
@@ -42,9 +42,9 @@ def metric(metric_id, value, unit, *, numerator=None, denominator=None, filters=
 
 
 def share(metric_id, numerator, denominator, **kwargs):
-    if not denominator:
+    if numerator is None or denominator in (None, 0):
         return metric(metric_id, None, "ratio", numerator=numerator, denominator=denominator,
-                      status="not_calculable", reason="denominator_zero_or_unavailable", **kwargs)
+                      status="not_calculable", reason=("source_unavailable" if numerator is None or denominator is None else "denominator_zero"), **kwargs)
     return metric(metric_id, round(numerator / denominator, 6), "ratio", numerator=numerator,
                   denominator=denominator, **kwargs)
 
@@ -54,6 +54,8 @@ def is_get200(row) -> bool:
 
 
 def compute(edition_dir: Path) -> dict:
+    catalog = load_json(edition_dir / "catalog.json")
+    modern = catalog.get("metrics_version") == "dwr-metrics/2.0.0"
     resources = {row["resource_id"]: row for row in read_csv(edition_dir / "resources.csv")}
     consultations = read_csv(edition_dir / "consultations.csv")
     summary = {row["resource_id"]: row for row in read_csv(edition_dir / "resource-summary.csv")}
@@ -252,9 +254,9 @@ def compute(edition_dir: Path) -> dict:
                           filters=f"historical report scope; stored tier {tier}; GET 200; all roles",
                           sources=files_c, label_en=tier, label_fr=tier))
 
-    out.append(metric("collector.requests", sum(int(r["request_count"]) for r in daily), "requests",
+    out.append(metric("collector.requests", sum(int(r["request_count"]) for r in (consultations if modern else daily)), "requests",
                       filters="all paths recorded by the collector on the three sites, all methods, statuses and actors",
-                      sources=("daily-summary.csv",), label_en="All requests recorded by the collector",
+                      sources=(("consultations.csv",) if modern else ("daily-summary.csv",)), label_en="All requests recorded by the collector",
                       label_fr="Toutes les requêtes enregistrées par le collecteur"))
     partial = sum(1 for r in coverage if r["coverage_status"] == "partial_declared")
     attestation = sum(1 for r in coverage if r["archive_reason_code"] == "COLLECTOR_WINDOW_ATTESTATION_MISSING")
@@ -269,17 +271,96 @@ def compute(edition_dir: Path) -> dict:
         metric("coverage.days_attestation_missing", attestation, "days", sources=("coverage.csv",),
                label_en="Days with missing collector window attestation",
                label_fr="Jours sans attestation de fenêtre du collecteur"),
-        metric("coverage.aggregate_v3_mismatch_days", len(mismatch_days), "days", sources=("coverage.csv",),
+        metric("coverage.aggregate_v3_mismatch_days", (None if modern and any(r["aggregate_minus_v3"] == "" for r in coverage) else len(mismatch_days)), "days", sources=("coverage.csv",),
                filters=";".join(mismatch_days), label_en="Days with an aggregate/V3 count gap",
                label_fr="Jours avec écart entre agrégats et V3"),
-        metric("coverage.aggregate_sum", sum(int(r["aggregate_count"]) for r in coverage), "requests",
+        metric("coverage.aggregate_sum", sum(int(r["aggregate_count"]) for r in coverage) if all(r["aggregate_count"] != "" for r in coverage) else None, "requests",
                sources=("coverage.csv",), label_en="Sum of archived aggregate counts",
                label_fr="Somme des comptes agrégés archivés"),
-        metric("coverage.v3_sum", sum(int(r["v3_count"]) for r in coverage), "requests", sources=("coverage.csv",),
+        metric("coverage.v3_sum", sum(int(r["v3_count"]) for r in coverage) if all(r["v3_count"] != "" for r in coverage) else None, "requests", sources=("coverage.csv",),
                label_en="Sum of archived V3 counts", label_fr="Somme des comptes V3 archivés"),
         metric("coverage.joint_matches_archive_days", sum(1 for r in coverage if r["joint_matches_archive"] == "true"),
                "days", sources=("coverage.csv",), label_en="Days whose joint total equals the archived aggregate",
                label_fr="Jours dont le total conjoint égale l’agrégat archivé"),
     ]
+    if modern:
+        out += expanded_metrics(resources, consultations, daily_main, total, pairs, llms, other)
+        for item in out:
+            if item["value"] is None and item["metric_id"] in ("coverage.aggregate_v3_mismatch_days", "coverage.aggregate_sum", "coverage.v3_sum"):
+                item.update(status="withheld", reason="daily_coverage_complement_withheld_by_disclosure_policy")
     out.sort(key=lambda m: m["metric_id"])
     return {"metrics": out}
+
+
+def expanded_metrics(resources, consultations, daily_main, total, pairs, llms, other):
+    """Version 2 additions, computed only here; frozen v1 metrics retain their contract."""
+    observed = {rid for rid, r in resources.items() if _bool(r["main_population"]) and r["window_rows_status"] == "rows_in_window"}
+    llms_pairs = sum(resources[rid]["path"] == "/llms.txt" for rid in observed)
+    sources = ("consultations.csv", "resources.csv")
+    selection = [r for r in consultations if r["resource_id"] in observed and is_get200(r)
+                 and r["stored_identity_tier"] == PROVIDER and r["actor_role"] in AI_ROLES]
+    definition = "main population site-path pairs with recorded rows across all actors, methods and HTTP statuses; not a complete historical inventory"
+    out = [metric("main.recorded_pairs", len(observed), "site-path pairs", filters=definition, sources=sources,
+                  label_en="Main resources with recorded rows", label_fr="Ressources principales avec lignes enregistrées"),
+           share("main.conditional_pair_share", pairs, len(observed), filters=MAIN_FILTER + "; denominator: " + definition,
+                 sources=sources, label_en="Conditional share of resources with recorded rows", label_fr="Part conditionnelle des ressources avec lignes"),
+           metric("main.llms_recorded_pairs", llms_pairs, "site-path pairs", filters=definition + "; /llms.txt", sources=sources),
+           metric("main.other_recorded_pairs", len(observed)-llms_pairs, "site-path pairs", filters=definition + "; other resources", sources=sources)]
+    for label, numerator, denominator in (("llms", llms, llms_pairs), ("other", other, len(observed)-llms_pairs)):
+        item = share(f"main.{label}_requests_per_recorded_url", numerator, denominator, filters=MAIN_FILTER + "; denominator: " + definition + "; no exposure adjustment", sources=sources)
+        item["unit"] = "requests per resource with recorded rows"
+        out.append(item)
+    for site in SITE_IDS:
+        out.append(metric(f"main.site.{site}.recorded_pairs", sum(resources[rid]["site_id"] == site for rid in observed), "site-path pairs", filters=definition + "; " + site, sources=sources))
+    for dimension in ("actor_name", "actor_family"):
+        counts = defaultdict(int)
+        for row in selection:
+            counts[row[dimension]] += int(row["request_count"])
+        for name, count in sorted(counts.items()):
+            prefix = f"main.{dimension}.{name}"
+            out.extend([metric(prefix + ".get200", count, "requests", filters=MAIN_FILTER + f"; {dimension}={name}", sources=sources, quality=QUALITY),
+                        share(prefix + ".share", count, total, filters=MAIN_FILTER + f"; {dimension}={name}", sources=sources, quality=QUALITY)])
+    names = {"GPTBot", "OAI-SearchBot", "PerplexityBot", "ChatGPT-User"}
+    failed = sum(int(r["request_count"]) for r in consultations if r["resource_id"] in observed and is_get200(r)
+                 and r["actor_name"] in names and r["stored_identity_tier"] == "spoofed_or_failed_verification" and r["actor_role"] in AI_ROLES)
+    matched = sum(int(r["request_count"]) for r in selection if r["actor_name"] in names)
+    filter_failed = "main population; GET 200; AI roles; exact names GPTBot, OAI-SearchBot, PerplexityBot, ChatGPT-User; failed tier spoofed_or_failed_verification; denominator matched provider-origin plus failed tier only; not proven spoofing"
+    out.extend([metric("main.failed_origin_selected.get200", failed, "requests", filters=filter_failed, sources=sources),
+                share("main.failed_origin_selected.share", failed, matched + failed, filters=filter_failed, sources=sources)])
+    by_day = defaultdict(int)
+    for (day, site), count in daily_main.items():
+        by_day[day] += count
+    top = sorted(by_day.items(), key=lambda item: (-item[1], item[0]))[:3]
+    numerator = sum(count for _, count in top)
+    out.extend([metric("main.automated.top3_days_get200", numerator, "requests", filters=DAILY_FILTER, sources=("daily-summary.csv",)),
+                share("main.automated.top3_days_share", numerator, sum(by_day.values()), filters=DAILY_FILTER, sources=("daily-summary.csv",))])
+    for index, (day, count) in enumerate(top, 1):
+        out.append(metric(f"main.automated.top_day_{index}.get200", count, "requests", filters=DAILY_FILTER + "; date=" + day, sources=("daily-summary.csv",)))
+    labels = {
+        "main.llms_recorded_pairs": ("llms.txt resources with recorded rows", "Ressources llms.txt avec lignes enregistrées"),
+        "main.other_recorded_pairs": ("Other resources with recorded rows", "Autres ressources avec lignes enregistrées"),
+        "main.llms_requests_per_recorded_url": ("llms.txt requests per resource with rows, unadjusted exposure", "Requêtes llms.txt par ressource avec lignes, exposition non ajustée"),
+        "main.other_requests_per_recorded_url": ("Other requests per resource with rows, unadjusted exposure", "Autres requêtes par ressource avec lignes, exposition non ajustée"),
+        "main.failed_origin_selected.get200": ("Failed origin verification for four selected names", "Vérification d’origine échouée pour quatre noms retenus"),
+        "main.failed_origin_selected.share": ("Failed-origin share among selected verified and failed tiers", "Part à origine non vérifiée parmi les niveaux vérifiés et échoués retenus"),
+        "main.automated.top3_days_get200": ("Automated requests on the three busiest days", "Requêtes automatisées des trois journées les plus actives"),
+        "main.automated.top3_days_share": ("Share of automated requests on the three busiest days", "Part des requêtes automatisées sur les trois journées les plus actives"),
+    }
+    for item in out:
+        key = item["metric_id"]
+        if item["label_en"] and item["label_fr"]:
+            continue
+        if key in labels:
+            en, fr = labels[key]
+        elif key.startswith(("main.actor_name.", "main.actor_family.")):
+            dimension, name, kind = key.split(".")[1:]
+            en = ("Recorded agent " if dimension == "actor_name" else "Provider family ") + name + (": requests" if kind == "get200" else ": share of main selection")
+            fr = ("Agent enregistré " if dimension == "actor_name" else "Famille de fournisseur ") + name + (" : requêtes" if kind == "get200" else " : part de la sélection principale")
+        elif key.startswith("main.site."):
+            site = key[len("main.site."):-len(".recorded_pairs")]
+            en, fr = site + ": resources with recorded rows", site + " : ressources avec lignes enregistrées"
+        else:
+            rank = key.split("top_day_")[1].split(".")[0]
+            en, fr = "Automated requests on ranked day " + rank, "Requêtes automatisées de la journée au rang " + rank
+        item.update(label_en=en, label_fr=fr)
+    return out

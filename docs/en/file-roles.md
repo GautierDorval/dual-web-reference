@@ -23,7 +23,7 @@ Only a short list of technical or collector paths is classified by rule. Every o
 - `/doctrine/ssa-e-a2-dual-web.md` is the Markdown reference of the definition on gautierdorval.com (`core_governance`) and an explanatory, non-contractual description on pagup.com (`supporting_documentation`).
 - `humans.txt`, `llms.txt`, `robots.txt` and `security.txt` share an extension and fall in four different classes.
 
-A file can carry several functions; its class follows its main function as reviewed. Each decision is recorded with its rule, review status and justification in [scope-registry.csv](../../config/scope-registry.csv), and published for the edition in [resources.csv](../../data/editions/2026-09-15_2026-10-15-r1/resources.csv). The `family` column of those tables is finer than the groups below.
+A file can carry several functions; its class follows its main function as reviewed. Each decision is recorded with its rule, review status and justification in [scope-registry.csv](../../config/scope-registry.csv), and published for the edition in [resources.csv](../../data/editions/2026-09-15_2026-10-15-r2/resources.csv). The `family` column of those tables is finer than the groups below.
 
 ## Groups and roles
 
@@ -51,7 +51,7 @@ A request to an operational descriptor is a request for the document, never a ca
 - **Main documentary population**: the pairs classified `core_governance` or `discovery_index`. The main result keeps, within it, GET requests with status 200 whose stored tier is `provider_origin_verified_actor`, for the roles `ai_training`, `ai_search` and `user_initiated_fetch`.
 - **llms.txt** belongs to the main population and is always reported separately. Isolating it never removes any other resource from the population.
 - **Extended documentary layer**: the main population plus `supporting_documentation`. It is a secondary reading, published beside the main result and never merged into it.
-- **Outside both**: `operational_descriptor`, `control_resource`, `technical_resource`, `undeclared_bucket` and `unresolved_scope`. Each class kept out of the main population that has requests in the window, `supporting_documentation` included, has its own row in [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r1/exclusions.csv).
+- **Outside both**: `operational_descriptor`, `control_resource`, `technical_resource`, `undeclared_bucket` and `unresolved_scope`. Each class kept out of the main population that has requests in the window, `supporting_documentation` included, has its own row in [exclusions.csv](../../data/editions/2026-09-15_2026-10-15-r2/exclusions.csv).
 
 The unit is the site-path pair. Mirrors (for example `/ai-governance.json` and `/.well-known/ai-governance.json`), languages and formats (a Markdown file and its JSON or YAML variant) are separate resources. A view by family may group them, without presenting them as independent documents.
 

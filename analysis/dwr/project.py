@@ -17,11 +17,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from . import SCHEMA_VERSION
+from . import SCHEMA_VERSION, measurement
 from .common import REPO_ROOT, SITE_IDS, load_json
 from .reconcile import AI_ROLES, PROVIDER, in_historical_scope
 
-EPOCH = "classifier-2026-08-24.1"
 AUTOMATED_MAIN_ROLES = ("ai_training", "ai_search")
 PROTECTED_GROUP = "protected_strata"
 ANY = "ANY"
@@ -128,6 +127,9 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
         raise DwrError("joint_aggregate_required", "acquire-readonly then normalize before project-public")
     rows = normalized["joint_rows"]
     inventory = normalized["archive_inventory"]
+    provenance = normalized.get("measurement_provenance", {})
+    measured = measurement.qualify(rows, inventory["days"], provenance)
+    rows = measured["rows"]
     attribution = qualified["attribution"]["assessments"]
     window = edition["window"]
     edition_id = edition["edition_id"]
@@ -137,10 +139,10 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
     if missing:
         from .common import DwrError
         raise DwrError("registry_entry_missing", f"{missing[0]}")
-    common = {"edition_id": edition_id, "schema_version": SCHEMA_VERSION, "measurement_epoch_id": EPOCH,
+    common = {"edition_id": edition_id, "schema_version": SCHEMA_VERSION, "measurement_epoch_id": measured["measurement_epoch_id"],
               "period_start_utc": window.start_utc, "period_end_exclusive_utc": window.end_exclusive_utc,
               "time_grain": "edition", "date_utc": None, "initiation_provenance": "unknown",
-              "initiation_evidence_status": "not_established", "coverage_status": "partial_declared",
+              "initiation_evidence_status": "not_established", "coverage_status": measured["coverage_status"],
               "suppression_status": "not_suppressed", "cell_derivation": "joint_exact", "source_snapshot_id": snapshot_id}
 
     graphs = qualified["graphs"]
@@ -164,7 +166,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
         population = population_of(resource)
         n = r["request_count"]
         edition_cells[(r["site_id"], r["path"], r["http_method"], r["http_status"], r["actor_family"], r["actor_name"],
-                       r["actor_role"], r["stored_identity_tier"])] += n
+                       r["actor_role"], r["stored_identity_tier"], r["measurement_epoch_id"])] += n
         daily_cells[daily_key(r["date_utc"], r["site_id"], population, r["actor_role"], r["stored_identity_tier"],
                               r["http_method"], r["http_status"], protected)] += n
         get200 = r["http_method"] == "GET" and r["http_status"] == 200
@@ -179,9 +181,9 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
         actor["_days"].add(r["date_utc"])
 
     consultations = []
-    for (site, path, method, status, family, name, role, tier), n in edition_cells.items():
+    for (site, path, method, status, family, name, role, tier, epoch_id), n in edition_cells.items():
         resource = resources[(site, path)]
-        consultations.append({**common, "site_id": site, "resource_id": resource["resource_id"], "path": path,
+        consultations.append({**common, "measurement_epoch_id": epoch_id, "site_id": site, "resource_id": resource["resource_id"], "path": path,
                               "scope_class": resource["scope_class"], "http_method": method, "http_status": status,
                               "actor_family": family, "actor_name": name, "actor_role": role,
                               "stored_identity_tier": tier, "attribution_assessment": attribution[tier]["attribution_assessment"],
@@ -206,7 +208,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
             "days_with_rows": counts["days"], "get200_days_all_actors": counts["get200_days"],
             "provider_origin_ai_get200": counts["provider_ai_get200"],
             "provider_origin_ai_get200_days": counts["provider_ai_get200_days"],
-            "coverage_status": "partial_declared",
+            "coverage_status": measured["coverage_status"],
         })
 
     links = []
@@ -229,7 +231,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
     archive_by_day = {day["date_utc"]: day for day in inventory["days"]}
     daily = [{"edition_id": edition_id, "date_utc": day, "site_id": site, "population": population, "actor_role": role,
               "stored_identity_tier": tier, "http_method": method, "http_status": status, "request_count": n,
-              "coverage_status": "partial_declared",
+              "coverage_status": measured["days"].get(day, {}).get("coverage_status", "observation_unavailable"),
               "archive_report_status": archive_by_day.get(day, {}).get("report_status", "unavailable")}
              for (day, site, population, role, tier, method, status), n in daily_cells.items()]
     daily.sort(key=lambda r: (r["date_utc"], SITE_IDS.index(r["site_id"]), r["population"], r["actor_role"],
@@ -242,8 +244,8 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
             for role in AUTOMATED_MAIN_ROLES:
                 n = family_cells.get((day.isoformat(), family, role), 0)
                 family_daily.append({"edition_id": edition_id, "date_utc": day.isoformat(), "family": family,
-                                     "actor_role": role, "request_count": n,
-                                     "observation_status": "observed" if n else "observed_zero"})
+                                     "actor_role": role, "request_count": (None if measured["days"].get(day.isoformat(), {}).get("coverage_status") == "observation_unavailable" else n),
+                                     "observation_status": ("observation_unavailable" if measured["days"].get(day.isoformat(), {}).get("coverage_status") == "observation_unavailable" else "observed" if n else "observed_zero")})
 
     actors = []
     for (population, site, family, name, role, tier), values in actor_cells.items():
@@ -267,13 +269,13 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
         aggregate, v3 = day.get("aggregate_count"), day.get("v3_count")
         coverage.append({"edition_id": edition_id, "date_utc": day["date_utc"],
                          "observation_status": "observed" if day["archive_status"] == "archived" else "observation_unavailable",
-                         "coverage_status": "partial_declared" if day.get("report_status") == "partial" else day.get("report_status", "unknown"),
+                         "coverage_status": measurement.coverage(day),
                          "archive_status": day["archive_status"], "archive_report_status": day.get("report_status"),
                          "archive_reason_code": day.get("governance_reason_code"), "aggregate_count": aggregate,
                          "v3_count": v3, "aggregate_minus_v3": (aggregate - v3) if aggregate is not None and v3 is not None else None,
                          "export_matches_archive": export_daily.get(day["date_utc"]) == aggregate,
                          "joint_matches_archive": joint_daily.get(day["date_utc"]) == aggregate,
-                         "snapshots_for_date": day.get("snapshots"), "classifier_version": "2026-08-24.1",
+                         "snapshots_for_date": day.get("snapshots"), "classifier_version": "+".join(measured["days"].get(day["date_utc"], {}).get("epochs", [])) or "unknown",
                          "producer_deployment_label": label_for_day(labels, day["date_utc"])})
 
     exclusions = build_exclusions(qualified, rows, resources, edition_id, attribution)
@@ -281,7 +283,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
                       "versions": [{"percentage": v["percentage"]} for v in d["versions"]]} for d in labels]
     return {"resources": resources_out, "links": links, "consultations": consultations, "resource_summary": summaries,
             "daily": daily, "actors": actors, "coverage": coverage, "exclusions": exclusions,
-            "family_daily": family_daily, "graph_snapshots": graph_ids, "deployments": public_labels,
+            "family_daily": family_daily, "measurement": {k: v for k, v in measured.items() if k != "rows"}, "graph_snapshots": graph_ids, "deployments": public_labels,
             "source_snapshot_id": snapshot_id}
 
 
