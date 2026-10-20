@@ -59,6 +59,11 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertNotIn('local candidate',(root/'cases/gautierdorval.com/README.md').read_text(encoding='utf-8'))
                 html=(root/'site/dist/en/index.html').read_text(encoding='utf-8')
                 self.assertIn('publicly accessible; reference approved',html)
+                # The visible edition banner preserves each language's punctuation.
+                for lang, prefix in (('en', R2 + ': '), ('fr', R2 + '\u00a0: ')):
+                    for page in ('index.html', 'editions.html'):
+                        rendered=(root/'site/dist'/lang/page).read_text(encoding='utf-8')
+                        self.assertIn('<p class="banner wrap">' + prefix, rendered)
                 self.assertNotIn('local candidate',(root/'CITATION.cff').read_text(encoding='utf-8'))
                 catalog=load_json(root/f'data/editions/{R2}/catalog.json')
                 self.assertFalse(set(catalog)&set(edition_rules.MUTABLE_CATALOG_FIELDS))
