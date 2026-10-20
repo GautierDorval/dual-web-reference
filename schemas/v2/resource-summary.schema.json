@@ -1,0 +1,121 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "resource_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "site_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "path",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "scope_class",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "main_population",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "llms_txt",
+      "type": "boolean"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "requests_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "get200_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "head_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "status304_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "status4xx5xx_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "days_with_rows",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "get200_days_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "provider_origin_ai_get200",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "provider_origin_ai_get200_days",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "enum": [
+          "observation_unavailable",
+          "complete_declared",
+          "partial_declared",
+          "coverage_unknown",
+          "mixed_coverage"
+        ]
+      },
+      "name": "coverage_status",
+      "type": "string"
+    }
+  ],
+  "name": "resource-summary.csv",
+  "primaryKey": [
+    "resource_id"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

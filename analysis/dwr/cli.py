@@ -47,6 +47,8 @@ def build_parser() -> argparse.ArgumentParser:
     add("build-site", "build the static presentation into site/dist")
     add("prepare-edition", "candidate package, digests and delta report")
     add("status", "data, edition and preparation state")
+    command = add("png-fallback", "guarded optional PNG rendering; public editions require an external preview")
+    command.add_argument("--preview", type=Path)
     command = add("publication-gate", "check every Git object of the branch to publish (private values never printed)",
                   private=True)
     command.add_argument("--ref", default="public-candidate", help="branch or commit to publish")
@@ -66,7 +68,10 @@ def _dispatch(args) -> int:
     from . import pipeline
 
     command = args.command
-    if command == "prepare-next":
+    if command == "png-fallback":
+        from . import png
+        _print(png.prepare(args.edition, args.preview))
+    elif command == "prepare-next":
         from . import maintenance
         result = maintenance.prepare(private_root(args.private_root))
         _print(result)
@@ -81,11 +86,14 @@ def _dispatch(args) -> int:
         _print(revisions.prepare(args.edition))
     elif command == "publication-gate":
         from . import gate
-        from .common import REPO_ROOT
         result = gate.check_ref(REPO_ROOT, args.ref, gate.load_secrets(private_root(args.private_root)))
         _print(result)
         return 0 if result["passed"] else 1
     elif command in ("normalize", "qualify", "project-public"):
+        if command == "project-public":
+            from .write_guard import admit
+            entry = pipeline.edition_entry(args.edition)
+            admit(REPO_ROOT, entry["edition_id"])
         _print(getattr(pipeline, "cmd_" + command.replace("-", "_"))(private_root(args.private_root), args.edition))
     elif command in ("analyze", "render", "verify", "build-site", "prepare-edition", "status"):
         result = getattr(pipeline, "cmd_" + command.replace("-", "_"))(args.edition)

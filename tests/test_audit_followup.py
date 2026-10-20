@@ -59,6 +59,11 @@ class AuditFollowupTests(unittest.TestCase):
                 self.assertNotIn('local candidate',(root/'cases/gautierdorval.com/README.md').read_text(encoding='utf-8'))
                 html=(root/'site/dist/en/index.html').read_text(encoding='utf-8')
                 self.assertIn('publicly accessible; reference approved',html)
+                # The visible edition banner preserves each language's punctuation.
+                for lang, prefix in (('en', R2 + ': '), ('fr', R2 + '\u00a0: ')):
+                    for page in ('index.html', 'editions.html'):
+                        rendered=(root/'site/dist'/lang/page).read_text(encoding='utf-8')
+                        self.assertIn('<p class="banner wrap">' + prefix, rendered)
                 self.assertNotIn('local candidate',(root/'CITATION.cff').read_text(encoding='utf-8'))
                 catalog=load_json(root/f'data/editions/{R2}/catalog.json')
                 self.assertFalse(set(catalog)&set(edition_rules.MUTABLE_CATALOG_FIELDS))
@@ -125,7 +130,7 @@ class AuditFollowupTests(unittest.TestCase):
     def test_preparation_refuses_changed_inputs_even_when_counts_still_match(self):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp);eid=prepare_inputs(private)
-            self.assertEqual(maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))['outcome'],'awaiting_review')
+            self.assertEqual(maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))['outcome'],'distribution_blocked_pending_policy_approval')
             path=private/'working'/eid/'normalized.json';source=load_json(path)
             source['joint_extracted_at']['end']='2026-11-17T00:00:02Z';write_json(path,source)
             result=maintenance.prepare(private,datetime(2026,11,18,tzinfo=timezone.utc))

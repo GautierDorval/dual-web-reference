@@ -14,6 +14,7 @@ from __future__ import annotations
 import html
 import posixpath
 import shutil
+import re
 from pathlib import Path
 
 from . import mdlite, typo, edition_rules
@@ -96,13 +97,17 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
               f'{"Français" if lang == "en" else "English"}</a>') if counterpart else ""
     from . import edition_rules
     entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
-    banner = edition_rules.status_label(entry, lang, scientific=False) + "."
+    home = page == f"{lang}/index.html"
+    banner = edition_id + t(lang, ": ", " : ") + edition_rules.status_label(entry, lang, scientific=home) + "."
+    if home:
+        banner += t(lang, " r1 remains accessible as an unapproved historical edition.",
+                    " r1 reste accessible comme édition historique non approuvée.")
     if lang == "fr":
         banner = typo.fr(banner)
     return (f'<!doctype html>\n<html lang="{lang}"><head><meta charset="utf-8">'
             f'<meta name="viewport" content="width=device-width, initial-scale=1">'
             f'<meta name="robots" content="noindex"><meta name="referrer" content="no-referrer">'
-            f'<title>{esc(title)} · Dual Web Reference</title>'
+            f'<title>{esc(title if title == "Dual Web Reference" else title + " · Dual Web Reference")}</title>'
             f'<link rel="stylesheet" href="{esc(root)}assets/style.css"></head>'
             f'<body><a class="skip" href="#main">{esc(t(lang, "Skip to content", "Aller au contenu"))}</a><header class="site"><div class="wrap"><a class="brand" href="{esc(relative(page, lang + "/index.html"))}">Dual Web Reference</a>'
             f'<nav aria-label="{esc(t(lang, "Main", "Principale"))}">{links}</nav>{switch}</div>'
@@ -115,6 +120,11 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
 def markdown_page(source_rel: str, page: str, lang: str, counterpart: str | None, edition_id: str) -> None:
     text = (REPO_ROOT / source_rel).read_text(encoding="utf-8")
     title = next((line[2:].strip() for line in text.splitlines() if line.startswith("# ")), "Dual Web Reference")
+    if source_rel in ("README.md", "README.fr.md"):
+        # The website shell provides language navigation and the same state once.
+        text = re.sub(r"<!-- dwr:begin edition-state -->.*?<!-- dwr:end edition-state -->", "", text, flags=re.S)
+        text = re.sub(r"(?m)^.*\[English\].*\[Français\].*\n", "", text)
+        text = re.sub(r"(?m)^\[(?:English|Français)\]\(README(?:\.fr)?\.md\)\s*\n", "", text)
     body = mdlite.render(text, rewriter(source_rel, page))
     write_text(DIST / page, layout(page, lang, title, body, counterpart, edition_id))
 

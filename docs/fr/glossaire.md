@@ -91,3 +91,14 @@ Plusieurs noms de fichiers et rôles des cas emploient le vocabulaire de la dém
 - **CAI** : décrite dans les fichiers des sites comme une couche d’intégrité attestée : des empreintes d’énoncés canoniques choisis, et ce que ces empreintes ne prouvent pas (`attested-interpretive-units.json`, `content-digests.json`). Le développement des lettres n’est pas établi ici.
 - **MCP** : le Model Context Protocol, par lequel un serveur expose des outils ou du contexte ; un fichier qui décrit un tel serveur est un descripteur opérationnel.
 - **`/.well-known/`** : préfixe de chemin réservé aux fichiers de métadonnées qui valent pour tout le site (RFC 8615).
+
+
+## Époques et états de couverture
+
+`classifier_version` identifie le classificateur ; `measurement_epoch_id` identifie un segment de mesure attesté. Plusieurs segments entièrement résolus donnent `multiple_epochs_resolved`, pas `mixed_epoch_unresolved`. Ce dernier désigne un mélange inséparable ; `unknown` signifie une preuve manquante. Le futur schéma 2 ajoute l’époque aux clés quotidiennes, par acteur et par famille. La couverture vaut `complete_declared`, `partial_declared`, `coverage_unknown` ou `observation_unavailable` ; une édition peut résumer des journées hétérogènes par `mixed_coverage`. Complétude et résolution d’époque sont indépendantes.
+
+Les classificateurs historiques scalaires deviennent une liste d’un élément, avec conservation de la valeur brute et de la transformation. Aucun préfixe n’est retiré pour deviner un classificateur. Les futures synthèses de ressources réunissent les ressources et journées par union entre époques, sans additionner leurs comptes distincts.
+
+`epoch_resolution` décrit la résolution des segments : `single_epoch_resolved` pour un seul segment attesté, `multiple_epochs_resolved` pour plusieurs segments attestés et séparables, `mixed_epoch_unresolved` pour un mélange inséparable, `unknown` pour une preuve insuffisante. Ce champ n’est pas une version de classificateur. Dans le schéma 2, `classifier_versions` contient seulement les versions enregistrées ; les marqueurs `unknown` et `mixed_epoch_unresolved` en sont exclus. Les états restent dans `measurement_epoch_id` et `epoch_resolution`.
+
+Dans les CSV version 2, `classifier_versions` et `measurement_epochs` sont des chaînes contenant un tableau JSON de chaînes triées et uniques, encodées selon les règles de citation CSV. `[]` signifie qu’aucune valeur n’a été enregistrée ; ce n’est ni une version ni une preuve de comparabilité. Les scalaires historiques conservent leurs octets et leur adaptation distincte.

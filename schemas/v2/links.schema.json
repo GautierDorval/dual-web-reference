@@ -1,0 +1,78 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "graph_snapshot_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "graph_snapshot_at",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "source_site",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "source_path",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "source_resource_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "target_site",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "target_path",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "target_resource_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "relation_type",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "evidence_line",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "occurrences",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "note",
+      "type": "string"
+    }
+  ],
+  "name": "links.csv",
+  "primaryKey": [
+    "source_site",
+    "source_path",
+    "target_site",
+    "target_path",
+    "relation_type"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

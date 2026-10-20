@@ -289,7 +289,13 @@ def compute(edition_dir: Path) -> dict:
             if item["value"] is None and item["metric_id"] in ("coverage.aggregate_v3_mismatch_days", "coverage.aggregate_sum", "coverage.v3_sum"):
                 item.update(status="withheld", reason="daily_coverage_complement_withheld_by_disclosure_policy")
     out.sort(key=lambda m: m["metric_id"])
-    return {"metrics": out}
+    document = {"metrics": out}
+    if catalog.get("versions", {}).get("public_schema") == "dwr-public/2.0.0":
+        document["measurement"] = {"epochs": catalog.get("measurement", {}).get("epochs", []),
+                                   "classifier_versions": catalog["versions"].get("classifier_recorded", []),
+                                   "epoch_resolution": catalog.get("measurement", {}).get("epoch_resolution", "unknown"),
+                                   "aggregation": "request sums across epochs; distinct resources and days use unions"}
+    return document
 
 
 def expanded_metrics(resources, consultations, daily_main, total, pairs, llms, other):

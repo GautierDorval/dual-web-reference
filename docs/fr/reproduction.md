@@ -36,16 +36,18 @@ Chaque édition peut être citée avec son identifiant, l’empreinte de son cat
 | `acquire-readonly --execute --confirm-scope <début>..<fin>` | paramètres d’acquisition privés | résultats bruts et journal d’acquisition privés | lit la base du producteur au moyen de son client |
 | `normalize` | l’unique import privé, l’archive privée à son commit épinglé, les acquisitions acceptées | `normalized.json` privé : lignes conjointes contrôlées contre les exports, chronologie des déploiements | aucun (lecture d’un dépôt local) |
 | `qualify` | `normalized.json`, registre et règles de périmètre, règles d’attribution, instantanés privés des sources, `config/cases.json` | `qualified.json` privé | aucun |
-| `project-public` | fichiers de travail privés ; refuse de s’exécuter sans acquisition conjointe acceptée | `data/editions/<edition>/` : tables, `reconciliation.json`, `case-checks.json`, `catalog.json` | aucun |
-| `analyze` | tables publiques de l’édition | `metrics.json` | aucun |
-| `render` | tables publiques, `metrics.json`, configuration | `figures/<edition>/` (SVG et CSV), `figures.json`, pages de cas, blocs générés du README et des pages de documentation, `data/index.json`, `data/latest.json`, `data/status.json`, `schemas/` | aucun |
+| `project-public` | intrants conjoints privés validés ; cible locale non approuvée seulement | tables, catalogue, métriques, figures et manifeste préparés ensemble avant installation protégée | aucun |
+| `analyze` | tables de l’édition | cible publique : comparaison seulement ; cible locale : métriques, figures et manifeste préparés avant installation | aucun |
+| `render` | tables, métriques, configuration | figures publiques : comparaison séparée seulement ; figures locales : préparation avant installation ; régénération des pages, blocs, index et schémas actuels | aucun |
 | `verify` | chaque fichier de l’arbre de travail ; les valeurs privées si `DWR_PRIVATE_ROOT` est défini | rien (rapport sur la sortie standard) | aucun |
 | `publication-gate --ref <branche>` | chaque objet Git atteignable depuis la branche ; valeurs privées de la racine privée | rien (rapport sur la sortie standard, code de sortie 1 au moindre constat) | aucun (lecture du dépôt local) |
 | `build-site` | fichiers publics | `site/dist/` (reconstruit de zéro, jamais déployé) | aucun |
 | `prepare-edition` | fichiers et figures de l’édition | `delta-report.json`, `SHA256SUMS.txt` | aucun, ne publie rien |
+| `png-fallback --edition <id>` | figures d’une candidate locale non approuvée | PNG facultatifs préparés avant installation ; refus public avant lancement du navigateur | rendu de fichiers locaux seulement |
+| `png-fallback --edition <id> --preview <nouveau-dossier-externe>` | copie des figures hors des arbres canoniques | aperçu PNG hors du dépôt ; aucun remplacement historique | rendu de fichiers locaux seulement |
 | `status` | `data/status.json`, calendrier | rien (sortie standard) | aucun |
 
-Chaque commande accepte `--edition <id>` ; par défaut, c’est la candidate désignée dans `config/editions.json`. Les résultats s’affichent en JSON. Un échec affiche `FAIL <code>: <détail>` sur la sortie d’erreur et se termine avec le code 2 ; `verify` se termine avec le code 1 si un contrôle échoue, et un contrôle qui plante compte comme un échec. `acquire-readonly` refuse une fenêtre qui n’est pas close et toute valeur de `--confirm-scope` autre que la fenêtre exacte. Son mode par défaut reste le dry-run ; pour cette édition, il a été exécuté une seule fois, avec `--execute` et la valeur exacte `--confirm-scope 2026-09-15..2026-10-15`, dans l’environnement privé, jamais dans la CI.
+`prepare-next` dérive sa fenêtre depuis l’état privé ; les autres commandes d’édition acceptent `--edition <id>` ; par défaut, c’est la candidate désignée dans `config/editions.json`. Les résultats s’affichent en JSON. Une erreur contrôlée `DwrError` affiche `FAIL <code>: <détail>` sur la sortie d’erreur et se termine avec le code 2 ; `verify` se termine avec le code 1 si un contrôle échoue, et un contrôle qui plante compte comme un échec. `acquire-readonly` refuse une fenêtre qui n’est pas close et toute valeur de `--confirm-scope` autre que la fenêtre exacte. Son mode par défaut reste le dry-run ; pour cette édition, il a été exécuté une seule fois, avec `--execute` et la valeur exacte `--confirm-scope 2026-09-15..2026-10-15`, dans l’environnement privé, jamais dans la CI.
 
 Les étapes publiques (`analyze`, `render`, `verify`, `build-site`, `prepare-edition`, `status`) fonctionnent hors ligne et ne contactent jamais les sites mesurés. `verify` contrôle qu’aucun module de la chaîne autre que `acquire.py` n’importe de code réseau.
 
@@ -71,7 +73,7 @@ Avant toute publication, `python -I scripts/dwr.py publication-gate --ref <branc
 | `local_root` | une racine locale de la machine qui exécute la porte (dossier personnel en forme longue ou courte, espace privé), quelle que soit la casse et quels que soient les séparateurs, y compris dans des chaînes JSON et des échappements en pourcentage | le dossier personnel en minuscules, comme l’écrit `ntpath.normcase` ; le dossier personnel en majuscules ; le dossier personnel avec des barres obliques ; le dossier personnel sérialisé par `common.canonical_json` ; la forme `/c/…` d’un shell de type Unix ; le nom court 8.3 du dossier personnel ; le chemin de l’espace privé sans le préfixe du dossier personnel ; le dossier personnel encodé en pourcentage dans une URL |
 | `local_path` | un marqueur générique de chemin local sur n’importe quelle machine, protection d’appoint (dossier utilisateur Windows, `/home/<nom>/`, `/Users/<nom>/`, dossier utilisateur d’un shell de type Unix, dossier synchronisé, données d’application), quelle que soit la casse | un dossier utilisateur dans un Markdown ; un dossier utilisateur sérialisé en JSON (séparateurs doublés) ; un dossier utilisateur écrit avec des barres obliques ; un dossier utilisateur en minuscules ; un dossier `/home/<nom>/` ; un dossier `/Users/<nom>/` |
 | `ip_address` | une adresse IPv4 | dans un Markdown ; dans un nom de fichier |
-| `user_agent` | une chaîne user agent de navigateur | dans un Markdown |
+| `user_agent` | une chaîne d’agent utilisateur de navigateur | dans un Markdown |
 | `identifier_32` | un identifiant hexadécimal de 32 caractères, dans l’une ou l’autre casse | en minuscules dans du code ; en majuscules dans du code ; dans un nom de fichier |
 | `identifier_40` | un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>` | dans un commentaire d’un modèle de workflow ; la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@` ; un épinglage absent de la liste, sur une étape `uses:` ; un épinglage absent de la liste, dans le bloc scalaire d’une étape `run:` ; une ligne `tree` dans le message du commit |
 | `short_commit` | une référence courte de commit (`commit` suivi de 7 à 12 caractères hexadécimaux) | dans un Markdown |
@@ -126,3 +128,20 @@ catalog.json SHA-256 <64 caractères hexadécimaux>, consulté le <date>.
 ```
 
 L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. Citer l’identifiant et l’empreinte avec le statut courant dans `config/editions.json`. Seul un reçu externe valide autorise la qualification de référence approuvée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).
+
+## Codes de sortie de la préparation
+
+| Résultat de `prepare-next` | Code | Interprétation |
+|---|---|---|
+| `validation_failed`, `source_unavailable` | 1 | Préparation non réussie, fraîcheur inchangée |
+| `distribution_blocked_pending_contract`, `distribution_blocked_pending_policy_approval` | 0 | Préparation privée terminée, diffusion toujours bloquée |
+| `unchanged`, fenêtre non prête ou état d’attente sans erreur | 0 | État consigné, aucune approbation implicite |
+| `FAIL <code>` (`DwrError`, dont verrou occupé) | 2 | Erreur contrôlée sur la sortie d’erreur |
+
+Un code 0 ne vaut donc jamais autorisation de diffusion. Les tableaux JSON et leurs champs d’état doivent être lus avec le code de sortie.
+
+## Reprise après interruption
+
+Pour un verrou `preparation/preparation.lock`, vérifier d’abord que le processus propriétaire est terminé. Conserver le verrou, l’état `preparation/status.json`, la candidate et son reçu avant intervention. Comparer les empreintes des intrants et sorties au reçu et inspecter les dossiers de préparation. Un reçu complet conforme permet à la prochaine exécution de récupérer la candidate et le curseur ; une candidate partielle ou des octets divergents exigent une résolution explicite, jamais un remplacement silencieux. Seulement après cette inspection, le propriétaire peut retirer le verrou périmé puis relancer `prepare-next`. Un second passage identique doit donner `unchanged`.
+
+Le verrou d’édition `.dwr-work/<edition>.lock` est distinct : son dossier temporaire contient `recovery.json` pendant l’installation et les sauvegardes nécessaires à la restauration. Aucun verrou n’expire automatiquement. Les verrous coordonnent les producteurs qui respectent ce protocole ; ils ne confinent pas un autre processus doté des mêmes droits qui écrit arbitrairement dans les dossiers. Sous POSIX, un tel processus peut créer un dossier vide dans l’intervalle précédant `os.rename`, qui peut le remplacer. Cette course externe au verrou n’est pas qualifiée par les tests Windows.

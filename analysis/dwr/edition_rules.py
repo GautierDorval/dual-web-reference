@@ -123,7 +123,8 @@ def latest_pointer(editions: list[dict], digest_of=None) -> str | None:
 
 def apply_run(status: dict, outcome: str, *, new_data_date: str | None = None, run_at: str | None = None) -> dict:
     """Return the new operation status after a preparation run."""
-    allowed = ("new_data", "unchanged", "source_unavailable", "validation_failed", "awaiting_review")
+    allowed = ("new_data", "unchanged", "source_unavailable", "validation_failed", "awaiting_review",
+               "distribution_blocked_pending_contract", "distribution_blocked_pending_policy_approval")
     if outcome not in allowed:
         raise DwrError("operation_state_unknown", outcome)
     updated = dict(status)
@@ -159,6 +160,20 @@ def add_windows(windows: list[dict]) -> int:
     return sum(w["count"] for w in windows)
 
 
+def classifier_adapter(catalog):
+    """Lossless type adapter. Never infer a classifier by stripping an epoch prefix."""
+    nested = "classifier_recorded" in catalog.get("versions", {})
+    raw = catalog.get("versions", {}).get("classifier_recorded", catalog.get("classifier_recorded"))
+    if isinstance(raw, str):
+        values, operation = [raw], "historical_scalar_to_singleton"
+    elif isinstance(raw, list) and all(isinstance(v, str) for v in raw):
+        values, operation = sorted(set(raw)), "list_sort_unique"
+    else:
+        values, operation = [], "unresolved_type"
+    return {"raw": raw, "values": values, "operation": operation,
+            "source": "catalog.versions.classifier_recorded" if nested else "catalog.classifier_recorded", "inferred": False}
+
+
 def comparable(first: dict, second: dict) -> tuple[bool, list[str]]:
     """Missing metadata are not equality evidence. Raw unequal-duration counts differ."""
     from .dates import window_from_strings
@@ -166,12 +181,20 @@ def comparable(first: dict, second: dict) -> tuple[bool, list[str]]:
     for key in COMPARABILITY_KEYS:
         a = first.get("versions", {}).get(key, first.get(key))
         b = second.get("versions", {}).get(key, second.get(key))
+        if key == "classifier_recorded":
+            a, b = classifier_adapter(first)["values"], classifier_adapter(second)["values"]
         unresolved = lambda value: value in (None, "", "unknown", "mixed_epoch_unresolved") or (isinstance(value, list) and (not value or any(v in (None, "", "unknown", "mixed_epoch_unresolved") for v in value)))
         if unresolved(a) or unresolved(b):
             reasons.append(f"missing_or_unresolved:{key}")
         elif a != b:
             reasons.append(f"changed:{key}")
     lengths = []
+    if any(c.get("versions", {}).get("measurement_epoch_id") == "multiple_epochs_resolved" for c in (first, second)):
+        segments = [c.get("measurement", {}).get("epoch_definitions") for c in (first, second)]
+        if not all(isinstance(s, dict) and s for s in segments):
+            reasons.append("missing_or_unresolved:epoch_definitions")
+        elif segments[0] != segments[1]:
+            reasons.append("changed:epoch_definitions")
     for edition in (first, second):
         if edition.get("coverage_status") != "complete_declared":
             reasons.append("coverage_not_complete:raw_comparison_not_qualified")
@@ -225,7 +248,7 @@ def strip_operational_state(catalog):
 
 
 def status_label(entry, lang, *, scientific=True):
-    """Human state from the external registry, with cryptographic receipt validation."""
+    """Human state with structural and content-digest validation, not reviewer authentication."""
     fr = lang == "fr"
     availability = {"local_candidate": ("local candidate", "candidate locale"),
                     "private_candidate": ("private candidate", "candidate privée"),

@@ -9,13 +9,14 @@ tier), aggregated only to the grains allowed by config/small-cell-policy.json:
   because a finer daily row crossed with the edition grain could isolate one path;
 - daily family grain for automated provider-origin roles of the main population
   only (daily-family-summary.csv).
-Cells are exact sums of joint rows. A combination absent from a table had no
-recorded request in the producer table; it is not a measured absence on the web.
+Cells are exact sums of joint rows. After disclosure minimization an absent row
+can be withheld. It is neither automatically zero nor a measured absence on the web.
 """
 
 from __future__ import annotations
 
 from collections import defaultdict
+import json
 
 from . import SCHEMA_VERSION, measurement
 from .common import REPO_ROOT, SITE_IDS, load_json
@@ -62,6 +63,12 @@ EXCLUSION_FIELDS = ("edition_id", "exclusion_id", "dimension", "excluded_value",
                     "reason_en", "reason_fr")
 FAMILY_DAILY_FIELDS = ("edition_id", "date_utc", "family", "actor_role", "request_count", "observation_status")
 GRAPH_PREFIX = {"gautierdorval.com": "gd", "pagup.com": "pg", "better-robots.com": "br"}
+LEGACY_FIELDS = {"daily-summary.csv": DAILY_FIELDS, "actor-summary.csv": ACTOR_FIELDS,
+                 "daily-family-summary.csv": FAMILY_DAILY_FIELDS, "coverage.csv": COVERAGE_FIELDS}
+DAILY_FIELDS += ("measurement_epoch_id",)
+ACTOR_FIELDS += ("measurement_epoch_id",)
+FAMILY_DAILY_FIELDS += ("measurement_epoch_id",)
+COVERAGE_FIELDS += ("classifier_versions", "measurement_epoch_id", "measurement_epochs", "epoch_resolution")
 
 
 def protected_strata() -> tuple[frozenset, frozenset]:
@@ -139,7 +146,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
     if missing:
         from .common import DwrError
         raise DwrError("registry_entry_missing", f"{missing[0]}")
-    common = {"edition_id": edition_id, "schema_version": SCHEMA_VERSION, "measurement_epoch_id": measured["measurement_epoch_id"],
+    common = {"edition_id": edition_id, "schema_version": "dwr-public/2.0.0", "measurement_epoch_id": measured["measurement_epoch_id"],
               "period_start_utc": window.start_utc, "period_end_exclusive_utc": window.end_exclusive_utc,
               "time_grain": "edition", "date_utc": None, "initiation_provenance": "unknown",
               "initiation_evidence_status": "not_established", "coverage_status": measured["coverage_status"],
@@ -168,13 +175,13 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
         edition_cells[(r["site_id"], r["path"], r["http_method"], r["http_status"], r["actor_family"], r["actor_name"],
                        r["actor_role"], r["stored_identity_tier"], r["measurement_epoch_id"])] += n
         daily_cells[daily_key(r["date_utc"], r["site_id"], population, r["actor_role"], r["stored_identity_tier"],
-                              r["http_method"], r["http_status"], protected)] += n
+                              r["http_method"], r["http_status"], protected) + (r["measurement_epoch_id"],)] += n
         get200 = r["http_method"] == "GET" and r["http_status"] == 200
         if (population == "main_documentary" and get200 and r["stored_identity_tier"] == PROVIDER
                 and r["actor_role"] in AUTOMATED_MAIN_ROLES):
-            family_cells[(r["date_utc"], resource["family"], r["actor_role"])] += n
+            family_cells[(r["date_utc"], resource["family"], r["actor_role"], r["measurement_epoch_id"])] += n
         actor = actor_cells[(population, r["site_id"], r["actor_family"], r["actor_name"], r["actor_role"],
-                             r["stored_identity_tier"])]
+                             r["stored_identity_tier"], r["measurement_epoch_id"])]
         actor["requests"] += n
         actor["get200"] += n if get200 else 0
         actor["_paths"].add(r["path"])
@@ -189,7 +196,7 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
                               "stored_identity_tier": tier, "attribution_assessment": attribution[tier]["attribution_assessment"],
                               "request_count": n, "observation_status": "observed"})
     consultations.sort(key=lambda c: (SITE_IDS.index(c["site_id"]), c["path"], c["http_method"], c["http_status"],
-                                      c["actor_family"], c["actor_name"], c["stored_identity_tier"]))
+                                      c["actor_family"], c["actor_name"], c["actor_role"], c["stored_identity_tier"], c["measurement_epoch_id"]))
 
     resources_out, summaries = [], []
     for resource in qualified["resources"]:
@@ -232,30 +239,36 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
     daily = [{"edition_id": edition_id, "date_utc": day, "site_id": site, "population": population, "actor_role": role,
               "stored_identity_tier": tier, "http_method": method, "http_status": status, "request_count": n,
               "coverage_status": measured["days"].get(day, {}).get("coverage_status", "observation_unavailable"),
-              "archive_report_status": archive_by_day.get(day, {}).get("report_status", "unavailable")}
-             for (day, site, population, role, tier, method, status), n in daily_cells.items()]
+              "archive_report_status": archive_by_day.get(day, {}).get("report_status", "unavailable"),
+              "measurement_epoch_id": epoch_id}
+             for (day, site, population, role, tier, method, status, epoch_id), n in daily_cells.items()]
     daily.sort(key=lambda r: (r["date_utc"], SITE_IDS.index(r["site_id"]), r["population"], r["actor_role"],
-                              r["stored_identity_tier"], r["http_method"], r["http_status"]))
+                              r["stored_identity_tier"], r["http_method"], r["http_status"], r["measurement_epoch_id"]))
 
-    families = sorted({family for (_, family, _) in family_cells})
+    families = sorted({family for (_, family, _, _) in family_cells})
     family_daily = []
     for day in window.dates():
         for family in families:
             for role in AUTOMATED_MAIN_ROLES:
-                n = family_cells.get((day.isoformat(), family, role), 0)
-                family_daily.append({"edition_id": edition_id, "date_utc": day.isoformat(), "family": family,
-                                     "actor_role": role, "request_count": (None if measured["days"].get(day.isoformat(), {}).get("coverage_status") == "observation_unavailable" else n),
-                                     "observation_status": ("observation_unavailable" if measured["days"].get(day.isoformat(), {}).get("coverage_status") == "observation_unavailable" else "observed" if n else "observed_zero")})
+                info = measured["days"].get(day.isoformat(), {})
+                unavailable = info.get("coverage_status") == "observation_unavailable"
+                for epoch_id in info.get("epochs") or ["unknown"]:
+                    n = family_cells.get((day.isoformat(), family, role, epoch_id), 0)
+                    family_daily.append({"edition_id": edition_id, "date_utc": day.isoformat(), "family": family,
+                                         "actor_role": role, "measurement_epoch_id": epoch_id,
+                                         "request_count": None if unavailable else n,
+                                         "observation_status": "observation_unavailable" if unavailable else "observed" if n else "observed_zero"})
 
     actors = []
-    for (population, site, family, name, role, tier), values in actor_cells.items():
+    for (population, site, family, name, role, tier, epoch_id), values in actor_cells.items():
         actors.append({"edition_id": edition_id, "population": population, "site_id": site, "actor_family": family,
                        "actor_name": name, "actor_role": role, "stored_identity_tier": tier,
                        "attribution_assessment": attribution[tier]["attribution_assessment"],
                        "requests": values["requests"], "get200": values["get200"],
-                       "distinct_paths_in_group": len(values["_paths"]), "days_with_rows": len(values["_days"])})
+                       "distinct_paths_in_group": len(values["_paths"]), "days_with_rows": len(values["_days"]),
+                       "measurement_epoch_id": epoch_id})
     actors.sort(key=lambda r: (r["population"], SITE_IDS.index(r["site_id"]), r["stored_identity_tier"],
-                               r["actor_role"], r["actor_name"]))
+                               r["actor_role"], r["actor_name"], r["actor_family"], r["measurement_epoch_id"]))
 
     labels = deployment_labels(normalized.get("deployment_timeline"))
     export_daily = defaultdict(int)
@@ -275,12 +288,21 @@ def project(qualified: dict, normalized: dict, edition: dict, import_id: str) ->
                          "v3_count": v3, "aggregate_minus_v3": (aggregate - v3) if aggregate is not None and v3 is not None else None,
                          "export_matches_archive": export_daily.get(day["date_utc"]) == aggregate,
                          "joint_matches_archive": joint_daily.get(day["date_utc"]) == aggregate,
-                         "snapshots_for_date": day.get("snapshots"), "classifier_version": "+".join(measured["days"].get(day["date_utc"], {}).get("epochs", [])) or "unknown",
+                         "snapshots_for_date": day.get("snapshots"),
+                         "classifier_version": (measured["days"][day["date_utc"]]["classifier_versions"][0]
+                                                if len(measured["days"][day["date_utc"]]["classifier_versions"]) == 1 else "multiple_versions" if measured["days"][day["date_utc"]]["classifier_versions"] else "unknown"),
+                         "classifier_versions": json.dumps(measured["days"][day["date_utc"]]["classifier_versions"], separators=(",", ":")),
+                         "measurement_epoch_id": measurement.epoch_summary(measured["days"][day["date_utc"]]["epochs"]),
+                         "measurement_epochs": json.dumps(measured["days"][day["date_utc"]]["epochs"], separators=(",", ":")),
+                         "epoch_resolution": measured["days"][day["date_utc"]]["epoch_resolution"],
                          "producer_deployment_label": label_for_day(labels, day["date_utc"])})
 
     exclusions = build_exclusions(qualified, rows, resources, edition_id, attribution)
     public_labels = [{"label": d["label"], "effective_at": d["effective_at"],
                       "versions": [{"percentage": v["percentage"]} for v in d["versions"]]} for d in labels]
+    resources_out.sort(key=lambda r: (r["site_id"], r["path"]))
+    summaries.sort(key=lambda r: (r["site_id"], r["path"]))
+    coverage.sort(key=lambda r: r["date_utc"])
     return {"resources": resources_out, "links": links, "consultations": consultations, "resource_summary": summaries,
             "daily": daily, "actors": actors, "coverage": coverage, "exclusions": exclusions,
             "family_daily": family_daily, "measurement": {k: v for k, v in measured.items() if k != "rows"}, "graph_snapshots": graph_ids, "deployments": public_labels,

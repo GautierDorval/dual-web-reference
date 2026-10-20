@@ -32,6 +32,8 @@ def edition_entry(edition_id: str | None) -> dict:
     edition_id = edition_id or config["candidate"]
     for entry in config["editions"]:
         if entry["edition_id"] == edition_id:
+            from .write_guard import assert_readable
+            assert_readable(REPO_ROOT, edition_id)
             window = window_from_strings(entry["period_start_inclusive"], entry["period_end_exclusive"])
             if window.edition_id(entry["revision"]) != edition_id:
                 raise DwrError("edition_id_inconsistent_with_window", edition_id)
@@ -156,21 +158,36 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     from . import project
     from .common import csv_text, write_text
     entry = edition_entry(edition_id)
-    from .frozen import refuse_write
-    refuse_write(entry["edition_id"])
+    from .write_guard import admit
+    admit(REPO_ROOT, entry["edition_id"])
+    from .write_guard import transaction
+    with transaction(REPO_ROOT, entry["edition_id"], fresh_payload=True, fresh_figures=True) as stage:
+        result = _project_into(private, entry, stage / "payload")
+        derive_stage(entry, stage)
+        return result
+
+
+def _project_into(private, entry, target):
+    from . import project
+    from .common import csv_text, write_text
     work = working_dir(private, entry["edition_id"])
     normalized = load_json(work / "normalized.json")
     qualified = load_json(work / "qualified.json")
+    if normalized.get("edition_id") != entry["edition_id"] or qualified.get("edition_id") != entry["edition_id"]:
+        raise DwrError("source_edition_mismatch")
+    from .maintenance import validate_inputs
+    validate_inputs(normalized, qualified, entry["window"])
     reconciliation = load_json(work / "reconciliation.json")
     imports = sorted((private / "import").glob("imp-*/receipt.json"))
+    if len(imports) != 1:
+        raise DwrError("import_ambiguous_or_missing")
     import_id = load_json(imports[0])["import_id"]
     result = project.project(qualified, normalized, entry, import_id)
     from . import disclosure
     policy = load_json(REPO_ROOT / "config/small-cell-policy.json")
     candidate = disclosure.coarsen({k: result[k] for k in disclosure.TABLES}, policy)
-    decision = disclosure.enforce(candidate, disclosure.inventory(), policy)
+    decision = disclosure.enforce(candidate, disclosure.inventory(REPO_ROOT), policy)
     result.update(candidate)
-    target = edition_dir(entry["edition_id"])
     tables = {
         "resources.csv": (project.RESOURCE_FIELDS, result["resources"]),
         "links.csv": (project.LINK_FIELDS, result["links"]),
@@ -198,6 +215,11 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     })
     write_json(target / "disclosure.json", decision)
     write_json(target / "catalog.json", build_catalog(entry, normalized, result, tables, target, private))
+    from . import verify, public_checks
+    report = verify.Report()
+    verify.check_tables(report, target)
+    if not report.result()["passed"] or not all(public_checks.reconcile_tables(target).values()):
+        raise DwrError("prepared_projection_schema_or_reconciliation_failed")
     return {"edition_id": entry["edition_id"], "rows": {name: len(rows) for name, (_, rows) in tables.items()}}
 
 
@@ -209,11 +231,18 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
     calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
     following = next_monthly_window(window, calendar["monthly_anchor_day"])
     ready = datetime.combine(following.end_exclusive, datetime.min.time(), tzinfo=timezone.utc) + timedelta(hours=calendar["consolidation_delay_hours"])
-    exports_extracted = sorted(normalized["marginals"]["extracted_at"])
-    joint_extracted = normalized["joint_extracted_at"]
+    try:
+        exports_extracted = sorted(normalized["marginals"]["extracted_at"])
+        joint_extracted = normalized["joint_extracted_at"]
+        source_snapshot_at = normalized["marginals"]["source"]["archive_commit_at"]
+        if not exports_extracted or not all(isinstance(v, str) and v for v in
+                [*exports_extracted, joint_extracted["start"], joint_extracted["end"], source_snapshot_at]):
+            raise ValueError()
+    except (KeyError, TypeError, ValueError) as exc:
+        raise DwrError("projection_catalog_provenance_incomplete") from exc
     timeline = normalized.get("deployment_timeline") or {}
     files = []
-    for name in sorted(tables) + ["reconciliation.json", "case-checks.json"]:
+    for name in sorted(tables) + ["reconciliation.json", "case-checks.json", "disclosure.json"]:
         path = target / name
         rows = len(tables[name][1]) if name in tables else None
         files.append({"path": name, "bytes": path.stat().st_size, "sha256": sha256_file(path), "rows": rows,
@@ -231,12 +260,14 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
         "superseded_by": entry["superseded_by"],
         "source_mode": entry["source_mode"],
         "source_mode_note": entry["source_mode_note"],
-        "versions": {"code": CODE_VERSION, "public_schema": SCHEMA_VERSION, **rule_versions(),
-                     "classifier_recorded": result.get("measurement", {}).get("epochs", []),
+        "versions": {"code": CODE_VERSION, "public_schema": "dwr-public/2.0.0", **rule_versions(),
+                     "classifier_recorded": result.get("measurement", {}).get("classifier_versions", []),
                      "measurement_epoch_id": result.get("measurement", {}).get("measurement_epoch_id", "unknown"),
                      "scope_registry_sha256": sha256_file(REPO_ROOT / "config/scope-registry.csv")},
         "metrics_version": "dwr-metrics/2.0.0",
         "coverage_status": result.get("measurement", {}).get("coverage_status", "coverage_unknown"),
+        "measurement": {k: v for k, v in result.get("measurement", {}).items() if k != "rows"},
+        "resource_summary_grain": "union of resources across epochs; requests summed, distinct paths and days not additive",
         "source_provenance": normalized.get("source_provenance_contract", "unknown"),
         "time_granularity": "edition",
         "dates": {
@@ -247,12 +278,12 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
             "calendar_days": window.days,
             "extracted_at": {"start": joint_extracted["start"].replace("+00:00", "Z"), "end": joint_extracted["end"].replace("+00:00", "Z")},
             "exports_extracted_at": {"start": exports_extracted[0], "end": exports_extracted[-1]},
-            "source_snapshot_at": normalized["marginals"]["source"]["archive_commit_at"],
+            "source_snapshot_at": source_snapshot_at,
             "graph_snapshot_at": {site: info["graph_snapshot_at"] for site, info in graphs.items()},
             "generated_at": entry["generated_at"],
             "published_at": entry["published_at"],
             "revised_at": entry["revised_at"],
-            "latest_available_data_date": window.last_included.isoformat(),
+            "latest_available_data_date": max(r["date_utc"] for r in normalized["joint_rows"]),
             "next_review_target": {
                 "weekly_review": None,
                 "next_monthly_window": {"start_inclusive": following.start.isoformat(), "end_exclusive": following.end_exclusive.isoformat(), "days": following.days},
@@ -282,7 +313,7 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
         ],
         "private_lock_sha256": sha256_file(lock) if lock.is_file() else None,
         "files": files,
-        "files_not_listed_here": ["catalog.json (this file)", "metrics.json and figures.json (derived after the catalog)",
+        "files_not_listed_here": ["catalog.json (this file)", "metrics.json, figures.json and delta-report.json (derived after the catalog; sealed by SHA256SUMS.txt)",
                                   "SHA256SUMS.txt (does not include itself)"],
     })
 
@@ -317,10 +348,48 @@ def cmd_prepare_edition(edition_id: str | None) -> dict:
     """Candidate package: SHA256SUMS.txt over the edition files (never itself) and a delta report."""
     from .common import sha256_file, write_text
     entry = edition_entry(edition_id)
-    from .frozen import refuse_write
-    refuse_write(entry["edition_id"])
-    target = edition_dir(entry["edition_id"])
-    figure_dir = REPO_ROOT / "figures" / entry["edition_id"]
+    from .write_guard import transaction
+    with transaction(REPO_ROOT, entry["edition_id"]) as stage:
+        return _prepare_manifest(entry, stage / "payload", stage / "figures")
+
+
+def derive_stage(entry, stage):
+    """Complete derivatives before committing a changed projection."""
+    from . import metrics, render
+    payload = stage / "payload"
+    write_json(payload / "metrics.json", {"schema_version": "dwr-metrics/2.0.0",
+               "edition_id": entry["edition_id"], **metrics.compute(payload)})
+    render.render_figures(render.Edition(entry["edition_id"], payload, entry), stage / "figures")
+    return _prepare_manifest(entry, payload, stage / "figures")
+
+
+def _prepare_manifest(entry, target, figure_dir):
+    from .common import sha256_file, write_text
+    from . import verify, public_checks, project
+    required = {*project.LEGACY_FIELDS, "consultations.csv", "resource-summary.csv", "resources.csv", "links.csv", "exclusions.csv",
+                "reconciliation.json", "case-checks.json", "disclosure.json", "catalog.json",
+                "metrics.json", "figures.json"}
+    allowed = required | {"delta-report.json", "SHA256SUMS.txt"}
+    actual = {p.name for p in target.iterdir()}
+    if not required <= actual or not figure_dir.is_dir():
+        raise DwrError("prepared_projection_incomplete")
+    if actual - allowed or any(not p.is_file() for p in target.iterdir()):
+        raise DwrError("prepared_projection_unexpected_files")
+    registry = load_json(target / "figures.json")
+    expected_figures = {Path(item["path"]).name for figure in registry["figures"]
+                        for item in [figure["data_table"], *figure["files"].values()]}
+    actual_figures = {p.name for p in figure_dir.iterdir() if p.is_file()}
+    if expected_figures != actual_figures or any(p.name != "png" for p in figure_dir.iterdir() if p.is_dir()):
+        raise DwrError("prepared_figures_missing_or_unexpected")
+    # Optional PNGs must correspond to current SVGs. A figure rebuild discards all PNGs.
+    if (figure_dir / "png").exists() and any(
+            not p.is_file() or p.suffix != ".png" or p.with_suffix(".svg").name not in expected_figures
+            for p in (figure_dir / "png").iterdir()):
+        raise DwrError("prepared_png_unexpected")
+    checked = verify.Report()
+    verify.check_tables(checked, target)
+    if not checked.result()["passed"] or not all(public_checks.reconcile_tables(target).values()):
+        raise DwrError("prepared_projection_schema_or_reconciliation_failed")
     figure_files = sorted(p for p in figure_dir.iterdir() if p.is_file())
     from .edition_rules import latest_pointer
     if entry.get("supersedes"):
@@ -373,7 +442,14 @@ def cmd_analyze(edition_id: str | None) -> dict:
         return historical
     target = edition_dir(entry["edition_id"])
     result = {"schema_version": "dwr-metrics/1.0.0", "edition_id": entry["edition_id"], **metrics.compute(target)}
-    write_json(target / "metrics.json", result)
+    from .write_guard import state, transaction
+    from .common import canonical_json
+    if state(REPO_ROOT, entry["edition_id"])[1]:
+        if canonical_json(result).encode("utf-8") != (target / "metrics.json").read_bytes():
+            raise DwrError("public_metrics_reproduction_differs")
+    else:
+        with transaction(REPO_ROOT, entry["edition_id"], fresh_figures=True) as stage:
+            derive_stage(entry, stage)
     headline = {m["metric_id"]: m["value"] for m in result["metrics"] if m["metric_id"].count(".") == 1
                 and m["metric_id"].startswith("main.")}
     return {"edition_id": entry["edition_id"], "metrics": len(result["metrics"]), "headline": headline}

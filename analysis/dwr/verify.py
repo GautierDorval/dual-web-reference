@@ -27,7 +27,7 @@ from .common import DwrError, REPO_ROOT, SITE_IDS, canonical_json, load_json, re
 # Private names and identifiers live in the private workspace and are read by gate.load_secrets, never written
 # here. The patterns are those of the publication gate, so that verify and the gate cannot diverge.
 LOCAL_PATH, IPV4, UA, HEX32, HEX40 = gate.LOCAL_PATH, gate.IPV4, gate.USER_AGENT, gate.HEX32, gate.HEX40
-SCAN_EXCLUDED_DIRS = {".git", "__pycache__", "node_modules", ".venv"}
+SCAN_EXCLUDED_DIRS = {".git", "__pycache__", "node_modules", ".venv", ".dwr-work"}
 FORBIDDEN_COLUMNS = ("ip", "client_ip", "user_agent", "ua", "cookie", "session", "referrer", "referer", "first_seen",
                      "last_seen", "query_string", "token", "first_date", "last_date")
 
@@ -106,16 +106,34 @@ def check_tables(report, edition_dir):
         if b"\r" in data or data.startswith(b"\xef\xbb\xbf"):
             problems.append(f"{name}: CR or BOM")
         header = data.decode("utf-8").split("\n", 1)[0].split(",")
-        if tuple(header) != tuple(fields):
+        legacy = tuple(header) == tuple(project.LEGACY_FIELDS.get(name, fields))
+        if tuple(header) != tuple(fields) and not legacy:
             problems.append(f"{name}: header differs from schema")
         if any(column in FORBIDDEN_COLUMNS for column in header):
             problems.append(f"{name}: forbidden column")
-        schema = load_json((frozen.rule_path(edition_dir.name, "schemas") if frozen.entry(edition_dir.name) else REPO_ROOT / "schemas") / name.replace(".csv", ".schema.json"))
+        schema_root = frozen.rule_path(edition_dir.name, "schemas") if frozen.entry(edition_dir.name) else REPO_ROOT / "schemas"
+        if not legacy and name in project.LEGACY_FIELDS:
+            schema_root = REPO_ROOT / "schemas/v2"
+        schema = load_json(schema_root / name.replace(".csv", ".schema.json"))
         rows = read_csv(edition_dir / name)
         keys = [tuple(row[k] for k in schema["primaryKey"]) for row in rows]
         if len(keys) != len(set(keys)):
             problems.append(f"{name}: duplicate primary key")
         for field in schema["fields"]:
+            for row in rows:
+                value = row[field["name"]]
+                if "enum" in field.get("constraints", {}) and value not in field["constraints"]["enum"]:
+                    problems.append(f"{name}: {field['name']} invalid state")
+                if field.get("format") == "json-array-of-strings":
+                    try:
+                        array = json.loads(value)
+                        if (not isinstance(array, list) or any(not isinstance(v, str) or not v for v in array)
+                                or array != sorted(set(array))):
+                            raise ValueError()
+                        if field["name"] == "classifier_versions" and any(v in ("unknown", "mixed_epoch_unresolved") for v in array):
+                            raise ValueError()
+                    except (ValueError, TypeError):
+                        problems.append(f"{name}: {field['name']} invalid JSON array")
             if field["type"] == "integer":
                 for row in rows:
                     value = row[field["name"]]

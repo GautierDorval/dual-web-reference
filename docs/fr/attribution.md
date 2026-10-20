@@ -36,7 +36,7 @@ Le producteur décide si Cloudflare a vérifié un client au moyen de ce prédic
 cloudflareVerified(cf) = cf?.botManagement?.verifiedBot === true || cf?.verifiedBotCategory != null
 ```
 
-En JavaScript, `"" != null` est vrai : une catégorie réduite à une chaîne vide satisfait donc le prédicat, même si `verifiedBot` vaut explicitement `false`. Le défaut a été reproduit dans le vrai module de test du producteur avec l’entrée `{botManagement: {verifiedBot: false}, verifiedBotCategory: ""}` : un client non déclaré, et même un user agent de navigateur, reçoivent `cloudflare_verified_unattributed` ; un acteur déclaré sans preuve de registre (par exemple `ClaudeBot`) reçoit `network_verified_claimed_actor`.
+En JavaScript, `"" != null` est vrai : une catégorie réduite à une chaîne vide satisfait donc le prédicat, même si `verifiedBot` vaut explicitement `false`. Le défaut a été reproduit dans le vrai module de test du producteur avec l’entrée `{botManagement: {verifiedBot: false}, verifiedBotCategory: ""}` : un client non déclaré, et même un agent utilisateur de navigateur, reçoivent `cloudflare_verified_unattributed` ; un acteur déclaré sans preuve de registre (par exemple `ClaudeBot`) reçoit `network_verified_claimed_actor`.
 
 ## Reproduire n’est pas établir l’incidence en production
 

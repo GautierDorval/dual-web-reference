@@ -19,7 +19,7 @@ The archive declares its own reports partial when it cannot attest completeness.
 | `COLLECTOR_WINDOW_ATTESTATION_MISSING` | the collector did not attest the coverage window of that day |
 | `AGGREGATE_V3_COUNT_MISMATCH` | the two counts kept by the archive for that day, the aggregate count and the V3 count, differ |
 
-Both counts are published (`aggregate_count`, `v3_count`) with their difference (`aggregate_minus_v3`). The gap is reported, not corrected, and neither count is chosen over the other.
+The numeric margins were published in r1. They are withheld in r2; the historic discrepancies and partial coverage remain documented.
 
 ## One snapshot per date, never double counted
 
@@ -33,17 +33,15 @@ The archive may hold several snapshots of one date when a report is captured aga
 
 Agreement of the daily totals of the exports and of the joint aggregate with the archived aggregate counts (`export_matches_archive`, `joint_matches_archive`) is not an independent validation: all of them come from the same producer chain. The presence of rows on a day shows that something was recorded, not that everything was.
 
-## Five states that are never confused
+## Values and missing rows
 
-| State | How it appears | Meaning |
-|---|---|---|
-| Measured zero | `request_count = 0`, `observation_status = observed_zero`, in `daily-family-summary.csv` only | the cell is written explicitly: the producer table has no such request for that day, family and role |
-| Absent row | no row for a combination in `consultations.csv` or `daily-summary.csv`; for a whole pair, `window_rows_status` in `resources.csv` is `registered_now_no_row_in_window` or `not_in_collector_window_export` | the producer table holds no recorded request for this combination in the window; this is not a measured absence on the web |
-| Null | empty cell, with a status column or a metric `status` | the value is not available or not calculable, for example a share whose denominator is zero (`status = not_calculable`) |
-| Suppressed | `suppression_status` other than `not_suppressed`, value empty | the value was withheld for privacy; it is never written as zero (no cell is suppressed in this edition) |
-| Source unavailable | the stage stops with `source_unavailable`; a graph keeps `status = source_unavailable`; `status.json` keeps the last valid edition | the source could not be read; nothing is published in its place |
+<!-- dwr:begin daily-contract -->
+`daily-summary.csv` changes from 970 rows and 24,815 requests in `2026-09-15_2026-10-15-r1` to 136 rows and 1,653 requests in `2026-09-15_2026-10-15-r2`. Of the 834 removed rows, 285 were already grouped under `protected_strata` and 549 belong to other strata now protected by this revision's policy. Protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
 
-An empty table is published with its reason in `catalog.json` (`status = empty_with_reason`, `empty_reason`); no table of this edition is empty. A metric that cannot be computed is null with its status and reason, never zero.
+Explicit zero: no recorded row for the allowed cell, under the declared coverage. Null: unavailable or not calculable. Withheld: removed from distribution, including `aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. Partial coverage is never upgraded to complete coverage.
+<!-- dwr:end daily-contract -->
+
+An empty table carries `table_state = empty` and `empty_reason` in catalog schema 2. A null metric has an explicit status and reason.
 
 ## Producer deployments
 

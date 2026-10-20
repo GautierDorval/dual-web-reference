@@ -14,13 +14,21 @@ def prepare(edition_id=None):
     frozen.refuse_write(entry["edition_id"])
     if entry.get("availability_status") != "local_candidate" or entry.get("reference_release_status") != "not_approved":
         raise DwrError("revision_target_not_local_unapproved")
+    from .write_guard import transaction
+    with transaction(REPO_ROOT, entry["edition_id"], fresh_payload=True, fresh_figures=True) as stage:
+        result = _prepare_into(entry, stage / "payload")
+        pipeline.derive_stage(entry, stage)
+        return result
+
+
+def _prepare_into(entry, target):
     source = entry.get("supersedes")
     if not source or not frozen.verify(source):
         raise DwrError("revision_requires_frozen_source")
     previous = pipeline.edition_entry(source)
     if (previous["period_start_inclusive"], previous["period_end_exclusive"]) != (entry["period_start_inclusive"], entry["period_end_exclusive"]):
         raise DwrError("revision_window_changed")
-    original, target = pipeline.edition_dir(source), pipeline.edition_dir(entry["edition_id"])
+    original = pipeline.edition_dir(source)
     policy = load_json(REPO_ROOT / "config/small-cell-policy.json")
     tables = disclosure.tables(original)
     for rows in tables.values():
@@ -28,7 +36,7 @@ def prepare(edition_id=None):
             if "edition_id" in row:
                 row["edition_id"] = entry["edition_id"]
     tables = disclosure.coarsen(tables, policy)
-    report = disclosure.enforce(tables, disclosure.inventory(), policy)
+    report = disclosure.enforce(tables, disclosure.inventory(REPO_ROOT), policy)
     # All checks precede the first write; the internal brief is never an input.
     for key, name in disclosure.TABLES.items():
         header = (original / name).read_text(encoding="utf-8").splitlines()[0].split(",")
@@ -47,11 +55,24 @@ def prepare(edition_id=None):
         item.update(sha256=sha256_file(path), bytes=path.stat().st_size)
         if path.suffix == ".csv":
             item["rows"] = len(read_csv(path))
-    write_json(target / "catalog.json", edition_rules.strip_operational_state(catalog))
     write_json(target / "disclosure.json", report)
     write_json(target / "delta-report.json", {"schema_version": "dwr-delta/2.0.0", "edition_id": entry["edition_id"],
                "compared_with": source, "cause": "privacy_revision", "additional_changes": ["presentation", "metadata", "derived_metrics"],
                "observations_changed": False, "is_growth": False, "protected_daily": "withheld_not_zero",
                "coverage_daily_margins": "withheld_not_zero", "source_payload_status": "frozen_original_bytes_preserved"})
+    catalog["files"] = [{"path": p.name, "sha256": sha256_file(p), "bytes": p.stat().st_size,
+                          "rows": len(read_csv(p)) if p.suffix == ".csv" else None,
+                          "empty_reason": "no rows after minimization" if p.suffix == ".csv" and not read_csv(p) else None}
+                         for p in sorted(target.iterdir()) if p.is_file() and p.name not in
+                         ("catalog.json", "metrics.json", "figures.json", "SHA256SUMS.txt")]
+    catalog["files_not_listed_here"] = ["catalog.json (self reference excluded)",
+        "metrics.json, figures.json, figures/* (derived after catalog; SHA256SUMS.txt seals deterministic outputs)",
+        "SHA256SUMS.txt (self reference excluded); PNG (optional non-bit-reproducible fallback)"]
+    write_json(target / "catalog.json", edition_rules.strip_operational_state(catalog))
+    from . import verify, public_checks
+    checked = verify.Report()
+    verify.check_tables(checked, target)
+    if not checked.result()["passed"] or not all(public_checks.reconcile_tables(target).values()):
+        raise DwrError("prepared_projection_schema_or_reconciliation_failed")
     return {"edition_id": entry["edition_id"], "source": source, "status": "local_candidate",
             "cause": "privacy_revision", "disclosure": report["status"], "new_acquisition": False}
