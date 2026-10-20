@@ -15,7 +15,7 @@ def prepare(edition_id=None):
     if entry.get("availability_status") != "local_candidate" or entry.get("reference_release_status") != "not_approved":
         raise DwrError("revision_target_not_local_unapproved")
     from .write_guard import transaction
-    with transaction(REPO_ROOT, entry["edition_id"]) as stage:
+    with transaction(REPO_ROOT, entry["edition_id"], fresh_payload=True, fresh_figures=True) as stage:
         result = _prepare_into(entry, stage / "payload")
         pipeline.derive_stage(entry, stage)
         return result

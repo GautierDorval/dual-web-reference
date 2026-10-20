@@ -105,12 +105,13 @@ def assert_readable(root, edition_id):
 
 
 @contextmanager
-def transaction(root, edition_id):
+def transaction(root, edition_id, *, fresh_payload=False, fresh_figures=False):
     """Stage both trees, then install under an exclusive cooperative lock.
 
     A caught failure rolls back. Process termination leaves the lock and recovery
     journal; readers refuse that edition until its owner inspects the journal.
     The two directory renames are not claimed to be one filesystem transaction.
+    Full rebuilds start with empty staged trees so obsolete outputs cannot survive.
     """
     root = Path(root)
     admit(root, edition_id)
@@ -136,7 +137,8 @@ def transaction(root, edition_id):
         write_json(lock, {"edition_id": edition_id, "state": "building", "staging": stage.name})
         for index, target in enumerate(targets):
             output = stage / ("payload" if index == 0 else "figures")
-            if target.exists():
+            fresh = fresh_payload if index == 0 else fresh_figures
+            if target.exists() and not fresh:
                 shutil.copytree(target, output)
             else:
                 output.mkdir()
@@ -159,7 +161,9 @@ def transaction(root, edition_id):
                 backed_up.append(index)
                 if fingerprint(stage / f"backup-{index}") != before[index]:
                     raise DwrError("edition_destination_changed")
-            # Never replace a destination created concurrently after preflight.
+            # The lock serializes cooperative writers. Windows rename also refuses
+            # a new destination; POSIX can replace an empty directory in this gap.
+            # Arbitrary writers ignoring the lock are outside this transaction contract.
             source = stage / ("payload" if index == 0 else "figures")
             os.rename(source, target)
             installed.append(index)

@@ -47,7 +47,7 @@ The new consultation primary key adds `measurement_epoch_id` so separately recor
 | `png-fallback --edition <id> --preview <new-external-directory>` | edition figures copied outside canonical trees | optional PNG preview outside the repository; no historical replacement | local file rendering only |
 | `status` | `data/status.json`, calendar | nothing (standard output) | none |
 
-`prepare-next` derives its next window from private status and ignores no missing window; the other edition commands accept `--edition <id>`; the default is the candidate named in `config/editions.json`. Results are printed as JSON. A failure prints `FAIL <code>: <detail>` on standard error and exits with code 2; `verify` exits with code 1 when a check fails, and a check that crashes counts as failed. `acquire-readonly` refuses a window that is not closed and any `--confirm-scope` other than the exact window. Dry run remains its default; for this edition it was executed once, with `--execute` and the exact `--confirm-scope 2026-09-15..2026-10-15`, in the private environment, never in CI.
+`prepare-next` derives its next window from private status and ignores no missing window; the other edition commands accept `--edition <id>`; the default is the candidate named in `config/editions.json`. Results are printed as JSON. A controlled `DwrError` prints `FAIL <code>: <detail>` on standard error and exits with code 2; `verify` exits with code 1 when a check fails, and a check that crashes counts as failed. `acquire-readonly` refuses a window that is not closed and any `--confirm-scope` other than the exact window. Dry run remains its default; for this edition it was executed once, with `--execute` and the exact `--confirm-scope 2026-09-15..2026-10-15`, in the private environment, never in CI.
 
 The public stages (`analyze`, `render`, `verify`, `build-site`, `prepare-edition`, `status`) are offline and never contact the measured sites. `verify` checks that no module of the chain other than `acquire.py` imports network code.
 
@@ -128,3 +128,20 @@ catalog.json SHA-256 <64 hexadecimal characters>, consulted <date>.
 ```
 
 The digest is computed with `sha256sum data/editions/<edition>/catalog.json` or `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, and it also appears in `SHA256SUMS.txt`. Cite the edition and catalog digest together with the current availability and review state in `config/editions.json`. A reference is approved only when its external receipt validates against the payload digest. A revision such as `r2` has its own identifier and digest ([updates](updates.md)).
+
+## Preparation exit codes
+
+| `prepare-next` result | Code | Meaning |
+|---|---|---|
+| `validation_failed`, `source_unavailable` | 1 | Preparation unsuccessful, freshness unchanged |
+| `distribution_blocked_pending_contract`, `distribution_blocked_pending_policy_approval` | 0 | Private preparation complete, distribution still blocked |
+| `unchanged`, window not ready or pending state without error | 0 | State recorded, no implicit approval |
+| `FAIL <code>` (`DwrError`, including busy lock) | 2 | Controlled error on standard error |
+
+Exit code 0 never authorizes distribution. Read the JSON state fields together with the exit code.
+
+## Recovery after interruption
+
+For `preparation/preparation.lock`, first verify that the owning process has stopped. Preserve the lock, `preparation/status.json`, candidate and receipt before intervention. Compare input and output digests against the receipt and inspect staging directories. A complete matching receipt allows the next run to recover the candidate and cursor; partial candidates or divergent bytes require explicit resolution, never silent replacement. Only after this inspection may the owner remove the stale lock and rerun `prepare-next`. An identical second replay must return `unchanged`.
+
+The edition lock `.dwr-work/<edition>.lock` is separate: its staging directory contains `recovery.json` during installation and the backups required for restoration. Neither lock expires automatically. Locks coordinate producers following this protocol; they do not confine another process with the same permissions that writes arbitrarily into the directories. On POSIX, such a process can create an empty directory in the gap preceding `os.rename`, which may replace it. This race outside the cooperative lock is not qualified by Windows tests.

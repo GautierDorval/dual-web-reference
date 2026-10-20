@@ -98,7 +98,7 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
     from . import edition_rules
     entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
     home = page == f"{lang}/index.html"
-    banner = edition_rules.status_label(entry, lang, scientific=home) + "."
+    banner = edition_id + " : " + edition_rules.status_label(entry, lang, scientific=home) + "."
     if home:
         banner += t(lang, " r1 remains accessible as an unapproved historical edition.",
                     " r1 reste accessible comme édition historique non approuvée.")

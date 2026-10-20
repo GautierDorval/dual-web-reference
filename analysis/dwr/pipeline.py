@@ -161,7 +161,7 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     from .write_guard import admit
     admit(REPO_ROOT, entry["edition_id"])
     from .write_guard import transaction
-    with transaction(REPO_ROOT, entry["edition_id"]) as stage:
+    with transaction(REPO_ROOT, entry["edition_id"], fresh_payload=True, fresh_figures=True) as stage:
         result = _project_into(private, entry, stage / "payload")
         derive_stage(entry, stage)
         return result
@@ -231,8 +231,15 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
     calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
     following = next_monthly_window(window, calendar["monthly_anchor_day"])
     ready = datetime.combine(following.end_exclusive, datetime.min.time(), tzinfo=timezone.utc) + timedelta(hours=calendar["consolidation_delay_hours"])
-    exports_extracted = sorted(normalized["marginals"]["extracted_at"])
-    joint_extracted = normalized["joint_extracted_at"]
+    try:
+        exports_extracted = sorted(normalized["marginals"]["extracted_at"])
+        joint_extracted = normalized["joint_extracted_at"]
+        source_snapshot_at = normalized["marginals"]["source"]["archive_commit_at"]
+        if not exports_extracted or not all(isinstance(v, str) and v for v in
+                [*exports_extracted, joint_extracted["start"], joint_extracted["end"], source_snapshot_at]):
+            raise ValueError()
+    except (KeyError, TypeError, ValueError) as exc:
+        raise DwrError("projection_catalog_provenance_incomplete") from exc
     timeline = normalized.get("deployment_timeline") or {}
     files = []
     for name in sorted(tables) + ["reconciliation.json", "case-checks.json", "disclosure.json"]:
@@ -271,7 +278,7 @@ def build_catalog(entry, normalized, result, tables, target, private) -> dict:
             "calendar_days": window.days,
             "extracted_at": {"start": joint_extracted["start"].replace("+00:00", "Z"), "end": joint_extracted["end"].replace("+00:00", "Z")},
             "exports_extracted_at": {"start": exports_extracted[0], "end": exports_extracted[-1]},
-            "source_snapshot_at": normalized["marginals"]["source"]["archive_commit_at"],
+            "source_snapshot_at": source_snapshot_at,
             "graph_snapshot_at": {site: info["graph_snapshot_at"] for site, info in graphs.items()},
             "generated_at": entry["generated_at"],
             "published_at": entry["published_at"],
@@ -358,7 +365,27 @@ def derive_stage(entry, stage):
 
 def _prepare_manifest(entry, target, figure_dir):
     from .common import sha256_file, write_text
-    from . import verify, public_checks
+    from . import verify, public_checks, project
+    required = {*project.LEGACY_FIELDS, "consultations.csv", "resource-summary.csv", "resources.csv", "links.csv", "exclusions.csv",
+                "reconciliation.json", "case-checks.json", "disclosure.json", "catalog.json",
+                "metrics.json", "figures.json"}
+    allowed = required | {"delta-report.json", "SHA256SUMS.txt"}
+    actual = {p.name for p in target.iterdir()}
+    if not required <= actual or not figure_dir.is_dir():
+        raise DwrError("prepared_projection_incomplete")
+    if actual - allowed or any(not p.is_file() for p in target.iterdir()):
+        raise DwrError("prepared_projection_unexpected_files")
+    registry = load_json(target / "figures.json")
+    expected_figures = {Path(item["path"]).name for figure in registry["figures"]
+                        for item in [figure["data_table"], *figure["files"].values()]}
+    actual_figures = {p.name for p in figure_dir.iterdir() if p.is_file()}
+    if expected_figures != actual_figures or any(p.name != "png" for p in figure_dir.iterdir() if p.is_dir()):
+        raise DwrError("prepared_figures_missing_or_unexpected")
+    # Optional PNGs must correspond to current SVGs. A figure rebuild discards all PNGs.
+    if (figure_dir / "png").exists() and any(
+            not p.is_file() or p.suffix != ".png" or p.with_suffix(".svg").name not in expected_figures
+            for p in (figure_dir / "png").iterdir()):
+        raise DwrError("prepared_png_unexpected")
     checked = verify.Report()
     verify.check_tables(checked, target)
     if not checked.result()["passed"] or not all(public_checks.reconcile_tables(target).values()):
@@ -421,7 +448,7 @@ def cmd_analyze(edition_id: str | None) -> dict:
         if canonical_json(result).encode("utf-8") != (target / "metrics.json").read_bytes():
             raise DwrError("public_metrics_reproduction_differs")
     else:
-        with transaction(REPO_ROOT, entry["edition_id"]) as stage:
+        with transaction(REPO_ROOT, entry["edition_id"], fresh_figures=True) as stage:
             derive_stage(entry, stage)
     headline = {m["metric_id"]: m["value"] for m in result["metrics"] if m["metric_id"].count(".") == 1
                 and m["metric_id"].startswith("main.")}

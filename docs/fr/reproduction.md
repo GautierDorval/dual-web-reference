@@ -47,7 +47,7 @@ Chaque édition peut être citée avec son identifiant, l’empreinte de son cat
 | `png-fallback --edition <id> --preview <nouveau-dossier-externe>` | copie des figures hors des arbres canoniques | aperçu PNG hors du dépôt ; aucun remplacement historique | rendu de fichiers locaux seulement |
 | `status` | `data/status.json`, calendrier | rien (sortie standard) | aucun |
 
-Chaque commande accepte `--edition <id>` ; par défaut, c’est la candidate désignée dans `config/editions.json`. Les résultats s’affichent en JSON. Un échec affiche `FAIL <code>: <détail>` sur la sortie d’erreur et se termine avec le code 2 ; `verify` se termine avec le code 1 si un contrôle échoue, et un contrôle qui plante compte comme un échec. `acquire-readonly` refuse une fenêtre qui n’est pas close et toute valeur de `--confirm-scope` autre que la fenêtre exacte. Son mode par défaut reste le dry-run ; pour cette édition, il a été exécuté une seule fois, avec `--execute` et la valeur exacte `--confirm-scope 2026-09-15..2026-10-15`, dans l’environnement privé, jamais dans la CI.
+`prepare-next` dérive sa fenêtre depuis l’état privé ; les autres commandes d’édition acceptent `--edition <id>` ; par défaut, c’est la candidate désignée dans `config/editions.json`. Les résultats s’affichent en JSON. Une erreur contrôlée `DwrError` affiche `FAIL <code>: <détail>` sur la sortie d’erreur et se termine avec le code 2 ; `verify` se termine avec le code 1 si un contrôle échoue, et un contrôle qui plante compte comme un échec. `acquire-readonly` refuse une fenêtre qui n’est pas close et toute valeur de `--confirm-scope` autre que la fenêtre exacte. Son mode par défaut reste le dry-run ; pour cette édition, il a été exécuté une seule fois, avec `--execute` et la valeur exacte `--confirm-scope 2026-09-15..2026-10-15`, dans l’environnement privé, jamais dans la CI.
 
 Les étapes publiques (`analyze`, `render`, `verify`, `build-site`, `prepare-edition`, `status`) fonctionnent hors ligne et ne contactent jamais les sites mesurés. `verify` contrôle qu’aucun module de la chaîne autre que `acquire.py` n’importe de code réseau.
 
@@ -128,3 +128,20 @@ catalog.json SHA-256 <64 caractères hexadécimaux>, consulté le <date>.
 ```
 
 L’empreinte se calcule avec `sha256sum data/editions/<edition>/catalog.json` ou `Get-FileHash -Algorithm SHA256 data/editions/<edition>/catalog.json`, et elle figure aussi dans `SHA256SUMS.txt`. Citer l’identifiant et l’empreinte avec le statut courant dans `config/editions.json`. Seul un reçu externe valide autorise la qualification de référence approuvée. Une révision comme `r2` a son propre identifiant et sa propre empreinte ([mises à jour](mises-a-jour.md)).
+
+## Codes de sortie de la préparation
+
+| Résultat de `prepare-next` | Code | Interprétation |
+|---|---|---|
+| `validation_failed`, `source_unavailable` | 1 | Préparation non réussie, fraîcheur inchangée |
+| `distribution_blocked_pending_contract`, `distribution_blocked_pending_policy_approval` | 0 | Préparation privée terminée, diffusion toujours bloquée |
+| `unchanged`, fenêtre non prête ou état d’attente sans erreur | 0 | État consigné, aucune approbation implicite |
+| `FAIL <code>` (`DwrError`, dont verrou occupé) | 2 | Erreur contrôlée sur la sortie d’erreur |
+
+Un code 0 ne vaut donc jamais autorisation de diffusion. Les tableaux JSON et leurs champs d’état doivent être lus avec le code de sortie.
+
+## Reprise après interruption
+
+Pour un verrou `preparation/preparation.lock`, vérifier d’abord que le processus propriétaire est terminé. Conserver le verrou, l’état `preparation/status.json`, la candidate et son reçu avant intervention. Comparer les empreintes des intrants et sorties au reçu et inspecter les dossiers de préparation. Un reçu complet conforme permet à la prochaine exécution de récupérer la candidate et le curseur ; une candidate partielle ou des octets divergents exigent une résolution explicite, jamais un remplacement silencieux. Seulement après cette inspection, le propriétaire peut retirer le verrou périmé puis relancer `prepare-next`. Un second passage identique doit donner `unchanged`.
+
+Le verrou d’édition `.dwr-work/<edition>.lock` est distinct : son dossier temporaire contient `recovery.json` pendant l’installation et les sauvegardes nécessaires à la restauration. Aucun verrou n’expire automatiquement. Les verrous coordonnent les producteurs qui respectent ce protocole ; ils ne confinent pas un autre processus doté des mêmes droits qui écrit arbitrairement dans les dossiers. Sous POSIX, un tel processus peut créer un dossier vide dans l’intervalle précédant `os.rename`, qui peut le remplacer. Cette course externe au verrou n’est pas qualifiée par les tests Windows.

@@ -82,7 +82,7 @@ def render_figure(edition: Edition, function, extra, lang: str, compact: bool):
 def render_figures(edition: Edition, target=None) -> dict:
     from .write_guard import transaction
     if target is None:
-        with transaction(REPO_ROOT, edition.id) as stage:
+        with transaction(REPO_ROOT, edition.id, fresh_figures=True) as stage:
             document = render_figures(Edition(edition.id, stage / "payload", edition.entry), stage / "figures")
             from .pipeline import _prepare_manifest
             _prepare_manifest(edition.entry, stage / "payload", stage / "figures")
@@ -538,10 +538,11 @@ def render_index(edition: Edition) -> None:
         "rule": "shared latest_pointer selects an externally approved public payload with a matching receipt; never a candidate or a successful run",
         "reason": None if latest else "no publicly accessible edition has a matching approved reference receipt"})
     operations = load_json(REPO_ROOT / "config" / "operations.json")
-    last = next(row for row in reversed(operations["reviews"]) if row["edition_id"] == edition.id)
+    last = next((row for row in reversed(operations["reviews"]) if row["edition_id"] == edition.id), None)
     effective = edition_rules.reference_state(edition.entry)
-    current_state = {"approved": "approved_reference", "approval_invalid": "approval_invalid"}.get(effective, last["state"])
-    review_record = {"date": last["date"], "kind": last["kind"], "state": last["state"]}
+    current_state = {"approved": "approved_reference", "approval_invalid": "approval_invalid"}.get(
+        effective, last["state"] if last else "not_reviewed")
+    review_record = {key: last[key] for key in ("date", "kind", "state")} if last else None
     if effective == "approved":
         review_record = {"date": edition.entry["approval_receipt"]["reviewed_at"], "kind": "reference_approval", "state": "approved"}
     from .dates import window_from_strings, next_monthly_window
@@ -617,6 +618,16 @@ def render_schemas() -> None:
                         "boolean" if field in boolean_fields else "string",
                         "constraints": {"minimum": 0} if field in integer_fields else {}} for field in fields],
         }
+        if version == 2:
+            from .measurement import RESOLUTIONS, COVERAGE_STATES
+            for field in schema["fields"]:
+                if field["name"] == "epoch_resolution":
+                    field["constraints"] = {"enum": list(RESOLUTIONS)}
+                elif field["name"] == "coverage_status":
+                    field["constraints"] = {"enum": list(COVERAGE_STATES)}
+                elif field["name"] in ("classifier_versions", "measurement_epochs"):
+                    field["description"] = "JSON array encoded in a CSV string; sorted, unique nonempty strings. Empty array means none recorded."
+                    field["format"] = "json-array-of-strings"
         write_json(REPO_ROOT / "schemas" / ("v2" if version == 2 else "") / (name.replace(".csv", ".schema.json")), schema)
 
 

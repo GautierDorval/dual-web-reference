@@ -78,13 +78,13 @@ Avant l’acquisition conjointe, la ventilation de chaque chemin par méthode et
 `project-public` refuse de s’exécuter sans acquisition conjointe acceptée (`joint_aggregate_required`). Il additionne les lignes conjointes aux seuls grains permis par la [politique des petites cellules](confidentialite.md) (`analysis/dwr/project.py`) :
 
 - `consultations.csv` : grain de l’édition, site × chemin × méthode × statut × famille d’acteur × nom d’acteur × rôle × niveau enregistré ;
-- `daily-summary.csv` : jour × site × population × rôle × niveau × méthode × statut. r1 regroupait les strates protégées ; r2 retient ces lignes. Le futur schéma 2 ajoute `measurement_epoch_id` à chaque clé.
+- `daily-summary.csv` : jour × site × population × rôle × niveau × méthode × statut. r1 regroupait certaines strates protégées ; r2 retire ces lignes ainsi que les autres strates désormais protégées par la politique 2.0.0. Le décompte détaillé figure dans le contrat quotidien ci-dessous. Le futur schéma 2 ajoute `measurement_epoch_id` à chaque clé.
 - `actor-summary.csv` : population × site × famille d’acteur × nom d’acteur × rôle × niveau enregistré, avec `requests`, `get200`, `distinct_paths_in_group` et `days_with_rows`, pour chaque population ;
 - `resource-summary.csv` : une ligne par couple ayant des lignes dans la fenêtre, y compris le nombre de jours UTC avec au moins un `GET 200` IA à origine fournisseur (`provider_origin_ai_get200_days`) ;
 - `daily-family-summary.csv` : jour × famille documentaire × rôle, pour la population principale, le niveau à origine fournisseur, les `GET 200` et les seuls rôles `ai_training` et `ai_search` ; la politique des petites cellules en écarte les récupérations à la demande.
 
 <!-- dwr:begin daily-contract -->
-`daily-summary.csv` passe de 970 lignes et 24 815 requêtes dans r1 à 136 lignes et 1 653 requêtes dans r2. Les 834 lignes protégées sont retenues, pas transformées en zéros. Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. `collector.requests` somme les lignes encore publiées, pas le trafic total du collecteur.
+`daily-summary.csv` passe de 970 lignes et 24 815 requêtes dans `2026-09-15_2026-10-15-r1` à 136 lignes et 1 653 requêtes dans `2026-09-15_2026-10-15-r2`. Parmi les 834 lignes retirées, 285 étaient déjà regroupées sous `protected_strata` et 549 relèvent des autres strates désormais protégées par la politique de cette révision. Les lignes protégées sont retenues, pas transformées en zéros. Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. `collector.requests` somme les lignes encore publiées, pas le trafic total du collecteur.
 
 Zéro explicite : aucune ligne enregistrée pour la cellule autorisée, sous la couverture déclarée. Null : valeur non calculable ou indisponible. Retenue : valeur retirée de la diffusion, y compris les marges `aggregate_count`, `v3_count` et `aggregate_minus_v3`. Source indisponible : aucune observation de remplacement. La couverture partielle n’est jamais requalifiée en couverture complète.
 <!-- dwr:end daily-contract -->

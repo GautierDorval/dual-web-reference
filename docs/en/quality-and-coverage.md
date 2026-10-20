@@ -36,7 +36,7 @@ Agreement of the daily totals of the exports and of the joint aggregate with the
 ## Values and missing rows
 
 <!-- dwr:begin daily-contract -->
-`daily-summary.csv` changes from 970 rows and 24,815 requests in r1 to 136 rows and 1,653 requests in r2. The 834 protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
+`daily-summary.csv` changes from 970 rows and 24,815 requests in `2026-09-15_2026-10-15-r1` to 136 rows and 1,653 requests in `2026-09-15_2026-10-15-r2`. Of the 834 removed rows, 285 were already grouped under `protected_strata` and 549 belong to other strata now protected by this revision's policy. Protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
 
 Explicit zero: no recorded row for the allowed cell, under the declared coverage. Null: unavailable or not calculable. Withheld: removed from distribution, including `aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. Partial coverage is never upgraded to complete coverage.
 <!-- dwr:end daily-contract -->

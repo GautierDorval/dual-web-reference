@@ -230,13 +230,28 @@ class EpochAndContract(unittest.TestCase):
                  "http_method":"GET","http_status":200,"request_count":3,"measurement_epoch_id":"e1"}
         resources=[{"site_id":"synthetic","path":"/a","family":"policy","main_population":True}]
         first=future_projection.prepare_synthetic([allowed],resources,nature="synthetic_only_not_observed_traffic")
-        for role,tier in (("user_initiated_fetch",future_projection.TIER),("ai_training","network_verified_claimed_actor"),
-                          ("unknown","unknown")):
-            second=future_projection.prepare_synthetic([allowed,{**allowed,"actor_role":role,"stored_identity_tier":tier,
-                "request_count":983,"path":"/protected-only","private_digest":"rejected-source"}],
-                resources+[{"site_id":"synthetic","path":"/protected-only","main_population":True,"family":"protected"}],
-                nature="synthetic_only_not_observed_traffic")
-            self.assertEqual(canonical_json(first),canonical_json(second))
+        variants = [
+            ({"actor_role":"user_initiated_fetch"}, True),
+            ({"actor_role":"unknown"}, True),
+            ({"stored_identity_tier":"network_verified_claimed_actor"}, True),
+            ({"stored_identity_tier":"unknown"}, True),
+            ({"stored_identity_tier":"claimed_actor"}, True),
+            ({"http_method":"HEAD"}, True),
+            ({"http_method":"POST"}, True),
+            ({"http_status":304}, True),
+            ({"http_status":404}, True),
+            ({}, False), ({}, "false"), ({}, None)]
+        for changes, population in variants:
+            with self.subTest(changes=changes, population=population):
+                extra = {"site_id":"synthetic","path":"/protected-only","main_population":population,"family":"protected"}
+                second=future_projection.prepare_synthetic([allowed,{**allowed,**changes,
+                    "request_count":983,"path":"/protected-only","private_digest":"rejected-source"}],
+                    resources + ([extra] if population is not None else []),
+                    nature="synthetic_only_not_observed_traffic")
+                self.assertEqual(canonical_json(first),canonical_json(second))
+        search = future_projection.prepare_synthetic([{**allowed, "actor_role":"ai_search"}], resources,
+            nature="synthetic_only_not_observed_traffic")
+        self.assertEqual(search["metrics"]["selected_requests"], 3)
         with self.assertRaises(DwrError):future_projection.prepare_synthetic([],[],nature="real")
 
 
@@ -293,7 +308,7 @@ class MonthlyCursor(unittest.TestCase):
             self.assertEqual(result["outcome"],"validation_failed")
             self.assertEqual(result["reason"],"monthly_window_not_anchored")
 
-    def test_calendar_lengths_leap_year_rollover_and_timezone_boundary(self):
+    def test_calendar_lengths_leap_year_rollover_and_preparation_lock(self):
         for start,days,end in (("2028-02-15",29,"2028-03-15"),("2027-02-15",28,"2027-03-15"),
                                ("2026-04-15",30,"2026-05-15"),("2026-12-15",31,"2027-01-15")):
             window=dates.monthly_window(dates.parse_date(start),15)

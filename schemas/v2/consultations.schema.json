@@ -114,7 +114,15 @@
       "type": "string"
     },
     {
-      "constraints": {},
+      "constraints": {
+        "enum": [
+          "observation_unavailable",
+          "complete_declared",
+          "partial_declared",
+          "coverage_unknown",
+          "mixed_coverage"
+        ]
+      },
       "name": "coverage_status",
       "type": "string"
     },

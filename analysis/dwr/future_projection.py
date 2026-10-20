@@ -58,5 +58,7 @@ def prepare_synthetic(rows, resources, *, nature):
             "figure_data": table(daily, ("date_utc", "measurement_epoch_id")),
             "coverage": "not_inferred_from_selection",
             "excluded_surfaces": ["all-source totals", "rejected strata", "full inventory", "private input digests",
-                                  "coverage complements", "graph snapshots", "source diagnostics"],
+                                  "coverage complements", "graph snapshots", "source diagnostics",
+                                  "catalog.measurement.days", "catalog.measurement.epoch_definitions",
+                                  "all-source coverage epoch fields", "catalog.input_digest", "private_input_digest"],
             "limits": "Conditional selection only; named automated actors and single-resource families can be inferred."}

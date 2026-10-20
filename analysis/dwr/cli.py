@@ -86,7 +86,6 @@ def _dispatch(args) -> int:
         _print(revisions.prepare(args.edition))
     elif command == "publication-gate":
         from . import gate
-        from .common import REPO_ROOT
         result = gate.check_ref(REPO_ROOT, args.ref, gate.load_secrets(private_root(args.private_root)))
         _print(result)
         return 0 if result["passed"] else 1

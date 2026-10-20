@@ -78,13 +78,13 @@ Before the joint acquisition, the split of each path by method and status had be
 `project-public` refuses to run without an accepted joint acquisition (`joint_aggregate_required`). It sums the joint rows only to the grains allowed by the [small-cell policy](privacy.md) (`analysis/dwr/project.py`):
 
 - `consultations.csv`: edition grain, site × path × method × status × actor family × actor name × role × stored tier;
-- `daily-summary.csv`: day × site × population × role × tier × method × status. r1 combined protected strata; r2 withholds those rows. Future schema 2 also keys each row by `measurement_epoch_id`.
+- `daily-summary.csv`: day × site × population × role × tier × method × status. r1 grouped some protected strata; r2 withholds those rows and the other strata newly protected by policy 2.0.0. The daily contract below gives the detailed counts. Future schema 2 also keys each row by `measurement_epoch_id`.
 - `actor-summary.csv`: population × site × actor family × actor name × role × stored tier, with `requests`, `get200`, `distinct_paths_in_group` and `days_with_rows`, for every population;
 - `resource-summary.csv`: one row per pair with rows in the window, including the number of UTC days with at least one provider-origin AI `GET 200` (`provider_origin_ai_get200_days`);
 - `daily-family-summary.csv`: day × documentary family × role, for the main population, the provider-origin tier, `GET 200` and the roles `ai_training` and `ai_search` only; the small-cell policy leaves user-initiated fetches out.
 
 <!-- dwr:begin daily-contract -->
-`daily-summary.csv` changes from 970 rows and 24,815 requests in r1 to 136 rows and 1,653 requests in r2. The 834 protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
+`daily-summary.csv` changes from 970 rows and 24,815 requests in `2026-09-15_2026-10-15-r1` to 136 rows and 1,653 requests in `2026-09-15_2026-10-15-r2`. Of the 834 removed rows, 285 were already grouped under `protected_strata` and 549 belong to other strata now protected by this revision's policy. Protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
 
 Explicit zero: no recorded row for the allowed cell, under the declared coverage. Null: unavailable or not calculable. Withheld: removed from distribution, including `aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. Partial coverage is never upgraded to complete coverage.
 <!-- dwr:end daily-contract -->

@@ -4,6 +4,14 @@ import re
 
 REQUIRED_EPOCH = ("classifier_version", "attribution_rules", "deployment_evidence")
 TOKEN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
+UNRESOLVED = ("unknown", "mixed_epoch_unresolved")
+RESOLUTIONS = (*UNRESOLVED, "single_epoch_resolved", "multiple_epochs_resolved")
+COVERAGE_STATES = ("observation_unavailable", "complete_declared", "partial_declared", "coverage_unknown", "mixed_coverage")
+
+
+def recorded_classifiers(rows):
+    """State markers are not versions; retained row values remain explicit."""
+    return sorted({r["classifier_version"] for r in rows if r["classifier_version"] not in UNRESOLVED})
 
 
 def token(value):
@@ -106,14 +114,14 @@ def qualify(rows, archive_days, provenance):
             raise DwrError("rows_on_unavailable_day")
         qualified.append({**row, **epoch(row, provenance), "coverage_status": cov})
     epochs = sorted({r["measurement_epoch_id"] for r in qualified})
-    classifiers = sorted({r["classifier_version"] for r in qualified})
+    classifiers = recorded_classifiers(qualified)
     return {"rows": qualified, "epochs": epochs, "classifier_versions": classifiers,
             "epoch_definitions": {key: definitions[key] for key in sorted(definitions) if key in epochs},
             "measurement_epoch_id": epoch_summary(epochs), "epoch_resolution": resolution(epochs),
             "coverage_status": combined_coverage(coverage(d) for d in archive_days),
             "days": {day: {"coverage_status": coverage(record),
                            "epochs": sorted({r["measurement_epoch_id"] for r in qualified if r["date_utc"] == day}),
-                           "classifier_versions": sorted({r["classifier_version"] for r in qualified if r["date_utc"] == day}),
+                           "classifier_versions": recorded_classifiers(r for r in qualified if r["date_utc"] == day),
                            "epoch_resolution": resolution(r["measurement_epoch_id"] for r in qualified if r["date_utc"] == day),
                            "attribution_comparable": coverage(record) != "observation_unavailable" and any(r["date_utc"] == day for r in qualified) and all(r["comparable"] for r in qualified if r["date_utc"] == day)}
                      for day, record in sorted(by_day.items())}}

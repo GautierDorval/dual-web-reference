@@ -120,6 +120,20 @@ def check_tables(report, edition_dir):
         if len(keys) != len(set(keys)):
             problems.append(f"{name}: duplicate primary key")
         for field in schema["fields"]:
+            for row in rows:
+                value = row[field["name"]]
+                if "enum" in field.get("constraints", {}) and value not in field["constraints"]["enum"]:
+                    problems.append(f"{name}: {field['name']} invalid state")
+                if field.get("format") == "json-array-of-strings":
+                    try:
+                        array = json.loads(value)
+                        if (not isinstance(array, list) or any(not isinstance(v, str) or not v for v in array)
+                                or array != sorted(set(array))):
+                            raise ValueError()
+                        if field["name"] == "classifier_versions" and any(v in ("unknown", "mixed_epoch_unresolved") for v in array):
+                            raise ValueError()
+                    except (ValueError, TypeError):
+                        problems.append(f"{name}: {field['name']} invalid JSON array")
             if field["type"] == "integer":
                 for row in rows:
                     value = row[field["name"]]

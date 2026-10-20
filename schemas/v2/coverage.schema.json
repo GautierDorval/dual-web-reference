@@ -17,7 +17,15 @@
       "type": "string"
     },
     {
-      "constraints": {},
+      "constraints": {
+        "enum": [
+          "observation_unavailable",
+          "complete_declared",
+          "partial_declared",
+          "coverage_unknown",
+          "mixed_coverage"
+        ]
+      },
       "name": "coverage_status",
       "type": "string"
     },
@@ -86,6 +94,8 @@
     },
     {
       "constraints": {},
+      "description": "JSON array encoded in a CSV string; sorted, unique nonempty strings. Empty array means none recorded.",
+      "format": "json-array-of-strings",
       "name": "classifier_versions",
       "type": "string"
     },
@@ -96,11 +106,20 @@
     },
     {
       "constraints": {},
+      "description": "JSON array encoded in a CSV string; sorted, unique nonempty strings. Empty array means none recorded.",
+      "format": "json-array-of-strings",
       "name": "measurement_epochs",
       "type": "string"
     },
     {
-      "constraints": {},
+      "constraints": {
+        "enum": [
+          "unknown",
+          "mixed_epoch_unresolved",
+          "single_epoch_resolved",
+          "multiple_epochs_resolved"
+        ]
+      },
       "name": "epoch_resolution",
       "type": "string"
     }
