@@ -3,6 +3,7 @@ site/dist/
 __pycache__/
 *.pyc
 .venv/
+.dwr-work/
 # Private material must never live under this root (see docs/en/privacy.md).
 # These patterns are a second line of defence, not the storage location.
 private/

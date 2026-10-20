@@ -39,6 +39,8 @@ def code(text: str) -> str:
 
 class Edition:
     def __init__(self, edition_id: str, directory=None, entry=None):
+        from .write_guard import assert_readable
+        assert_readable(REPO_ROOT, edition_id)
         self.id = edition_id
         self.dir = directory or REPO_ROOT / "data" / "editions" / edition_id
         self.catalog = load_json(self.dir / "catalog.json")
@@ -78,7 +80,18 @@ def render_figure(edition: Edition, function, extra, lang: str, compact: bool):
 
 
 def render_figures(edition: Edition, target=None) -> dict:
-    target = target or REPO_ROOT / "figures" / edition.id
+    from .write_guard import transaction
+    if target is None:
+        with transaction(REPO_ROOT, edition.id) as stage:
+            document = render_figures(Edition(edition.id, stage / "payload", edition.entry), stage / "figures")
+            from .pipeline import _prepare_manifest
+            _prepare_manifest(edition.entry, stage / "payload", stage / "figures")
+            return document
+    # Explicit previews must never write a canonical payload via figures.json.
+    from .common import DwrError
+    if (edition.dir.resolve().is_relative_to((REPO_ROOT / "data/editions").resolve())
+            or Path(target).resolve().is_relative_to((REPO_ROOT / "figures").resolve())):
+        raise DwrError("figure_preview_requires_separate_payload_and_destination")
     target.mkdir(parents=True, exist_ok=True)
     registry = []
     for figure_id, function, inputs, extra in figure_jobs(edition):
@@ -165,6 +178,13 @@ def headline(edition: Edition, lang: str, prefix: str = "") -> str:
     if "main.recorded_pairs" not in edition.metrics:
         return t(lang, "Historical edition: see its frozen metrics.", "Édition historique : voir ses métriques figées.")
     m = lambda key: number(edition.m(key), lang)
+    resources = {r["resource_id"]: r for r in read_csv(edition.dir / "resources.csv")}
+    network = [r for r in read_csv(edition.dir / "consultations.csv")
+               if resources[r["resource_id"]]["main_population"] == "true" and r["http_method"] == "GET"
+               and r["http_status"] == "200" and r["stored_identity_tier"] == "network_verified_claimed_actor"
+               and r["actor_role"] in ("ai_training", "ai_search", "user_initiated_fetch")]
+    network_count = number(sum(int(r["request_count"]) for r in network), lang)
+    meta_count = number(sum(int(r["request_count"]) for r in network if r["actor_name"] == "Meta-ExternalAgent"), lang)
     case = prefix + "cases/gautierdorval.com/" + ("README.fr.md" if lang == "fr" else "README.md")
     if lang == "fr":
         lines = [
@@ -189,6 +209,9 @@ def headline(edition: Edition, lang: str, prefix: str = "") -> str:
             f"Explicit exclusion: {m('main.failed_origin_selected.get200')} requests under those four names have **failed origin verification according to the producer**, among {number(edition.metrics['main.failed_origin_selected.share']['denominator'], lang)} requests in the selected provider-verified and failed-verification tiers only. Spoofing is not demonstrated. On PAGUP: no GET 200 of `llms.txt` in this selection and window; an earlier access remains possible.",
         ]
     lines[1], lines[2] = lines[2], lines[1]
+    lines.append(t(lang,
+        f"Separate network-claimed stratum on the main documentary population: {network_count} AI-role GET 200, including {meta_count} recorded as Meta-ExternalAgent. Its origin predicate remains under review; these requests are never added to the provider-origin selection.",
+        f"Strate réseau déclarée distincte sur la population documentaire principale : {network_count} GET 200 de rôles IA, dont {meta_count} enregistrés comme Meta-ExternalAgent. Son prédicat d’origine reste en revue ; ces requêtes ne sont jamais additionnées à la sélection d’origine fournisseur."))
     return "\n\n".join(lines)
 
 
@@ -307,9 +330,12 @@ def gate_coverage(lang: str) -> str:
 
 
 def blocks_for(edition: Edition, lang: str, prefix: str) -> dict:
+    from . import semantics
     return {
         "dates": lambda: dates_box(edition, lang),
-        "edition-state": lambda: t(lang, "Edition r", "Édition r") + str(edition.entry["revision"]) + t(lang, ": ", " : ") + edition_rules.status_label(edition.entry, lang) + ". " + t(lang, "r1 remains public and byte-frozen.", "r1 demeure publique et figée."),
+        "edition-state": lambda: t(lang, "Edition r", "Édition r") + str(edition.entry["revision"]) + t(lang, ": ", " : ") + edition_rules.status_label(edition.entry, lang) + ". " + t(lang, "r1 remains accessible as a byte-frozen, unapproved historical edition.", "r1 reste accessible comme édition historique figée et non approuvée."),
+        "daily-contract": lambda: semantics.daily_contract(edition, lang),
+        "history-inventory": lambda: semantics.inventory_contract(lang, REPO_ROOT),
         "headline": lambda: headline(edition, lang, prefix),
         "figures-main": lambda: figures_block(edition, lang, prefix=prefix),
         "figures-all": lambda: figures_block(edition, lang, ids=("G01", "G02", "G03", "G04", "G05", "G06", "G07", "G08", "G10"), prefix=prefix),
@@ -576,17 +602,22 @@ def render_schemas() -> None:
         "coverage.csv": project.COVERAGE_FIELDS, "exclusions.csv": project.EXCLUSION_FIELDS,
         "daily-family-summary.csv": project.FAMILY_DAILY_FIELDS,
     }
-    for name, fields in tables.items():
+    for name, current_fields in tables.items():
+      for version in (1, 2):
+        fields = project.LEGACY_FIELDS.get(name, current_fields) if version == 1 else current_fields
+        primary = list(keys[name])
+        if version == 2 and name in ("daily-summary.csv", "actor-summary.csv", "daily-family-summary.csv"):
+            primary.append("measurement_epoch_id")
         schema = {
             "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
-            "schema_version": "dwr-public/1.0.0",
+            "schema_version": f"dwr-public/{version}.0.0",
             "name": name,
-            "primaryKey": keys[name],
+            "primaryKey": primary,
             "fields": [{"name": field, "type": "integer" if field in integer_fields else
                         "boolean" if field in boolean_fields else "string",
                         "constraints": {"minimum": 0} if field in integer_fields else {}} for field in fields],
         }
-        write_json(REPO_ROOT / "schemas" / (name.replace(".csv", ".schema.json")), schema)
+        write_json(REPO_ROOT / "schemas" / ("v2" if version == 2 else "") / (name.replace(".csv", ".schema.json")), schema)
 
 
 def cmd(edition_id: str) -> dict:
@@ -595,10 +626,32 @@ def cmd(edition_id: str) -> dict:
     if historical:
         return historical
     edition = Edition(edition_id)
-    figures = render_figures(edition)
+    from .write_guard import state
+    if state(REPO_ROOT, edition_id)[1]:
+        figures = compare_figures(edition)
+    else:
+        figures = render_figures(edition)
     cases = render_cases(edition)
     changed = render_documents(edition)
     render_index(edition)
     render_schemas()
     return {"edition_id": edition_id, "figures": len(figures["figures"]), "case_pages": sorted(cases),
             "documents_updated": changed}
+
+
+def compare_figures(edition):
+    """Recompute in a disposable tree; never open an exposed file for writing."""
+    import shutil
+    import tempfile
+    from .common import DwrError
+    with tempfile.TemporaryDirectory(prefix="dwr-figure-comparison-") as temp:
+        root = Path(temp)
+        shutil.copytree(edition.dir, root / "payload")
+        result = render_figures(Edition(edition.id, root / "payload", edition.entry), root / "figures")
+        for path in (root / "figures").iterdir():
+            original = REPO_ROOT / "figures" / edition.id / path.name
+            if not original.is_file() or path.read_bytes() != original.read_bytes():
+                raise DwrError("public_figure_reproduction_differs", path.name)
+        if (root / "payload/figures.json").read_bytes() != (edition.dir / "figures.json").read_bytes():
+            raise DwrError("public_figure_registry_reproduction_differs")
+        return result

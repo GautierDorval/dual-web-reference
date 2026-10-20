@@ -36,13 +36,15 @@ The new consultation primary key adds `measurement_epoch_id` so separately recor
 | `acquire-readonly --execute --confirm-scope <start>..<end>` | private acquisition settings | private raw results and acquisition log | reads the producer database through its client |
 | `normalize` | the single private import, the private archive at its pinned commit, accepted acquisitions | private `normalized.json`: joint rows checked against the exports, deployment timeline | none (local repository read) |
 | `qualify` | `normalized.json`, scope registry and rules, attribution rules, private source snapshots, `config/cases.json` | private `qualified.json` | none |
-| `project-public` | private working files; refuses to run without an accepted joint acquisition | `data/editions/<edition>/`: tables, `reconciliation.json`, `case-checks.json`, `catalog.json` | none |
-| `analyze` | public edition tables | `metrics.json` | none |
-| `render` | public tables, `metrics.json`, configuration | `figures/<edition>/` (SVG and CSV), `figures.json`, case pages, generated blocks of the README and docs, `data/index.json`, `data/latest.json`, `data/status.json`, `schemas/` | none |
+| `project-public` | validated private joint inputs; local unapproved target only | staged tables, catalog, metrics, figures and checksum manifest; one guarded installation | none |
+| `analyze` | edition tables | public target: comparison only; local target: staged metrics, figures and manifest | none |
+| `render` | tables, metrics, configuration | public figures: separate comparison only; local figures: staged installation; current pages, blocks, indexes and schemas regenerated | none |
 | `verify` | every file of the working tree; the private values if `DWR_PRIVATE_ROOT` is set | nothing (report on standard output) | none |
 | `publication-gate --ref <branch>` | every Git object reachable from the branch; private values of the private root | nothing (report on standard output, exit code 1 on any finding) | none (local repository read) |
 | `build-site` | public files | `site/dist/` (rebuilt from scratch, never deployed) | none |
 | `prepare-edition` | edition files and figures | `delta-report.json`, `SHA256SUMS.txt` | none, publishes nothing |
+| `png-fallback --edition <id>` | local unapproved edition figures | staged optional PNGs; public targets refused before browser launch | local file rendering only |
+| `png-fallback --edition <id> --preview <new-external-directory>` | edition figures copied outside canonical trees | optional PNG preview outside the repository; no historical replacement | local file rendering only |
 | `status` | `data/status.json`, calendar | nothing (standard output) | none |
 
 `prepare-next` derives its next window from private status and ignores no missing window; the other edition commands accept `--edition <id>`; the default is the candidate named in `config/editions.json`. Results are printed as JSON. A failure prints `FAIL <code>: <detail>` on standard error and exits with code 2; `verify` exits with code 1 when a check fails, and a check that crashes counts as failed. `acquire-readonly` refuses a window that is not closed and any `--confirm-scope` other than the exact window. Dry run remains its default; for this edition it was executed once, with `--execute` and the exact `--confirm-scope 2026-09-15..2026-10-15`, in the private environment, never in CI.

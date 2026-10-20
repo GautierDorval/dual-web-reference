@@ -13,6 +13,7 @@
       "observation_provenance": "historical-r1",
       "period_end_exclusive": "2026-10-15",
       "period_start_inclusive": "2026-09-15",
+      "proposed_successor": "2026-09-15_2026-10-15-r2",
       "public_availability_evidence": {
         "earliest_bound_utc": "2026-10-18T23:45:37.9798885Z",
         "evidence": "Owner-authorized repository visibility mutation log and anonymous readback; retained privately. Commit time and repository creation time are not used.",

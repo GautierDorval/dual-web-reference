@@ -91,3 +91,10 @@ Several file names and roles in the cases use the vocabulary of the author's fra
 - **CAI**: described in the site files as an attested integrity layer: digests of selected canonical statements, and what those digests do not prove (`attested-interpretive-units.json`, `content-digests.json`). The expansion of the letters is not established here.
 - **MCP**: the Model Context Protocol, through which a server exposes tools or context; a file that describes such a server is an operational descriptor.
 - **`/.well-known/`**: a path prefix reserved for site-wide metadata files (RFC 8615).
+
+
+## Epochs and coverage states
+
+`classifier_version` identifies the classifier; `measurement_epoch_id` identifies an attested measurement segment. Several fully resolved segments mean `multiple_epochs_resolved`, not `mixed_epoch_unresolved`. The latter means an inseparable mixture; `unknown` means missing evidence. Future schema 2 carries the epoch in daily, actor and family keys. Coverage is one of `complete_declared`, `partial_declared`, `coverage_unknown` or `observation_unavailable`; an edition may summarize heterogeneous days as `mixed_coverage`. Completeness and epoch resolution are independent.
+
+Historical classifier scalars are adapted to a singleton list with the raw value and transformation retained. No prefix is stripped to guess a classifier. Future resource summaries use unions of resources and days across epochs, not sums of distinct counts.

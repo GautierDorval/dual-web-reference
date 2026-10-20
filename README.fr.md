@@ -5,7 +5,7 @@
 Ce dépôt étudie les fichiers de gouvernance, leurs relations documentaires et leurs accès HTTP enregistrés.
 
 <!-- dwr:begin edition-state -->
-Édition r2 : accessible publiquement ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 demeure publique et figée.
+Édition r2 : accessible publiquement ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 reste accessible comme édition historique figée et non approuvée.
 <!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
@@ -24,6 +24,8 @@ GPTBot : 200 ; OAI-SearchBot : 14 ; PerplexityBot : 16 ; ChatGPT-User 
 Hors récupérations à la demande : 230 accès automatisés sur 12 jours ; les trois journées les plus actives en portent 185, soit 80.4 %. 133 des 174 couples ont des accès sur un seul jour.
 
 Exclusion explicite : 17 requêtes sous ces quatre noms ont une **vérification d’origine échouée selon le producteur**, sur 262 requêtes des seuls niveaux fournisseur vérifié et vérification échouée retenus. Aucune usurpation n’est démontrée. Sur PAGUP : aucun GET 200 de `llms.txt` dans cette sélection et cette fenêtre ; un accès antérieur reste possible.
+
+Strate réseau déclarée distincte sur la population documentaire principale : 412 GET 200 de rôles IA, dont 361 enregistrés comme Meta-ExternalAgent. Son prédicat d’origine reste en revue ; ces requêtes ne sont jamais additionnées à la sélection d’origine fournisseur.
 <!-- dwr:end headline -->
 
 ## Lire un instantané documentaire

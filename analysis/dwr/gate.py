@@ -101,7 +101,7 @@ COVERAGE = (
       ("mac_users", "a `/Users/<name>/` folder", "un dossier `/Users/<nom>/`"))),
     ("ip_address", "an IPv4 address", "une adresse IPv4",
      (("in_markdown", "in Markdown", "dans un Markdown"), ("in_path", "in a file name", "dans un nom de fichier"))),
-    ("user_agent", "a browser user-agent string", "une chaîne user agent de navigateur",
+    ("user_agent", "a browser user-agent string", "une chaîne d’agent utilisateur de navigateur",
      (("in_markdown", "in Markdown", "dans un Markdown"),)),
     ("identifier_32", "a 32-character hexadecimal identifier, in either case",
      "un identifiant hexadécimal de 32 caractères, dans l’une ou l’autre casse",

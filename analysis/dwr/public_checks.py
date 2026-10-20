@@ -8,6 +8,8 @@ def reconcile_tables(directory):
     tables = disclosure.tables(directory)
     resources = {r["resource_id"]:r for r in tables["resources"]}
     cells = tables["consultations"]
+    segmented = "measurement_epoch_id" in (tables["actors"][0] if tables["actors"] else {})
+    epoch = lambda row: (row["measurement_epoch_id"],) if segmented else ()
     valid = all(r["resource_id"] in resources and r["site_id"] in SITE_IDS and r["http_method"] in HTTP_METHODS
                 and r["actor_role"] in ACTOR_ROLES and r["stored_identity_tier"] in IDENTITY_TIERS
                 and r["http_status"].isdigit() and 100 <= int(r["http_status"]) <= 599
@@ -23,25 +25,25 @@ def reconcile_tables(directory):
         n=int(row["request_count"]);rid=row["resource_id"];resource=resources[rid];pop=population(resource)
         get=row["http_method"]=="GET" and row["http_status"]=="200"
         ai=get and row["stored_identity_tier"]=="provider_origin_verified_actor" and row["actor_role"] in ("ai_training","ai_search","user_initiated_fetch")
-        key=(pop,)+tuple(row[k] for k in ("site_id","actor_family","actor_name","actor_role","stored_identity_tier","attribution_assessment"))
+        key=(pop,)+tuple(row[k] for k in ("site_id","actor_family","actor_name","actor_role","stored_identity_tier","attribution_assessment"))+epoch(row)
         a=expected_actor[key];a[0]+=n;a[1]+=n if get else 0;a[2].add(row["path"])
         flags=(True,get,row["http_method"]=="HEAD",row["http_status"]=="304",int(row["http_status"])>=400,ai)
         for i,flag in enumerate(flags):per_resource[rid][i]+=n if flag else 0
         if ai and row["actor_role"] in ("ai_training","ai_search") and pop=="main_documentary":
-            expected_family[(resource["family"],row["actor_role"])]+=n
+            expected_family[(resource["family"],row["actor_role"])+epoch(row)]+=n
         if not disclosure.protected(row,policy):
-            expected_daily[(row["site_id"],pop,row["actor_role"],row["stored_identity_tier"],row["http_method"],row["http_status"])]+=n
-    actual_actor={tuple(r[k] for k in ("population","site_id","actor_family","actor_name","actor_role","stored_identity_tier","attribution_assessment")):[int(r["requests"]),int(r["get200"]),int(r["distinct_paths_in_group"])] for r in tables["actors"]}
+            expected_daily[(row["site_id"],pop,row["actor_role"],row["stored_identity_tier"],row["http_method"],row["http_status"])+epoch(row)]+=n
+    actual_actor={tuple(r[k] for k in ("population","site_id","actor_family","actor_name","actor_role","stored_identity_tier","attribution_assessment"))+epoch(r):[int(r["requests"]),int(r["get200"]),int(r["distinct_paths_in_group"])] for r in tables["actors"]}
     expected_actor={k:[a,b,len(c)] for k,(a,b,c) in expected_actor.items()}
     fields=("requests_all_actors","get200_all_actors","head_all_actors","status304_all_actors","status4xx5xx_all_actors","provider_origin_ai_get200")
     actual_resource={r["resource_id"]:[int(r[k]) for k in fields] for r in tables["resource_summary"]}
     actual_family=defaultdict(int)
     for r in tables["family_daily"]:
-        if r["request_count"] != "":actual_family[(r["family"],r["actor_role"])]+=int(r["request_count"])
+        if r["request_count"] != "":actual_family[(r["family"],r["actor_role"])+epoch(r)]+=int(r["request_count"])
     actual_daily=defaultdict(int)
     for r in tables["daily"]:
         if not disclosure.protected(r,policy):
-            actual_daily[tuple(r[k] for k in ("site_id","population","actor_role","stored_identity_tier","http_method","http_status"))]+=int(r["request_count"])
+            actual_daily[tuple(r[k] for k in ("site_id","population","actor_role","stored_identity_tier","http_method","http_status"))+epoch(r)]+=int(r["request_count"])
     nonzero=lambda d:{k:v for k,v in d.items() if v}
     return {"public_cell_references_domains_and_types":True,"public_actor_marginals_recomputed":actual_actor==expected_actor,
             "public_resource_marginals_recomputed":actual_resource==dict(per_resource),

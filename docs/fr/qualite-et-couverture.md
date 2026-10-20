@@ -19,7 +19,7 @@ L’archive déclare ses propres rapports partiels lorsqu’elle ne peut pas en 
 | `COLLECTOR_WINDOW_ATTESTATION_MISSING` | le collecteur n’a pas attesté la fenêtre de couverture de ce jour |
 | `AGGREGATE_V3_COUNT_MISMATCH` | les deux comptes que l’archive conserve pour ce jour, le compte agrégé et le compte V3, diffèrent |
 
-Les deux comptes sont publiés (`aggregate_count`, `v3_count`) avec leur différence (`aggregate_minus_v3`). L’écart est signalé, pas corrigé, et aucun des deux comptes n’est préféré à l’autre.
+Les marges numériques étaient publiées dans r1. Elles sont retenues dans r2 ; les écarts historiques et la couverture partielle restent documentés.
 
 ## Un instantané par date, jamais compté deux fois
 
@@ -33,17 +33,15 @@ L’archive peut contenir plusieurs instantanés d’une même date lorsqu’un 
 
 La concordance des totaux quotidiens des exports et de l’agrégat conjoint avec les comptes agrégés archivés (`export_matches_archive`, `joint_matches_archive`) n’est pas une validation indépendante : tous proviennent de la même chaîne productrice. La présence de lignes un jour donné montre que quelque chose a été enregistré, pas que tout l’a été.
 
-## Cinq états jamais confondus
+## Valeurs et lignes absentes
 
-| État | Forme dans les fichiers | Sens |
-|---|---|---|
-| Zéro mesuré | `request_count = 0`, `observation_status = observed_zero`, dans `daily-family-summary.csv` seulement | la cellule est écrite explicitement : la table du producteur ne compte aucune requête de ce type pour ce jour, cette famille et ce rôle |
-| Ligne absente | aucune ligne pour une combinaison dans `consultations.csv` ou `daily-summary.csv` ; pour un couple entier, `window_rows_status` vaut `registered_now_no_row_in_window` ou `not_in_collector_window_export` dans `resources.csv` | la table du producteur ne contient aucune requête enregistrée pour cette combinaison dans la fenêtre ; ce n’est pas une absence mesurée sur le Web |
-| Null | cellule vide, avec une colonne d’état ou un `status` d’indicateur | la valeur n’est pas disponible ou pas calculable, par exemple une part dont le dénominateur est nul (`status = not_calculable`) |
-| Supprimé | `suppression_status` autre que `not_suppressed`, valeur vide | la valeur a été retenue pour confidentialité ; elle n’est jamais écrite comme zéro (aucune cellule n’est supprimée dans cette édition) |
-| Source indisponible | l’étape s’arrête avec `source_unavailable` ; un graphe garde `status = source_unavailable` ; `status.json` conserve la dernière édition valide | la source n’a pas pu être lue ; rien n’est publié à sa place |
+<!-- dwr:begin daily-contract -->
+`daily-summary.csv` passe de 970 lignes et 24 815 requêtes dans r1 à 136 lignes et 1 653 requêtes dans r2. Les 834 lignes protégées sont retenues, pas transformées en zéros. Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. `collector.requests` somme les lignes encore publiées, pas le trafic total du collecteur.
 
-Une table vide est publiée avec son motif dans `catalog.json` (`status = empty_with_reason`, `empty_reason`) ; aucune table de cette édition n’est vide. Un indicateur qui ne peut pas être calculé est vide, avec son statut et son motif, jamais zéro.
+Zéro explicite : aucune ligne enregistrée pour la cellule autorisée, sous la couverture déclarée. Null : valeur non calculable ou indisponible. Retenue : valeur retirée de la diffusion, y compris les marges `aggregate_count`, `v3_count` et `aggregate_minus_v3`. Source indisponible : aucune observation de remplacement. La couverture partielle n’est jamais requalifiée en couverture complète.
+<!-- dwr:end daily-contract -->
+
+Une table vide porte `table_state = empty` et `empty_reason` dans le schéma 2 du catalogue. Un indicateur null a un statut et un motif explicites.
 
 ## Déploiements du producteur
 

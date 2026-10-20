@@ -1,0 +1,78 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "exclusion_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "dimension",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "excluded_value",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "rule_id",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "site_pairs",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "requests_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "get200_all_actors",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "provider_origin_ai_get200",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "published_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "reason_en",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "reason_fr",
+      "type": "string"
+    }
+  ],
+  "name": "exclusions.csv",
+  "primaryKey": [
+    "exclusion_id"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

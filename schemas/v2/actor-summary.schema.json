@@ -1,0 +1,89 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "population",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "site_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "actor_family",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "actor_name",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "actor_role",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "stored_identity_tier",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "attribution_assessment",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "requests",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "get200",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "distinct_paths_in_group",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "days_with_rows",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "measurement_epoch_id",
+      "type": "string"
+    }
+  ],
+  "name": "actor-summary.csv",
+  "primaryKey": [
+    "population",
+    "site_id",
+    "actor_family",
+    "actor_name",
+    "actor_role",
+    "stored_identity_tier",
+    "measurement_epoch_id"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

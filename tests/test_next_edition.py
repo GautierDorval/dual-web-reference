@@ -56,7 +56,7 @@ class ManualPreparationTests(unittest.TestCase):
             private=Path(temp);eid=prepare_inputs(private)
             before={p:sha256_file(REPO_ROOT/p) for p in ("data/status.json","data/latest.json","config/editions.json")}
             first=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
-            self.assertEqual(first["outcome"],"awaiting_review",first)
+            self.assertEqual(first["outcome"],"distribution_blocked_pending_policy_approval",first)
             target=private/"preparation/candidates"/eid
             report=load_json(target/"measurement-report.json")
             self.assertEqual(report["days"]["2026-10-17"]["epochs"],["mixed_epoch_unresolved"])
@@ -91,7 +91,7 @@ class ManualPreparationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp);prepare_inputs(private,protected=True)
             result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
-            self.assertEqual(result["outcome"],"awaiting_review",result)
+            self.assertEqual(result["outcome"],"distribution_blocked_pending_contract",result)
             self.assertEqual(result["distribution_status"],"not_assessed")
             self.assertFalse(result["public_mutation"])
 

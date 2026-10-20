@@ -55,7 +55,7 @@ Each entry of `metrics.json` carries `metric_id`, `value`, `unit`, `status`, `nu
 | `main.scope_delta.provider_ai_get200_excluded` | provider-origin AI `GET 200` of the initial report scope minus `main.get200` | requests |
 | `historical.*` | the same quantities on the initial report scope, per role, and `GET 200` per stored tier, from `consultations.csv` | requests, pairs, ratio |
 | `coverage.*` | day counts and archived sums from `coverage.csv`, including the days whose joint total equals the archived aggregate count | days, requests |
-| `collector.requests` | sum of `request_count` over all rows of `daily-summary.csv` | requests |
+| `collector.requests` | sum of published daily rows only; after withholding, not the full collector total | requests |
 
 ```text
 other_share = other_get200 / total_get200
@@ -78,12 +78,16 @@ Before the joint acquisition, the split of each path by method and status had be
 `project-public` refuses to run without an accepted joint acquisition (`joint_aggregate_required`). It sums the joint rows only to the grains allowed by the [small-cell policy](privacy.md) (`analysis/dwr/project.py`):
 
 - `consultations.csv`: edition grain, site × path × method × status × actor family × actor name × role × stored tier;
-- `daily-summary.csv`: day × site × population × role × stored tier × method × status, never path or actor name; protected strata are combined into one row per day, site and population (`protected_strata`, method and status `ANY`, see [privacy](privacy.md)); columns `edition_id`, `date_utc`, `site_id`, `population`, `actor_role`, `stored_identity_tier`, `http_method`, `http_status`, `request_count`, `coverage_status` and `archive_report_status`; populations `main_documentary`, `other_documentary` (every other scope class except the two below), `robots_control` (`/robots.txt`) and `undeclared_bucket`;
+- `daily-summary.csv`: day × site × population × role × tier × method × status. r1 combined protected strata; r2 withholds those rows. Future schema 2 also keys each row by `measurement_epoch_id`.
 - `actor-summary.csv`: population × site × actor family × actor name × role × stored tier, with `requests`, `get200`, `distinct_paths_in_group` and `days_with_rows`, for every population;
 - `resource-summary.csv`: one row per pair with rows in the window, including the number of UTC days with at least one provider-origin AI `GET 200` (`provider_origin_ai_get200_days`);
 - `daily-family-summary.csv`: day × documentary family × role, for the main population, the provider-origin tier, `GET 200` and the roles `ai_training` and `ai_search` only; the small-cell policy leaves user-initiated fetches out.
 
-Every cell is an exact sum of joint rows (`cell_derivation = joint_exact`); nothing is allocated in proportion to anything. A combination absent from a table had no recorded request in the producer table; it is not a measured absence on the web. Explicit zeros appear only in `daily-family-summary.csv` (`observation_status = observed_zero`). The heat map G06 is drawn from that table, never from marginals.
+<!-- dwr:begin daily-contract -->
+`daily-summary.csv` changes from 970 rows and 24,815 requests in r1 to 136 rows and 1,653 requests in r2. The 834 protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
+
+Explicit zero: no recorded row for the allowed cell, under the declared coverage. Null: unavailable or not calculable. Withheld: removed from distribution, including `aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. Partial coverage is never upgraded to complete coverage.
+<!-- dwr:end daily-contract -->
 
 ## Reconciliation
 

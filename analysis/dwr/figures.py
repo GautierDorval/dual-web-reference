@@ -60,6 +60,13 @@ class Context:
         ]
         if extra:
             lines.insert(0, extra)
+        if self.catalog.get("versions", {}).get("public_schema") == "dwr-public/2.0.0":
+            measure = self.catalog.get("measurement", {})
+            lines.extend([
+                t(lang, "Measurement epochs: ", "Époques de mesure : ") + ", ".join(measure.get("epochs", [])),
+                t(lang, "Epoch resolution: ", "Résolution des époques : ") + measure.get("epoch_resolution", "unknown"),
+                t(lang, "Aggregated across epochs; counts are conditional on the population, roles and identity tier shown. Distinct resources use unions.",
+                        "Agrégation entre époques ; comptes conditionnels à la population, aux rôles et au niveau d’identité indiqués. Les ressources distinctes sont réunies par union.")])
         return lines
 
 
@@ -625,6 +632,8 @@ def figure_g08(ctx, lang, compact):
              t(lang, "Aggregate/V3 differences are in the data table; agreement does not prove complete coverage.", "Les écarts agrégats/V3 figurent dans le tableau ; leur concordance ne prouve pas une couverture complète."),
              t(lang, "An intraday change without version on the aggregate stays mixed_epoch_unresolved; it is never split proportionally.",
                     "Un changement intrajournalier sans version sur l’agrégat reste mixed_epoch_unresolved ; il n’est jamais réparti proportionnellement.")]
+    if ctx.catalog.get("versions", {}).get("public_schema") == "dwr-public/2.0.0":
+        notes[1] = t(lang, "Recorded classifier versions: ", "Versions de classificateur enregistrées : ") + ", ".join(ctx.catalog["versions"]["classifier_recorded"])
     for note in notes:
         for line in S.wrap(note, 12.5, width - 40):
             svg.text(20, y, line, "lb"); y += 16

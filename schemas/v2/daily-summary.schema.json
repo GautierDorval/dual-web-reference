@@ -1,0 +1,79 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "date_utc",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "site_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "population",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "actor_role",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "stored_identity_tier",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "http_method",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "http_status",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "request_count",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "coverage_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "archive_report_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "measurement_epoch_id",
+      "type": "string"
+    }
+  ],
+  "name": "daily-summary.csv",
+  "primaryKey": [
+    "date_utc",
+    "site_id",
+    "population",
+    "actor_role",
+    "stored_identity_tier",
+    "http_method",
+    "http_status",
+    "measurement_epoch_id"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

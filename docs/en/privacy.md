@@ -29,6 +29,8 @@ Public projections have no request IP, raw or hashed user-agent string, cookie/s
 
 The publication gate checks configured private terms and identifiers as well as known unsafe representations. Private exports and source snapshots stay outside this repository. Public hashes establish byte identity, not the truth of collection, and synthetic privacy tests are not evidence of an actual personal disclosure. Report a concern through [the approved private channel](../../SECURITY.md).
 
-The gate authenticates the declared inventory against local bytes. It does not discover omitted Git history: completeness requires a separate audit of exact public references. The three named historical states were compared at those references; this does not cover unknown third-party copies or auxiliary data.
+<!-- dwr:begin history-inventory -->
+The inventory describes 8 named historical states, not 8 commits. Declared bytes are checked locally; completeness of Git references requires separate evidence. Unknown third-party copies and auxiliary data remain outside that evidence.
+<!-- dwr:end history-inventory -->
 
 The combined gate reconciles resource request totals but cannot independently reconstruct per-resource active-day counts from edition-level cells. For repeated historical protected output, those day-count bytes must match the inventoried release. For a new private preparation, validate_inputs checks the complete per-resource counts, including day counts, against the real joint source. An arbitrary standalone synthetic projection is not that source-backed preparation.

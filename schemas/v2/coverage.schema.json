@@ -1,0 +1,113 @@
+{
+  "$comment": "Table schema (Frictionless-style). UTF-8, LF, comma, header row, RFC 4180 quoting; decimal point; ISO 8601 dates; empty cell = null (never zero).",
+  "fields": [
+    {
+      "constraints": {},
+      "name": "edition_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "date_utc",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "observation_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "coverage_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "archive_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "archive_report_status",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "archive_reason_code",
+      "type": "string"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "aggregate_count",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "v3_count",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "aggregate_minus_v3",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "export_matches_archive",
+      "type": "boolean"
+    },
+    {
+      "constraints": {},
+      "name": "joint_matches_archive",
+      "type": "boolean"
+    },
+    {
+      "constraints": {
+        "minimum": 0
+      },
+      "name": "snapshots_for_date",
+      "type": "integer"
+    },
+    {
+      "constraints": {},
+      "name": "classifier_version",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "producer_deployment_label",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "classifier_versions",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "measurement_epoch_id",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "measurement_epochs",
+      "type": "string"
+    },
+    {
+      "constraints": {},
+      "name": "epoch_resolution",
+      "type": "string"
+    }
+  ],
+  "name": "coverage.csv",
+  "primaryKey": [
+    "date_utc"
+  ],
+  "schema_version": "dwr-public/2.0.0"
+}

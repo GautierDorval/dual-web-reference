@@ -5,7 +5,7 @@
 This repository studies governance files, their documentary relations and recorded HTTP accesses.
 
 <!-- dwr:begin edition-state -->
-Edition r2: publicly accessible; reference not approved; no independent scientific review documented. r1 remains public and byte-frozen.
+Edition r2: publicly accessible; reference not approved; no independent scientific review documented. r1 remains accessible as a byte-frozen, unapproved historical edition.
 <!-- dwr:end edition-state -->
 
 <!-- dwr:begin headline -->
@@ -24,6 +24,8 @@ GPTBot: 200; OAI-SearchBot: 14; PerplexityBot: 16; ChatGPT-User: 15. The OpenAI 
 Excluding user-initiated fetches: 230 automated accesses on 12 days; the three busiest days account for 185, or 80.4%. 133 of the 174 pairs received requests on only one day.
 
 Explicit exclusion: 17 requests under those four names have **failed origin verification according to the producer**, among 262 requests in the selected provider-verified and failed-verification tiers only. Spoofing is not demonstrated. On PAGUP: no GET 200 of `llms.txt` in this selection and window; an earlier access remains possible.
+
+Separate network-claimed stratum on the main documentary population: 412 AI-role GET 200, including 361 recorded as Meta-ExternalAgent. Its origin predicate remains under review; these requests are never added to the provider-origin selection.
 <!-- dwr:end headline -->
 
 ## Read a documentary snapshot
