@@ -67,6 +67,13 @@ The three sites belong to one author's ecosystem: three applications of one appr
 
 [r2 catalog](data/editions/2026-09-15_2026-10-15-r2/catalog.json) · [Metrics](data/editions/2026-09-15_2026-10-15-r2/metrics.json) · [Resources](data/editions/2026-09-15_2026-10-15-r2/resources.csv) · [Accesses](data/editions/2026-09-15_2026-10-15-r2/consultations.csv) · [Relations](data/editions/2026-09-15_2026-10-15-r2/links.csv).
 
+## Editorial presentations in the ecosystem
+
+- [Gautier Dorval: scope and interpretation of the observation](https://gautierdorval.com/en/blog/field-observations/dual-web-reference/).
+- [Pagup: an operational reading of the evidence](https://pagup.com/en/proof/dual-web-reference-study/).
+
+These presentations connect DWR with the Dual Web concept and the ecosystem. The repository remains the canonical data source. Their publication is neither reference approval nor independent scientific review.
+
 ## Essential limits
 
 Three sites in one ecosystem are not three independent replications. Coverage is partial, discovery paths are not established, and provider origin remains a producer classification. A GET 200 does not prove semantic reading, adoption, better answers or SEO effects. Private collection evidence cannot be rerun from this repository. [Detailed limits](docs/en/limits.md).
