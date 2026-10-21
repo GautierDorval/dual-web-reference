@@ -61,10 +61,10 @@ class DistributionTests(unittest.TestCase):
         self.valid = snapshot(self.root/'site/dist')
 
     def refused(self, diagnostic=True):
-        for command in ('build-site', 'verify', 'prepare-edition'):
+        for command in ('build-site', 'verify'):
             result = cli(self.root, command)
             self.assertNotEqual(result.returncode, 0, (command, result.stdout))
-            if diagnostic and command != 'prepare-edition':
+            if diagnostic:
                 self.assertIn('distribution_', result.stdout+result.stderr)
                 self.assertNotIn('Traceback', result.stdout+result.stderr)
         self.assertEqual(snapshot(self.root/'site/dist'), self.valid)
@@ -251,7 +251,7 @@ site_build.cmd("2026-09-15_2026-10-15-r2")
     def test_T32_diagnostic_never_echoes_unknown_sensitive_name_or_contents(self):
         marker='synthetic-sensitive-marker'
         path=self.root/f'data/editions/{R2}'/(marker+'.csv');path.write_text(marker)
-        for command in ('verify','build-site','prepare-edition'):
+        for command in ('verify','build-site'):
             result=cli(self.root,command)
             self.assertNotEqual(result.returncode,0)
             self.assertNotIn(marker,result.stdout+result.stderr)
@@ -311,8 +311,90 @@ site_build.cmd("2026-09-15_2026-10-15-r2")
             payload=self.root/f'data/editions/{R2}';figures=self.root/f'figures/{R2}'
             required=set(p.name for p in payload.iterdir())-{'SHA256SUMS.txt','delta-report.json'}
             d.check_candidate(payload,figures,R2,required,{'SHA256SUMS.txt','delta-report.json'})
+            entry = next(e for e in json.loads((self.root/'config/editions.json').read_bytes())['editions'] if e['edition_id'] == R2)
+            self.assertGreater(pipeline._prepare_manifest(entry,payload,figures)['files'],0)
             (figures/'unexpected.csv').write_bytes(b'fixture')
-            with self.assertRaises(DwrError):pipeline._prepare_manifest({'edition_id':R2},payload,figures)
+            with self.assertRaises(DwrError):pipeline._prepare_manifest(entry,payload,figures)
+
+
+    def test_T23_keyboard_interrupt_retains_lock_stage_and_backup(self):
+        with patched(self.root):
+            original = Path.rename
+            def interrupt(path, target):
+                if path.name.startswith('.build-'):
+                    raise KeyboardInterrupt()
+                return original(path, target)
+            with patch.object(Path, 'rename', interrupt):
+                with self.assertRaises(KeyboardInterrupt):
+                    site_build.cmd(R2)
+            self.assertFalse((self.root/'site/dist').exists())
+            self.assertTrue((self.root/'site/.build.lock').exists())
+            self.assertEqual(snapshot(self.root/'site/.dist-backup'), self.valid)
+            stages = list((self.root/'site').glob('.build-*'))
+            self.assertEqual(len(stages), 1)
+            self.assertEqual(snapshot(stages[0]), self.valid)
+            with self.assertRaises(DwrError) as error:
+                site_build.cmd(R2)
+            self.assertEqual(error.exception.code, 'site_install_recovery_required')
+
+    def test_T25_stage_injection_during_final_source_recheck_is_refused(self):
+        with patched(self.root):
+            original = site_build.source_inputs
+            def recheck():
+                result = original()
+                for stage in (self.root/'site').glob('.build-*'):
+                    (stage/'late.csv').write_bytes(b'fixture')
+                return result
+            with patch.object(site_build, 'source_inputs', recheck):
+                with self.assertRaises(DwrError):
+                    site_build.cmd(R2)
+            self.assertEqual(snapshot(self.root/'site/dist'), self.valid)
+
+    def test_T17_pinned_baseline_ancestors_and_invalid_pins(self):
+        shutil.rmtree(self.root/'site/dist')
+        config = self.root/'config/publication-gate.json'
+        doc = json.loads(config.read_bytes())
+        doc.pop('published_root', None)
+        doc.pop('distribution_baseline', None)
+        config.write_text(json.dumps(doc), encoding='utf-8')
+        extra = self.root/f'data/editions/{R2}/old-extra.csv'
+        extra.write_bytes(b'fixture')
+        self.git('init','-q')
+        self.git('config','user.name','Synthetic test')
+        self.git('config','user.email','test@example.invalid')
+        self.git('add','--','.')
+        self.git('commit','-q','-m','Synthetic historical state')
+        root = self.git('rev-parse','HEAD').decode().strip()
+        extra.unlink()
+        doc['published_root'] = 'GautierDorval/dual-web-reference@' + root
+        config.write_text(json.dumps(doc), encoding='utf-8')
+        self.git('add','-u')
+        self.git('commit','-q','-m','Synthetic admitted baseline')
+        baseline = self.git('rev-parse','HEAD').decode().strip()
+        pin = 'GautierDorval/dual-web-reference@' + baseline
+        doc['distribution_baseline'] = pin
+        config.write_text(json.dumps(doc), encoding='utf-8')
+        self.git('add','-u')
+        self.git('commit','-q','-m','Synthetic pinned successor')
+        with patch.object(d, 'BASELINE_PIN_SHA256', d.sha(pin.encode())):
+            report = gate.check_ref(self.root, 'HEAD', gate.Secrets(), pins=gate.admitted_pins(config))
+        self.assertTrue(report['passed'], report)
+        self.assertEqual(report['distribution_trees_checked'], 2)
+        self.assertEqual(report['distribution_historical_ancestors_pinned'], 1)
+        # A changed baseline cannot inherit the old trusted pin.
+        with patch.object(d, 'BASELINE_PIN_SHA256', d.sha(b'different pin')):
+            report = gate.check_ref(self.root, 'HEAD', gate.Secrets(), pins=gate.admitted_pins(config))
+        self.assertFalse(report['passed'])
+        self.assertTrue(any(f['category']=='distribution_history_contract_invalid' for f in report['findings']))
+        missing = 'GautierDorval/dual-web-reference@' + 'a'*40
+        doc['distribution_baseline'] = missing
+        config.write_text(json.dumps(doc), encoding='utf-8')
+        self.git('add','-u')
+        self.git('commit','-q','-m','Synthetic unavailable baseline')
+        with patch.object(d, 'BASELINE_PIN_SHA256', d.sha(missing.encode())):
+            report = gate.check_ref(self.root, 'HEAD', gate.Secrets(), pins=gate.admitted_pins(config))
+        self.assertFalse(report['passed'])
+        self.assertTrue(any(f['category']=='distribution_history_contract_invalid' for f in report['findings']))
 
 
 if __name__=='__main__':unittest.main()

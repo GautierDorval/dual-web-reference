@@ -461,14 +461,19 @@ def cmd(edition_id: str) -> dict:
             handle.write('local cooperative build; no automatic stale-lock removal\n')
         stage = Path(tempfile.mkdtemp(prefix='.build-', dir=site))
         write_plan(stage, plan)
-        distribution.check_output(stage, plan)
         if source_inputs() != inputs:
             distribution.fail('source_changed')
+        # Last cooperative validation immediately precedes installation.
+        distribution.check_output(stage, plan)
         install(stage, DIST, backup)
         return {"output": "site/dist", "pages": len(page_contract()), "files": len(plan),
                 "distribution": "exact_set_and_bytes_validated_before_install"}
     except DwrError as error:
         recovery = error.code == 'site_install_recovery_required'
+        raise
+    except (KeyboardInterrupt, SystemExit):
+        # Retain the lock and all recovery evidence, including between renames.
+        recovery = True
         raise
     finally:
         if stage is not None and stage.exists() and not recovery:
