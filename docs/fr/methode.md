@@ -124,3 +124,7 @@ Mêmes exports, mêmes filtres, code propre à ce dépôt. C’est une reproduct
 - Aucune consultation en direct des trois sites : les relations viennent d’instantanés des sources, et aucune URL qui s’y trouve n’est visitée.
 - Aucune écriture dans la base du producteur : l’unique extraction bornée n’a lancé que des requêtes `SELECT` en lecture seule, n’a écrit aucune ligne et a laissé la base inchangée.
 - Aucun libellé enregistré n’a été réécrit (voir [attribution](attribution.md)).
+
+## L’admission des fichiers est une garantie distincte
+
+Le contrat fermé contrôle l’ensemble exact et l’intégrité des octets historiques avant l’installation du site et dans chaque arbre Git après la référence épinglée. L’admission d’un fichier de configuration ne certifie pas chaque valeur : les contrôles sémantiques et de confidentialité restent requis. Des octets identiques ne valident ni l’acquisition, ni la provenance du classificateur, ni la complétude, ni la causalité, ni une évaluation scientifique. Voir la [reproduction](reproduction.md) pour le périmètre, la construction temporaire, l’histoire et les limites de reprise, et la [qualité et couverture](qualite-et-couverture.md) pour la proposition synthétique inactive. Aucun résultat futur n’est présenté comme nouvelle observation historique.

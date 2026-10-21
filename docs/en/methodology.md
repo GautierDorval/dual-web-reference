@@ -124,3 +124,7 @@ Same exports, same filters, this repository's own code. This is a reproduction o
 - No live fetch of the three sites: relations come from source snapshots, and no URL found in them is fetched.
 - No write to the producer database: the single bounded extraction ran read-only `SELECT` queries, wrote no row and left the database unchanged.
 - No stored label was rewritten (see [attribution](attribution.md)).
+
+## File admission is a separate claim
+
+The closed distribution contract checks exact membership and historical byte integrity before a site is installed and across each post-baseline Git tree. Configuration membership does not establish that every configuration value is safe; semantic checks and the privacy gate remain required. Matching bytes do not validate acquisition, classifier provenance, completeness, causal interpretation or scientific review. See [reproduction](reproduction.md) for scope, staging, history and recovery limits, and [quality and coverage](quality-and-coverage.md) for the inactive synthetic coverage proposal. No future-series result is represented as a new historical observation.

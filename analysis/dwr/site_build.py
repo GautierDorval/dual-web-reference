@@ -14,11 +14,14 @@ from __future__ import annotations
 import html
 import posixpath
 import shutil
+import os
+import tempfile
+from contextvars import ContextVar
 import re
 from pathlib import Path
 
-from . import mdlite, typo, edition_rules
-from .common import REPO_ROOT, SITE_IDS, load_json, read_csv, write_text
+from . import mdlite, typo, edition_rules, distribution
+from .common import REPO_ROOT, SITE_IDS, load_json, read_csv, DwrError
 from .i18n import number, t
 
 DIST = REPO_ROOT / "site" / "dist"
@@ -28,7 +31,6 @@ DOC_PAGES = {
     "fr": ["modele", "roles-des-fichiers", "decouverte-et-maillage", "methode", "perimetre", "attribution",
            "qualite-et-couverture", "confidentialite", "mises-a-jour", "reproduction", "limites", "etudes-llms-txt", "glossaire"],
 }
-COPIED = ("data", "figures", "schemas", "config")
 RAW_FILES = ("CHANGELOG.md", "CITATION.cff", "NOTICE.md", "SECURITY.md", "CONTRIBUTING.md")
 
 
@@ -126,7 +128,7 @@ def markdown_page(source_rel: str, page: str, lang: str, counterpart: str | None
         text = re.sub(r"(?m)^.*\[English\].*\[Français\].*\n", "", text)
         text = re.sub(r"(?m)^\[(?:English|Français)\]\(README(?:\.fr)?\.md\)\s*\n", "", text)
     body = mdlite.render(text, rewriter(source_rel, page))
-    write_text(DIST / page, layout(page, lang, title, body, counterpart, edition_id))
+    emit_text(DIST / page, layout(page, lang, title, body, counterpart, edition_id))
 
 
 def table_html(columns, rows, *, table_id, filters=(), label=None) -> str:
@@ -217,7 +219,7 @@ def explorer_page(edition_id: str, lang: str) -> None:
             + f'<p>{esc(t(lang, "Source:", "Source :"))} <a href="{esc(relative(page, f"data/editions/{edition_id}/actor-summary.csv"))}">actor-summary.csv</a></p>')
     if lang == "fr":
         body = typo.fr(body)
-    write_text(DIST / page, layout(page, lang, t(lang, "Explorer", "Explorateur"), body,
+    emit_text(DIST / page, layout(page, lang, t(lang, "Explorer", "Explorateur"), body,
                                    f"{'fr' if lang == 'en' else 'en'}/explorer.html", edition_id))
 
 
@@ -242,7 +244,7 @@ def figures_page(edition_id: str, lang: str) -> None:
     body = "".join(parts)
     if lang == "fr":
         body = typo.fr(body)
-    write_text(DIST / page, layout(page, lang, "Figures", body, f"{'fr' if lang == 'en' else 'en'}/figures.html", edition_id))
+    emit_text(DIST / page, layout(page, lang, "Figures", body, f"{'fr' if lang == 'en' else 'en'}/figures.html", edition_id))
 
 
 def cases_index(edition_id: str, lang: str) -> None:
@@ -254,7 +256,7 @@ def cases_index(edition_id: str, lang: str) -> None:
     body = f"<h1>{esc(t(lang, 'Three cases', 'Trois cas'))}</h1><p>{esc(note)}</p><ul>{items}</ul>"
     if lang == "fr":
         body = typo.fr(body)
-    write_text(DIST / page, layout(page, lang, t(lang, "Cases", "Cas"), body, f"{'fr' if lang == 'en' else 'en'}/cases.html", edition_id))
+    emit_text(DIST / page, layout(page, lang, t(lang, "Cases", "Cas"), body, f"{'fr' if lang == 'en' else 'en'}/cases.html", edition_id))
 
 
 def editions_page(edition_id: str, lang: str) -> None:
@@ -290,33 +292,36 @@ def editions_page(edition_id: str, lang: str) -> None:
             f"<p>{esc(status['automation']['label_' + lang])} "
             f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(review_state)}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
+            + f"<p>{esc(t(lang, 'Private preparation has been tested on synthetic inputs. Future distribution remains blocked pending contract qualification and owner approval; scheduling is inactive.', 'La préparation privée a été testée sur des entrées synthétiques. La diffusion future reste bloquée en attente de qualification du contrat et de décision propriétaire ; la planification est inactive.'))}</p>"
             + table_html(columns, rows, table_id="editions", label=t(lang, "Editions", "Éditions"))
             + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a privacy revision; its current state appears above. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision de confidentialité ; son état courant figure ci-dessus. Aucune tendance entre périodes n’est calculée.'))}</p>")
     if lang == "fr":
         body = typo.fr(body)
-    write_text(DIST / page, layout(page, lang, t(lang, "Editions", "Éditions"), body, f"{'fr' if lang == 'en' else 'en'}/editions.html", edition_id))
+    emit_text(DIST / page, layout(page, lang, t(lang, "Editions", "Éditions"), body, f"{'fr' if lang == 'en' else 'en'}/editions.html", edition_id))
 
 
-def cmd(edition_id: str) -> dict:
-    if DIST.exists():
-        shutil.rmtree(DIST)
-    DIST.mkdir(parents=True)
-    for folder in COPIED:
-        shutil.copytree(REPO_ROOT / folder, DIST / folder, ignore=shutil.ignore_patterns("*.example"))
-    for name in RAW_FILES:
-        if (REPO_ROOT / name).is_file():
-            shutil.copy2(REPO_ROOT / name, DIST / name)
-    (DIST / "assets").mkdir()
-    for asset in ("style.css", "explorer.js"):
-        shutil.copy2(REPO_ROOT / "site" / "assets" / asset, DIST / "assets" / asset)
+_RENDERED = ContextVar("dwr_site_rendered", default=None)
+
+
+def emit_text(path, text):
+    outputs = _RENDERED.get()
+    if outputs is None:
+        distribution.fail("render_outside_plan")
+    name = path.relative_to(DIST).as_posix()
+    distribution.canonical_path(name)
+    if name in outputs:
+        distribution.fail("duplicate_generated_output")
+    outputs[name] = text.encode("utf-8")
+
+
+def render_pages(edition_id):
     markdown_page("README.md", "en/index.html", "en", "fr/index.html", edition_id)
     markdown_page("README.fr.md", "fr/index.html", "fr", "en/index.html", edition_id)
     for lang in ("en", "fr"):
         other = "fr" if lang == "en" else "en"
         for position, name in enumerate(DOC_PAGES[lang]):
             source = f"docs/{lang}/{name}.md"
-            if (REPO_ROOT / source).is_file():
-                markdown_page(source, f"{lang}/docs/{name}.html", lang, f"{other}/docs/{DOC_PAGES[other][position]}.html", edition_id)
+            markdown_page(source, f"{lang}/docs/{name}.html", lang, f"{other}/docs/{DOC_PAGES[other][position]}.html", edition_id)
         for case in load_json(REPO_ROOT / "config" / "cases.json")["cases"]:
             source = f"cases/{case['slug']}/{'README.md' if lang == 'en' else 'README.fr.md'}"
             markdown_page(source, f"{lang}/cases/{case['slug']}.html", lang, f"{other}/cases/{case['slug']}.html", edition_id)
@@ -329,6 +334,145 @@ def cmd(edition_id: str) -> dict:
                '<body><main class="wrap landing"><h1>Dual Web Reference</h1>'
                '<p><a href="en/index.html" hreflang="en">English</a> · <a href="fr/index.html" hreflang="fr">Français</a></p>'
                f'<p>{esc(edition_id + "; availability and approval: see the edition registry via either language above.")}</p></main></body></html>\n')
-    write_text(DIST / "index.html", landing)
-    pages = sorted(str(p.relative_to(DIST)).replace("\\", "/") for p in DIST.rglob("*.html"))
-    return {"output": "site/dist", "pages": len(pages)}
+    emit_text(DIST / "index.html", landing)
+
+
+def page_contract():
+    pages = {"index.html", "en/index.html", "fr/index.html"}
+    cases = load_json(REPO_ROOT / "config/cases.json")["cases"]
+    slugs = [c["slug"] for c in cases]
+    if len(slugs) != len(set(slugs)) or set(slugs) != set(SITE_IDS):
+        distribution.fail("case_contract_changed")
+    for lang in ("en", "fr"):
+        pages.update(f"{lang}/docs/{name}.html" for name in DOC_PAGES[lang])
+        pages.update(f"{lang}/cases/{slug}.html" for slug in slugs)
+        pages.update(f"{lang}/{name}.html" for name in ("explorer", "figures", "cases", "editions"))
+    distribution.unique_names(pages)
+    return pages
+
+
+def source_inputs():
+    sources = distribution.check_sources(REPO_ROOT)
+    names = {"README.md", "README.fr.md", *RAW_FILES, "site/assets/style.css", "site/assets/explorer.js"}
+    for lang in ("en", "fr"):
+        names.update(f"docs/{lang}/{name}.md" for name in DOC_PAGES[lang])
+        names.update(f"cases/{slug}/{'README.md' if lang == 'en' else 'README.fr.md'}" for slug in SITE_IDS)
+    for name in names:
+        sources[name] = distribution.read_regular(REPO_ROOT, name)
+    return sources
+
+
+def output_plan(edition_id):
+    inputs = source_inputs()
+    inventory = distribution.json_object(inputs["config/publication-inventory.json"])
+    if edition_id not in {r["edition_id"] for r in inventory["releases"] if r["accessible"]}:
+        distribution.fail("edition_not_admitted")
+    expected_pages = page_contract()
+    generated = {}
+    token = _RENDERED.set(generated)
+    try:
+        render_pages(edition_id)
+    finally:
+        _RENDERED.reset(token)
+    if set(generated) != expected_pages:
+        distribution.fail("generated_set_mismatch")
+    copies = {name: data for name, data in inputs.items()
+              if name.split('/')[0] in distribution.ROOTS and name not in distribution.SOURCE_ONLY}
+    copies.update({name: inputs[name] for name in RAW_FILES})
+    copies.update({"assets/" + name: inputs["site/assets/" + name] for name in ("style.css", "explorer.js")})
+    if set(copies) & set(generated):
+        distribution.fail("path_collision")
+    plan = {**copies, **generated}
+    distribution.unique_names(plan)
+    if source_inputs() != inputs:
+        distribution.fail("source_changed")
+    check_links(plan)
+    return plan, inputs
+
+
+def check_links(plan):
+    for name, data in plan.items():
+        if not name.endswith('.html'):
+            continue
+        text = data.decode('utf-8')
+        for parts in re.findall(r'<script[^>]+src="([^"]+)"|<link[^>]+href="([^"]+)"', text):
+            if (parts[0] or parts[1]).startswith(('http://', 'https://', '//')):
+                distribution.fail('external_resource')
+        for target in re.findall(r'(?:href|src|srcset)="([^"#]+)', text):
+            target = html.unescape(target)
+            if target.startswith(('http://', 'https://', 'mailto:')):
+                continue
+            resolved = posixpath.normpath(posixpath.join(posixpath.dirname(name), target))
+            if resolved not in plan:
+                distribution.fail('internal_link_missing')
+
+
+def write_plan(stage, plan):
+    for name, data in sorted(plan.items()):
+        distribution.canonical_path(name)
+        path = stage / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # The staging directory is newly owned by this build; files are exclusive.
+        with path.open('xb') as stream:
+            stream.write(data)
+
+
+def install(stage, target, backup):
+    moved = False
+    try:
+        if target.exists():
+            distribution.plain(target, True)
+            target.rename(backup)
+            moved = True
+        stage.rename(target)
+    except OSError:
+        if moved:
+            try:
+                backup.rename(target)
+            except OSError:
+                raise DwrError('site_install_recovery_required', 'retain lock and backup; manual recovery required') from None
+        raise DwrError('site_install_failed', 'previous output retained; no new output installed') from None
+    if moved:
+        try:
+            shutil.rmtree(backup)
+        except OSError:
+            raise DwrError("site_install_recovery_required", "new output installed; retain lock and backup for inspection") from None
+
+
+def cmd(edition_id: str) -> dict:
+    # Admission and rendering occur before any mutation of the last valid output.
+    plan, inputs = output_plan(edition_id)
+    site = DIST.parent
+    distribution.plain(site, True)
+    if DIST.exists() or DIST.is_symlink():
+        distribution.plain(DIST, True)
+    lock = site / '.build.lock'
+    backup = site / '.dist-backup'
+    if backup.exists() or backup.is_symlink():
+        raise DwrError('site_install_recovery_required', 'previous backup requires manual inspection')
+    try:
+        handle = lock.open('x', encoding='utf-8')
+    except FileExistsError:
+        raise DwrError('site_build_locked', 'inspect the existing owner and recovery state') from None
+    stage = None
+    recovery = False
+    try:
+        with handle:
+            handle.write('local cooperative build; no automatic stale-lock removal\n')
+        stage = Path(tempfile.mkdtemp(prefix='.build-', dir=site))
+        write_plan(stage, plan)
+        distribution.check_output(stage, plan)
+        if source_inputs() != inputs:
+            distribution.fail('source_changed')
+        install(stage, DIST, backup)
+        return {"output": "site/dist", "pages": len(page_contract()), "files": len(plan),
+                "distribution": "exact_set_and_bytes_validated_before_install"}
+    except DwrError as error:
+        recovery = error.code == 'site_install_recovery_required'
+        raise
+    finally:
+        if stage is not None and stage.exists() and not recovery:
+            distribution.plain(stage, True)
+            shutil.rmtree(stage)
+        if not recovery:
+            lock.unlink()

@@ -265,7 +265,7 @@ class ConsolidatedRevisionTests(unittest.TestCase):
     def test_manifest_refuses_missing_or_obsolete_files_without_installation(self):
         with isolated_repository() as (root, private):
             register_local(root)
-            with self.assertRaisesRegex(common.DwrError, "prepared_projection_incomplete"):
+            with self.assertRaisesRegex(common.DwrError, "distribution_file_set_mismatch"):
                 pipeline.cmd_prepare_edition(LOCAL)
             revisions.prepare(LOCAL)
             payload, figures = root / "data/editions" / LOCAL, root / "figures" / LOCAL

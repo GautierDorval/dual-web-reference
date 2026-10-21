@@ -34,3 +34,11 @@ The inventory describes 8 named historical states, not 8 commits. Declared bytes
 <!-- dwr:end history-inventory -->
 
 The combined gate reconciles resource request totals but cannot independently reconstruct per-resource active-day counts from edition-level cells. For repeated historical protected output, those day-count bytes must match the inventoried release. For a new private preparation, validate_inputs checks the complete per-resource counts, including day counts, against the real joint source. An arbitrary standalone synthetic projection is not that source-backed preparation.
+
+## On-demand decision material, not a new public series
+
+The inactive synthetic proposal keeps three choices separate. U0 returns the same `withheld_not_zero` and null count whether protected rows are absent, singular or numerous. U2 defers the choice with no actual aggregate. U1 evaluates a **private synthetic** total for the whole window across the three sites, preserving attribution tiers and omitting days, paths, sites and actor names from its output. Its public approval is explicitly false. None of these choices activates a pipeline or changes the historical 245-request selection or the separate 230-request automated subset.
+
+Removing detail does not establish non-reconstruction. Executable counterexamples cover zero-to-one transitions, revision differences, overlapping windows with a known incoming margin, removal of one contributing site, subtraction from a global total, recovery through another output's denominator and previous public disclosures. No threshold, rounding rule or count band is asserted to guarantee anonymity. U0 is the conservative recommendation pending an explicit decision; B1 automated detail, B2 minimal coverage and B3 on-demand treatment can be decided separately.
+
+Role, attribution tier and initiation provenance are different dimensions. `user_initiated_fetch` does not demonstrate that an outside user initiated the request, nor that its result appeared in an answer. The prototype labels initiation provenance unknown. Historical disclosures are not erased by this proposal, and source-qualified comparability remains required before using a historical subset as a future baseline.

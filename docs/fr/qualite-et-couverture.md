@@ -54,3 +54,22 @@ Une table vide porte `table_state = empty` et `empty_reason` dans le schéma 2 d
 ## Comptes non revérifiés
 
 `GET 200` est le statut enregistré par le collecteur. Le type de contenu et les octets servis ne sont pas revérifiés, et les compteurs sont des agrégats quotidiens écrits par le producteur pendant son fonctionnement. Les sommes de contrôle par jour de l’extraction conjointe (`acquire-readonly`), lues avant et après celle-ci, étaient identiques : les compteurs n’ont pas changé pendant la lecture. Elles ne font pas de cette extraction un instantané transactionnel.
+
+## Proposition inactive de couverture minimale
+
+La proposition synthétique `dwr-future-coverage/0.1.0` est distincte de l’adaptateur d’archive historique. Son schéma accompagne `coverage_synthetic` dans `future_projection.py`, hors du registre public de schémas. Elle produit chaque date UTC entre le début inclus et la fin exclue, même sans requête sélectionnée. Elle ne lit aucune archive privée et ne déduit pas une panne du producteur d’une archive absente.
+
+| Champ de sortie | Origine dans ce prototype | Condition de diffusion et limite |
+|---|---|---|
+| `date_utc` | Calendrier explicite de fenêtre | Indépendant des requêtes ; fenêtre réelle à qualifier |
+| `archive_status` | Déclaration synthétique explicite ou `unknown` | Aucun compte, motif ni empreinte d’archive ; ne certifie pas la complétude |
+| `observation_status` | Déclaration synthétique explicite ou indisponible | Disponibilité de la source nécessaire à la sélection, non déduite de l’archive |
+| `source_qualification` | Déclaration synthétique explicite ou non qualifiée | Provenance réelle à établir avant adoption |
+| `coverage_status` | Vocabulaire existant et déclaration explicite | État partiel ou inconnu jamais rehaussé par la présence de requêtes |
+| `evidence_status` | Déclaration ou non établi | Décrit le jeu synthétique, pas une attestation authentifiée |
+| `request_count` | Somme après la seule sélection automatisée | Zéro : aucune ligne sélectionnée enregistrée sous observation qualifiée déclarée ; null si indisponible ou retenue |
+| `suppression_status` | Disponibilité et choix constant de rétention du jeu synthétique | Retenu ne signifie pas zéro ; aucun état public dépendant d’un petit compte |
+
+Un zéro sous couverture partielle ou inconnue ne prouve pas l’absence d’accès réel. Une journée archivée peut avoir une source d’observation indisponible ou non qualifiée. Inversement, l’absence d’archive n’annule pas une source distinctement déclarée qualifiée. Ces combinaisons sont exercées uniquement sur des jeux synthétiques. La provenance et la diffusion des métadonnées, même catégorielles, restent à qualifier avant tout adaptateur réel.
+
+La sortie exclut les totaux toutes sources ou rejetés, écarts numériques, nombres de captures, motifs, empreintes privées et métadonnées d’époques calculées sur toutes les lignes. L’entrée de preuve refuse ces champs supplémentaires. Les tests font varier les lignes protégées, comptes et époques à déclarations fixes, puis comparent tous les octets retournés ; ils prouvent cette indépendance conditionnelle, pas celle d’un futur producteur de preuves. Les fichiers de couverture historiques, latest et la politique restent inchangés.

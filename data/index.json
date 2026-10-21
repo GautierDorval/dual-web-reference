@@ -18,10 +18,11 @@
       "published_at": null,
       "reference_release_status": "not_approved",
       "review_status": {
-        "distribution": "corrections_in_progress",
-        "editorial": "corrections_in_progress",
+        "distribution": "not_approved",
+        "editorial": "not_approved",
         "evidence": [],
-        "technical": "corrections_in_progress"
+        "note": "Historical edition closed to modification, not an active correction candidate. No review decision or approval is inferred; original payload unchanged.",
+        "technical": "not_approved"
       },
       "revised_at": null,
       "revision": 1,

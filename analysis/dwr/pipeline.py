@@ -333,7 +333,8 @@ def cmd_render(edition_id: str | None) -> dict:
 
 def cmd_verify(edition_id: str | None) -> dict:
     import os
-    from . import verify
+    from . import verify, distribution
+    distribution.check_sources(REPO_ROOT)
     entry = edition_entry(edition_id)
     lock = None
     if os.environ.get("DWR_PRIVATE_ROOT"):
@@ -349,6 +350,8 @@ def cmd_prepare_edition(edition_id: str | None) -> dict:
     from .common import sha256_file, write_text
     entry = edition_entry(edition_id)
     from .write_guard import transaction
+    # Private local preparation validates its own exact payload/figure contract.
+    # This does not admit its new edition directory to the shareable roots.
     with transaction(REPO_ROOT, entry["edition_id"]) as stage:
         return _prepare_manifest(entry, stage / "payload", stage / "figures")
 
@@ -370,6 +373,8 @@ def _prepare_manifest(entry, target, figure_dir):
                 "reconciliation.json", "case-checks.json", "disclosure.json", "catalog.json",
                 "metrics.json", "figures.json"}
     allowed = required | {"delta-report.json", "SHA256SUMS.txt"}
+    from . import distribution
+    distribution.check_candidate(target, figure_dir, entry["edition_id"], required, allowed - required)
     actual = {p.name for p in target.iterdir()}
     if not required <= actual or not figure_dir.is_dir():
         raise DwrError("prepared_projection_incomplete")
@@ -425,7 +430,8 @@ def cmd_status(edition_id: str | None) -> dict:
 
 
 def cmd_build_site(edition_id: str | None) -> dict:
-    from . import site_build
+    from . import site_build, distribution
+    distribution.check_sources(REPO_ROOT)
     entry = edition_entry(edition_id)
     return site_build.cmd(entry["edition_id"])
 

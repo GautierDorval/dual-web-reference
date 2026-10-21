@@ -443,6 +443,20 @@ def check_site(report):
 
 def cmd(edition_id: str, private_lock: Path | None = None) -> dict:
     report = Report()
+    # Stop before any generic scanner follows an unadmitted path or prints its name.
+    from . import distribution, site_build
+    try:
+        distribution.check_sources(REPO_ROOT)
+        report.add("distribution_source_exact_set_and_bytes", True)
+        plan, _ = site_build.output_plan(edition_id)
+        distribution.check_output(REPO_ROOT / "site/dist", plan)
+        report.add("distribution_site_exact_set_and_bytes", True)
+    except DwrError as error:
+        report.add("distribution_closed_contract", False, error.code)
+        return report.result()
+    except (OSError, ValueError, KeyError, TypeError):
+        report.add("distribution_closed_contract", False, "distribution_contract_unreadable")
+        return report.result()
     edition_dir = REPO_ROOT / "data" / "editions" / edition_id
     for check in (lambda: check_catalog(report, edition_dir), lambda: check_tables(report, edition_dir),
                   lambda: check_semantics(report, edition_dir), lambda: check_metrics(report, edition_dir),

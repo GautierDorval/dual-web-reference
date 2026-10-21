@@ -6,7 +6,7 @@ every tree, trees included, and every blob as raw bytes, binary files included. 
 is excluded. Each file must be of an admitted type; a PNG must have exactly the
 structure IHDR, IDAT..., IEND with an empty IEND and image data of exactly the size its
 header announces. A 40-character identifier is admitted only as an action pin or as the
-published root listed in config/publication-gate.json, written owner/repository@<commit>.
+published root or distribution baseline listed in config/publication-gate.json, written owner/repository@<commit>.
 The history must run linearly from that published root; before the first publication,
 when no root is named, it must be a single commit. JSON files are also
 checked after decoding their strings, and text after decoding percent escapes. Local
@@ -108,8 +108,8 @@ COVERAGE = (
      (("lowercase", "in lower case in code", "en minuscules dans du code"),
       ("uppercase", "in upper case in code", "en majuscules dans du code"),
       ("in_path", "in a file name", "dans un nom de fichier"))),
-    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin or the published root listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
-     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>`",
+    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin or the published root/distribution baseline listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
+     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée/référence de diffusion listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>`",
      (("workflow_comment", "in a comment of a workflow template", "dans un commentaire d’un modèle de workflow"),
       ("pin_value_repeated_bare", "an admitted pin value repeated without its `owner/repository@` prefix",
        "la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@`"),
@@ -280,8 +280,9 @@ def admitted_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
     """The action pins and the published root (owner/repository@<commit>) listed in config/publication-gate.json."""
     if not config.is_file():
         return frozenset()
-    root = load_json(config).get("published_root")
-    return action_pins(config) | ({root} if root else set())
+    document = load_json(config)
+    roots = (document.get("published_root"), document.get("distribution_baseline"))
+    return action_pins(config) | {root for root in roots if root}
 
 
 def pattern_findings(path: str, text: str, pins: frozenset[str] | None = None) -> list[str]:
@@ -460,13 +461,16 @@ def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | 
     for sha, content in _read_objects(repo, [h[0] for h in history]).items():
         raw += [(category, f"commit {sha[:12]}") for category in commit_findings(content, secrets)]
     entries = {}
+    snapshots = {}
     for sha, *_ in history:
+        snapshots[sha] = []
         for item in _git(repo, "ls-tree", "-r", "-t", "-z", "--full-tree", sha).split(b"\0"):
             if not item:
                 continue
             meta, path = item.split(b"\t", 1)
             mode, kind, obj = meta.decode().split()
             entries.setdefault((path.decode("utf-8", "replace"), obj), (mode, kind))
+            snapshots[sha].append((path.decode("utf-8", "replace"), mode, kind, obj))
     ordered = sorted(entries.items())
     blobs = sorted({obj for (_, obj), (mode, kind) in ordered if kind == "blob"})
     contents = _read_objects(repo, blobs)
@@ -481,6 +485,47 @@ def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | 
         if admitted(path) is None:
             raw.append(("file_type_not_admitted", where))
         raw += [(category, where) for category in scan_bytes(path, contents[obj], secrets, pins)]
+    # Check each new actual tree, not a union of file names or just HEAD.
+    # Already-public ancestors are not retroactively rewritten. The pinned
+    # baseline itself must satisfy the exact current data/file contract.
+    from . import distribution
+    checked_distribution = []
+    historical_distribution = []
+    is_dwr = any(p.startswith("analysis/dwr/") for rows in snapshots.values() for p, _, _, _ in rows)
+    if is_dwr:
+        head_map = {p: obj for p, _, kind, obj in snapshots[commit] if kind == 'blob'}
+        try:
+            config = distribution.json_object(contents[head_map['config/publication-gate.json']])
+            pin = config.get('distribution_baseline')
+            baseline = None
+            if pin is not None:
+                match = PIN.fullmatch(pin) if isinstance(pin, str) else None
+                if (match is None or match.group('pair') != 'GautierDorval/dual-web-reference'
+                        or distribution.sha(pin.encode()) != distribution.BASELINE_PIN_SHA256):
+                    distribution.fail('baseline_invalid')
+                baseline = match.group('sha')
+                if baseline not in snapshots:
+                    distribution.fail('baseline_not_in_history')
+                ancestors = set(_git(repo, 'rev-list', baseline).decode().splitlines()) - {baseline}
+            else:
+                ancestors = set()
+            for snapshot, rows in snapshots.items():
+                if snapshot in ancestors:
+                    historical_distribution.append(snapshot)
+                    continue
+                lookup = {p: obj for p, _, kind, obj in rows if kind == 'blob'}
+                def read(name):
+                    if name not in lookup:
+                        distribution.fail('contract_missing')
+                    return contents[lookup[name]]
+                try:
+                    distribution.check_git([(p, mode, kind) for p, mode, kind, _ in rows], read)
+                except DwrError as error:
+                    # Do not expose a potentially sensitive injected file name.
+                    raw.append((error.code, 'commit ' + snapshot[:12]))
+                checked_distribution.append(snapshot)
+        except (DwrError, KeyError, TypeError, ValueError):
+            raw.append(('distribution_history_contract_invalid', None))
     printed = set()
     for category, where in raw:
         if where is None:
@@ -488,9 +533,13 @@ def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | 
         elif isinstance(where, str):
             label = where
         else:
-            label = safe_path(where[2], where[1], secrets)
+            label = ("<controlled-entry " + str(where[1]) + ">"
+                     if where[2].split("/")[0].casefold() in distribution.ROOTS
+                     else safe_path(where[2], where[1], secrets))
         printed.add((category, label))
     files = sum(1 for _, (mode, kind) in ordered if kind != "tree")
     return {"commit": commit, "commits": len(history), "files": files, "trees": len(ordered) - files,
             "blobs": len(blobs), "passed": not printed,
+            "distribution_trees_checked": len(checked_distribution),
+            "distribution_historical_ancestors_pinned": len(historical_distribution),
             "findings": [{"category": c, "path": p} for c, p in sorted(printed)], "coverage": list(CATEGORY_IDS)}
