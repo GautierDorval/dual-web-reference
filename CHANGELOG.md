@@ -2,6 +2,18 @@
 
 Editions (data) and code are versioned separately. An edition identifier names its window and revision; a correction creates a new revision and never rewrites the previous one.
 
+## Distribution closure (2026-10-20)
+
+- Close the admitted file sets for data, figures, configuration and schemas using the existing, byte-pinned publication and historical inventories. Reject extras, missing or changed historical files, unknown directories, links, ambiguous paths and manifest relearning. Both omitted r2 catalog entries remain admitted through the existing publication inventory.
+- Build a declared page/copy plan in memory, validate source stability and all staged bytes, then install under a cooperative lock. Caught filesystem installation errors restore the previous output; process interruptions retain recovery evidence. Verification checks the actual output; the Git gate checks the baseline and each later reachable tree, including files removed from HEAD.
+- Close r1's correction-in-progress wording as frozen historical and unapproved. Scope code readiness to private synthetic preparation; future distribution and scheduling remain inactive.
+- Extend inactive synthetic proposals with a complete window calendar, field-specific coverage provenance and on-demand aggregation counterexamples. No real-source qualification, new observation, owner decision, reference approval or publication is implied.
+
+## PR 2 integration (2026-10-20)
+
+- PR 2 integrated the consolidated corrective tree into public main. Existing offline CI for that integrated revision passed on Python 3.12, 3.13 and 3.14; those runs do not validate this later patch.
+- Integration did not change the measured window, the 245/174/6/239 reference values, the r1/r2 payload bytes, latest approval, or scheduling. r2 remains publicly accessible and unapproved; repository integration is not an independent scientific review.
+
 ## Public review branch preparation (2026-10-19)
 
 - Mark r2 accessible on the public review branch, with technical, editorial and distribution decisions awaiting review. No approval receipt or scientific validation is added; `latest` remains empty. Availability is separate from integration into `main` and reference approval.

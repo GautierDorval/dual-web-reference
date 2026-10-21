@@ -369,7 +369,7 @@ class GateSourceTests(unittest.TestCase):
         self.assertTrue(pins)
         self.assertEqual(pins, set(gate.action_pins()))
         self.assertEqual(set(gate.admitted_pins()) - set(gate.action_pins()),
-                         {load_json(gate.PIN_CONFIG)["published_root"]})
+                         {load_json(gate.PIN_CONFIG)[key] for key in ("published_root", "distribution_baseline")})
 
     def test_png_of_the_edition_have_the_admitted_structure(self):
         pngs = sorted((REPO_ROOT / "figures").rglob("*.png"))

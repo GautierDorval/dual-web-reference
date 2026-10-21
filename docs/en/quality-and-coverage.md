@@ -54,3 +54,22 @@ An empty table carries `table_state = empty` and `empty_reason` in catalog schem
 ## Counts that are not re-verified
 
 `GET 200` is the status recorded by the collector. The content type and bytes served are not re-verified, and counters are daily aggregates written by the producer while it runs. The per-day checksums of the joint extraction (`acquire-readonly`), read before and after it, were identical: the counters did not change during the read. They do not turn the extraction into a transactional snapshot.
+
+## Inactive minimal-coverage proposal
+
+The synthetic `dwr-future-coverage/0.1.0` proposal is separate from the historical archive adapter. Its schema lives beside `coverage_synthetic` in `future_projection.py`, outside the public schema registry. It emits every UTC date from the inclusive start to the exclusive end, even when no selected request exists. It does not read a private archive or infer a producer failure from a missing archive.
+
+| Output field | Origin in this prototype | Distribution condition and limit |
+|---|---|---|
+| `date_utc` | Explicit window calendar | Independent of request presence; actual window needs qualification |
+| `archive_status` | Explicit synthetic declaration or `unknown` | No report count, reason or archive hash; does not attest collection completeness |
+| `observation_status` | Explicit synthetic declaration or unavailable | Availability of the source needed for this selection, not inferred from the archive |
+| `source_qualification` | Explicit synthetic declaration or not qualified | Real provenance remains to be established before adoption |
+| `coverage_status` | Existing coverage vocabulary, explicit declaration | Partial/unknown is never upgraded from request presence |
+| `evidence_status` | Declaration or not established | Describes this fixture, not an authenticated attestation |
+| `request_count` | Sum after the automated selection only | Zero means no selected row recorded under qualified declared observation; null when unavailable or withheld |
+| `suppression_status` | Availability plus a constant fixture withholding choice | Withheld is not zero; no small-count dependent public status |
+
+A zero under partial or unknown coverage is not proof of no real access. An archived day can have an unavailable or unqualified observation source. Conversely, archive absence does not null a separately declared qualified source. These combinations are exercised on fixtures only. Source provenance and diffusion of even categorical metadata must be qualified before a real adapter is activated.
+
+The proposed output excludes all-source/rejected totals, numeric differences, capture counts, reason codes, private hashes and all-row epoch metadata. The evidence input rejects such additional fields. Tests vary protected rows, counts and epochs while keeping the declared evidence fixed, then compare every returned byte; this proves the stated conditional independence, not that a future evidence producer will be independent. These proposals leave historical coverage files, latest and policy unchanged.

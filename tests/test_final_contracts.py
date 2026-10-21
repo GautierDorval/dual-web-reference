@@ -67,9 +67,7 @@ class FinalContractTests(unittest.TestCase):
                 if 'id' in attrs: self.ids.append(attrs['id'])
                 if tag=='table': self.tables.add(attrs.get('id'))
                 if tag=='form': self.targets.append(attrs.get('data-table'))
-        with tempfile.TemporaryDirectory() as temp:
-            with patch.object(site_build,'DIST',Path(temp)):
-                site_build.explorer_page('2026-09-15_2026-10-15-r2','fr')
-            parsed=Elements();parsed.feed((Path(temp)/'fr/explorer.html').read_text(encoding='utf-8'))
-            self.assertEqual(len(parsed.ids),len(set(parsed.ids)))
-            self.assertEqual(set(parsed.targets),parsed.tables)
+        plan,_=site_build.output_plan('2026-09-15_2026-10-15-r2')
+        parsed=Elements();parsed.feed(plan['fr/explorer.html'].decode('utf-8'))
+        self.assertEqual(len(parsed.ids),len(set(parsed.ids)))
+        self.assertEqual(set(parsed.targets),parsed.tables)

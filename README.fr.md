@@ -67,6 +67,13 @@ Les trois sites appartiennent à l’écosystème d’un même auteur : trois a
 
 [Catalogue r2](data/editions/2026-09-15_2026-10-15-r2/catalog.json) · [Métriques](data/editions/2026-09-15_2026-10-15-r2/metrics.json) · [Ressources](data/editions/2026-09-15_2026-10-15-r2/resources.csv) · [Accès](data/editions/2026-09-15_2026-10-15-r2/consultations.csv) · [Relations](data/editions/2026-09-15_2026-10-15-r2/links.csv).
 
+## Présentations éditoriales dans l’écosystème
+
+- [Gautier Dorval : portée et interprétation de l’observation](https://gautierdorval.com/blogue/observation-terrain/dual-web-reference/).
+- [Pagup : lecture opérationnelle de la preuve](https://pagup.com/preuves/dual-web-reference/).
+
+Ces présentations relient DWR au concept de Dual Web et à l’écosystème. Le dépôt demeure la source canonique des données. Leur publication ne vaut ni approbation de référence ni évaluation scientifique indépendante.
+
 ## Limites essentielles
 
 Trois sites d’un seul écosystème ne sont pas trois réplications indépendantes. La couverture est partielle, les voies de découverte ne sont pas établies et l’origine fournisseur reste une classification du producteur. Un GET 200 ne prouve ni lecture sémantique, ni adoption, ni meilleure réponse, ni effet SEO. Les données privées de collecte ne sont pas réexécutables depuis ce dépôt. [Limites détaillées](docs/fr/limites.md).

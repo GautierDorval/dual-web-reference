@@ -31,11 +31,14 @@
   "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
   "preparation": {
     "code_ready": true,
+    "code_ready_scope": "private_prepare_next_synthetic_qualification_only",
     "command": "prepare-next",
+    "future_distribution": "blocked_pending_contract_and_policy_approval",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
-    "real_next_window": "not_available"
+    "real_next_window": "not_available",
+    "source_qualification": "real_next_window_not_available"
   },
   "publication_preparation": {
     "cadence_enabled": false,

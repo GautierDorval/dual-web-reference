@@ -84,3 +84,9 @@ A SHA-256 receipt binds decisions to content and validates structure; it does no
 The historical V3 discrepancy still lacks a source-qualified resolution. Synthetic epoch tests cannot close it. Existing r2 metadata does not attest the classifier epoch or complete coverage; no missing provenance is inferred from current software, labels or timestamps. The availability registry states its own evidence precision, not a guessed first publication instant.
 
 Before adopting the future contract, distribution qualification must also address metadata derived from all rows: `catalog.measurement.days`, `catalog.measurement.epoch_definitions`, coverage epoch fields and `catalog.input_digest` (private input digest). These surfaces are explicitly excluded from the inactive synthetic prototype. The full private preparation catalog is neither a non-disclosure proof nor an authorized projection.
+
+## Closed historical review and readiness scope
+
+r1's mutable registry now records `not_approved` for its three review dimensions and `historical_frozen_no_approval_recorded` for its lifecycle. This closes the misleading correction-in-progress wording; it does not record a review, reviewer or approval. Its evidence list and approval receipt remain empty. Corrections continue in separate candidates; the r1 payload remains frozen. r2 remains publicly accessible and unapproved, with no new scientific review. Latest remains null.
+
+`preparation.code_ready` means only that private `prepare-next` has been qualified with synthetic inputs, as stated in `code_ready_scope`. It does not certify a future public projection. `future_distribution` remains blocked pending contract and policy approval, real next-window sources remain unavailable and `planning_activated` remains false. PR 2 integration is recorded separately in the changelog; its date is not the first availability time of either edition. The distribution-closure change introduces no new observation date.
