@@ -24,6 +24,8 @@ The other components named by the definition (SSA-E, A2, Q-Layer) are explained 
 
 **The documentary layer of a site is a set of published, accessible files, linked to the site or to each other, that make explicit its identity, context, sources, relations and interpretation limits. It complements the ordinary pages of the site; it does not replace them.**
 
+Consistency between human and machine representations does not require selecting clients by IP address, network or User-Agent. A response that varies with request origin is therefore not sufficient to characterize Dual Web. Authentication, authorization and abuse-prevention mechanisms, when present, are a separate dimension.
+
 ## What the layer is not
 
 - **Not hidden.** The files are published at public addresses, and many of them are linked from ordinary pages. Anyone can open them.

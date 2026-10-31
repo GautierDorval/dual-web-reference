@@ -32,7 +32,9 @@ Distinct counts are counts of site-path pairs: one URL, identified by a `resourc
 
 ## Method and status
 
-Only `GET` with status `200` counts as a request answered with a document body. `HEAD`, `304`, `301`, `404`, `405` and `5xx` stay in separate cells and are never added to `GET 200`. Under [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) (consulted 2026-10-16), a `HEAD` response and a `304` response carry no content (sections 9.3.2 and 15.4.5), and `405` means the method is not supported by the target resource (section 15.5.6). `GET 200` is the status recorded by the collector; the bytes served are not re-verified.
+The main selection includes only requests recorded with method `GET` and status `200`. This filter proves neither the presence of a non-empty body nor its correspondence to the expected documentary artifact. An intermediary, sign-in or access-denial page may also return status `200`. `HEAD`, `304`, `301`, `404`, `405` and `5xx` remain in separate cells and are never added to `GET 200`.
+
+Under [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) (consulted 2026-10-16), a `HEAD` response and a `304` response carry no content (sections 9.3.2 and 15.4.5), and `405` means the method is not supported by the target resource (section 15.5.6). The bytes served are not re-verified; see limitation 9 in [the observation limits](limits.md).
 
 ## Main indicators
 

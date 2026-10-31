@@ -32,7 +32,9 @@ Les comptes distincts portent sur des couples site-chemin : une URL, repérée 
 
 ## Méthode et statut
 
-Seul un `GET` de statut `200` compte comme une requête servie avec un corps de document. `HEAD`, `304`, `301`, `404`, `405` et `5xx` restent dans des cellules distinctes et ne s’ajoutent jamais aux `GET 200`. Selon la [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) (consultée le 2026-10-16), une réponse à `HEAD` et une réponse `304` ne contiennent aucun contenu (sections 9.3.2 et 15.4.5), et `405` signifie que la méthode n’est pas prise en charge par la ressource cible (section 15.5.6). `GET 200` est le statut enregistré par le collecteur ; les octets servis ne sont pas revérifiés.
+La sélection principale retient uniquement les requêtes dont la méthode `GET` et le statut `200` ont été enregistrés. Ce filtre ne prouve ni la présence d’un corps non vide ni sa correspondance avec l’artefact documentaire attendu. Une page intermédiaire, de connexion ou de refus peut également répondre avec le statut `200`. `HEAD`, `304`, `301`, `404`, `405` et `5xx` restent dans des cellules distinctes et ne s’ajoutent jamais aux `GET 200`.
+
+Selon la [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) (consultée le 2026-10-16), une réponse à `HEAD` et une réponse `304` ne contiennent aucun contenu (sections 9.3.2 et 15.4.5), et `405` signifie que la méthode n’est pas prise en charge par la ressource cible (section 15.5.6). Les octets servis ne sont pas revérifiés ; voir la limite 9 dans [les limites de l’observation](limites.md).
 
 ## Indicateurs principaux
 

@@ -24,6 +24,8 @@ Les autres composantes nommées par la définition (SSA-E, A2, Q-Layer) sont exp
 
 **La couche documentaire d’un site est un ensemble de fichiers publiés et accessibles, liés au site ou entre eux, qui rendent explicites son identité, son contexte, ses sources, ses relations et ses limites d’interprétation. Elle complète les pages ordinaires du site ; elle ne les remplace pas.**
 
+La cohérence entre les représentations humaine et machine ne suppose pas de sélectionner les clients selon leur adresse IP, leur réseau ou leur User-Agent. Une réponse différente selon l’origine d’une requête ne suffit donc pas à caractériser le Dual Web. Les éventuels mécanismes d’authentification, d’autorisation ou de protection contre les abus constituent une dimension distincte.
+
 ## Ce que la couche n’est pas
 
 - **Elle n’est pas cachée.** Les fichiers sont publiés à des adresses publiques, et beaucoup d’entre eux sont liés depuis des pages ordinaires. N’importe qui peut les ouvrir.
