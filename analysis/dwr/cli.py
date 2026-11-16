@@ -1,8 +1,8 @@
 """Command-line interface. Network-free commands: verify, analyze, render, build-site,
-project-public, revise-public, qualify, normalize, status, prepare-edition, prepare-next,
+project-public, revise-public, qualify, normalize, qualify-next, normalize-next, status, prepare-edition, prepare-next,
 import-existing, publication-gate.
-acquire-readonly is the only command able to contact the producer database; it is
-a dry run unless --execute and an exact --confirm-scope are given.
+Only acquire-readonly and acquire-next can contact the producer database; both
+are dry runs unless --execute and an exact --confirm-scope are given.
 """
 
 from __future__ import annotations
@@ -37,6 +37,11 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--execute", action="store_true")
     command.add_argument("--confirm-scope", default=None)
     command = add("prepare-next", "prepare the next consolidated window privately, offline", private=True)
+    command = add("acquire-next", "bounded SELECT for the pending private window (dry run by default)", private=True)
+    command.add_argument("--execute", action="store_true")
+    command.add_argument("--confirm-scope", default=None)
+    add("normalize-next", "normalize verified private next-window inputs, offline", private=True)
+    add("qualify-next", "qualify the private next-window inputs, offline", private=True)
     add("normalize", "typed working representation (private)", private=True)
     add("qualify", "apply scope, attribution and coverage rules (private)", private=True)
     add("project-public", "write the minimized public projection of an edition", private=True)
@@ -68,7 +73,18 @@ def _dispatch(args) -> int:
     from . import pipeline
 
     command = args.command
-    if command == "png-fallback":
+    if command in ("acquire-next", "normalize-next", "qualify-next"):
+        from . import next_inputs
+        if args.edition is not None:
+            raise DwrError("next_window_uses_private_cursor")
+        private = private_root(args.private_root)
+        if command == "acquire-next":
+            _print(next_inputs.acquire_next(private, execute=args.execute, confirm_scope=args.confirm_scope))
+        elif command == "normalize-next":
+            _print(next_inputs.normalize(private))
+        else:
+            _print(next_inputs.qualify_next(private))
+    elif command == "png-fallback":
         from . import png
         _print(png.prepare(args.edition, args.preview))
     elif command == "prepare-next":

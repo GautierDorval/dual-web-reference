@@ -51,6 +51,35 @@ def read_tables(repository: Path, commit: str, window: Window) -> dict[str, list
 
 def inventory(repository: Path, commit: str, window: Window) -> dict:
     tables = read_tables(repository, commit, window)
+    return _inventory(tables, commit, window)
+
+
+def snapshot_inventory(folder: Path, commit: str, window: Window, *, repository: str) -> dict:
+    """Read a byte-verified export of just the required tables at a pinned commit."""
+    from .common import DwrError, load_json, sha256_file
+    from .write_guard import checked_path
+    if len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
+        raise DwrError("archive_commit_not_pinned")
+    if not isinstance(repository, str) or not repository.strip():
+        raise DwrError("archive_repository_not_pinned")
+    manifest = load_json(checked_path(folder, folder / "manifest.json"))
+    if manifest.get("commit") != commit or manifest.get("repository") != repository:
+        raise DwrError("archive_snapshot_identity_mismatch")
+    files = manifest.get("files", [])
+    expected = {f"tables/{month}/{table}.csv" for month in _months(window) for table in TABLES}
+    if len(files) != len(expected) or {item.get("path") for item in files} != expected:
+        raise DwrError("archive_snapshot_file_set_mismatch")
+    tables = {table: [] for table in TABLES}
+    for item in files:
+        path = checked_path(folder, folder / item["path"])
+        if path.stat().st_size != item.get("byte_length") or sha256_file(path) != item.get("sha256"):
+            raise DwrError("archive_snapshot_integrity_failed")
+        text = path.read_text(encoding="utf-8-sig")
+        tables[path.stem].extend(csv.DictReader(io.StringIO(text, newline="")))
+    return _inventory(tables, commit, window)
+
+
+def _inventory(tables, commit, window):
     in_window = lambda value: window.contains(__import__("datetime").date.fromisoformat(value))
     reports = [row for row in tables["reports"] if row["source_id"] == SOURCE_ID and in_window(row["report_date"])]
     by_date = defaultdict(list)

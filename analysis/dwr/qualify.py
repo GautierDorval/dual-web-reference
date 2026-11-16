@@ -103,14 +103,15 @@ def qualify(normalized: dict, private: Path) -> dict:
                   "registered_now_no_row_in_window" if key in registered_only else "not_in_collector_window_export")
         resources.append({
             **entry,
+            "found_in_snapshot": entry["found_in_snapshot"] if graphs[key[0]]["status"] == "extracted" else None,
             "resource_id": resource_id(*key),
             "url": f"https://{key[0]}{key[1]}",
             "main_population": entry["scope_class"] in main_classes,
             "llms_txt": key[1] == "/llms.txt",
             "window_rows_status": status,
             "producer_category": (counts or registered_only.get(key) or {}).get("producer_category", ""),
-            "outbound_relations": outbound.get(key, 0),
-            "inbound_relations": inbound.get(key, 0),
+            "outbound_relations": outbound.get(key, 0) if graphs[key[0]]["status"] == "extracted" else None,
+            "inbound_relations": inbound.get(key, 0) if graphs[key[0]]["status"] == "extracted" else None,
             "historical_version_status": "unknown",
             "snapshot_sha256": digests.get(key, ""),
             "counts": counts,
@@ -135,6 +136,10 @@ def check_cases(private: Path, graphs: dict) -> list[dict]:
     checks = []
     for case in cases:
         site = case["site_id"]
+        if graphs[site]["status"] != "extracted":
+            checks.append({"site_id": site, "kind": "snapshot", "path": "", "verified": False,
+                           "reason": "source_unavailable", "snapshot_file_sha256": None})
+            continue
         snapshot = load_json(private / "sources" / site / "snapshot.json")
         files = {item["url_path"]: item for item in snapshot.get("files", [])}
         relations = {(r["source_path"], r["target_path"]) for r in graphs[site]["relations"]

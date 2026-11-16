@@ -54,7 +54,9 @@ def validate_inputs(normalized, qualified, window):
         if marginal[stamp] != daily[stamp]:
             raise DwrError("marginal_joint_daily_mismatch")
     counts = joint.path_counts(rows)
-    actual = {(r["site_id"], r["path"]): r.get("counts") for r in qualified["resources"] if r.get("counts")}
+    actual = {(r["site_id"], r["path"]): {
+        field: r["counts"].get(field) for field in counts.get((r["site_id"], r["path"]), {})}
+        for r in qualified["resources"] if r.get("counts")}
     if actual != counts:
         raise DwrError("qualified_counts_differ_from_joint")
     return rows
@@ -96,6 +98,26 @@ def atomic_json(path, value):
         temporary.unlink(missing_ok=True)
 
 
+def projection_inputs(normalized, qualified):
+    """Keep unavailable-day rows in private inputs, excluding them from every candidate count."""
+    from copy import deepcopy
+    available = {d["date_utc"] for d in normalized["archive_inventory"]["days"] if d["archive_status"] == "archived"}
+    kept = [r for r in normalized["joint_rows"] if r["date_utc"] in available]
+    excluded = [r for r in normalized["joint_rows"] if r["date_utc"] not in available]
+    counts = joint.path_counts(kept)
+    candidate_qualified = deepcopy(qualified)
+    for resource in candidate_qualified["resources"]:
+        key = (resource["site_id"], resource["path"])
+        resource["counts"] = counts.get(key)
+        if resource.get("window_rows_status") == "rows_in_window" and key not in counts:
+            resource["window_rows_status"] = "observation_unavailable"
+    report = {"reason": "archive_observation_unavailable", "private_only": True,
+              "excluded_rows": len(excluded), "excluded_requests": sum(r["request_count"] for r in excluded),
+              "dates": sorted({r["date_utc"] for r in excluded}),
+              "meaning": "Producer aggregates preserved privately; missing archives are not zero observations."}
+    return {**normalized, "joint_rows": kept}, candidate_qualified, report
+
+
 def _prepare_locked(private, now):
     now = now or datetime.now(timezone.utc)
     if now.tzinfo is None:
@@ -118,10 +140,9 @@ def _prepare_locked(private, now):
     try:
         calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
         # Window cursor and source freshness answer different questions.
-        base_entry = pipeline.edition_entry(None)
-        start = (previous.get("pending_window_start") or previous.get("last_processed_window_end_exclusive")
-                 or base_entry["period_end_exclusive"])
-        window = dates.monthly_window(dates.parse_date(start), calendar["monthly_anchor_day"])
+        from .next_inputs import window as next_window
+        window = next_window(private)
+        start = window.start.isoformat()
         edition_id = window.edition_id(1)
         state["pending_window_start"] = start
         if not dates.consolidation_ready(window, now, calendar["consolidation_delay_hours"]):
@@ -134,6 +155,9 @@ def _prepare_locked(private, now):
         normalized, qualified = (load_json(inputs / name) for name in names)
         if normalized.get("edition_id") != edition_id or qualified.get("edition_id") != edition_id:
             raise DwrError("source_edition_mismatch")
+        if normalized.get("source_provenance_contract") == "private-next-inputs/1.0.0":
+            from .next_inputs import verify_preparation_inputs
+            verify_preparation_inputs(private, normalized, qualified)
         validate_inputs(normalized, qualified, window)
         manifest = {name: sha256_file(inputs / name) for name in names}
         manifest.update({p.relative_to(REPO_ROOT).as_posix(): sha256_file(p) for folder in ("analysis/dwr", "config")
@@ -161,7 +185,8 @@ def _prepare_locked(private, now):
                  "scientific_review_status": "no_independent_scientific_review_documented", "supersedes": None, "superseded_by": None,
                  "source_mode": "joint_acquisition", "source_mode_note": "Existing local inputs; this command makes no acquisition.",
                  "generated_at": timestamp, "published_at": None, "revised_at": None}
-        result = project.project(qualified, normalized, entry, "local-preparation")
+        projected_normalized, projected_qualified, excluded_report = projection_inputs(normalized, qualified)
+        result = project.project(projected_qualified, projected_normalized, entry, "local-preparation")
         policy = load_json(REPO_ROOT / "config/small-cell-policy.json")
         candidate = disclosure.coarsen({k: result[k] for k in disclosure.TABLES}, policy)
         decision = disclosure.assess(candidate, disclosure.inventory(REPO_ROOT), policy)
@@ -169,6 +194,7 @@ def _prepare_locked(private, now):
         target.parent.mkdir(parents=True, exist_ok=True)
         stage = Path(tempfile.mkdtemp(prefix=".staging-", dir=target.parent))
         payload = stage / "payload"; payload.mkdir()
+        write_json(stage / "source-exclusions.private.json", excluded_report)
         for key, name in disclosure.TABLES.items():
             field_name = {"consultations":"CONSULTATION", "resources":"RESOURCE", "daily":"DAILY", "coverage":"COVERAGE",
                           "family_daily":"FAMILY_DAILY", "resource_summary":"RESOURCE_SUMMARY", "actors":"ACTOR", "exclusions":"EXCLUSION"}[key]
@@ -195,7 +221,9 @@ def _prepare_locked(private, now):
                    "nature": normalized.get("nature", "local_private_candidate")}
         catalog["files"] = [{"path": p.name, "sha256": sha256_file(p), "bytes": p.stat().st_size,
                              "rows": len(p.read_text(encoding="utf-8").splitlines()) - 1,
-                             "empty_reason": "no qualifying rows in this local window" if len(p.read_text(encoding="utf-8").splitlines()) == 1 else None}
+                             "empty_reason": ("source_snapshot_unavailable" if p.name == "links.csv" and
+                                              all(g["status"] != "extracted" for g in result["graph_snapshots"].values()) else
+                                              "no qualifying rows in this local window") if len(p.read_text(encoding="utf-8").splitlines()) == 1 else None}
                             for p in sorted(payload.glob("*.csv"))]
         catalog["files_not_listed_here"] = ["catalog.json (self reference excluded)",
             "metrics.json, figures.json, ../figures/* and private reports: sealed by preparation-receipt.json after derivation"]

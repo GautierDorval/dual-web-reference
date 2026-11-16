@@ -646,6 +646,18 @@ def figure_g08(ctx, lang, compact):
 
 def figure_g09(ctx, lang, compact, case):
     width = 288 if compact else 960
+    if not case.get("graph_snapshot_id"):
+        title = t(lang, f"Documentary graph unavailable: {case['site_id']}",
+                  f"Graphe documentaire indisponible : {case['site_id']}")
+        notes = [t(lang, "No qualified source snapshot is available for this edition. Documentary relations and case excerpts have not been verified for this window.",
+                         "Aucun instantané source qualifié n’est disponible pour cette édition. Les relations documentaires et les extraits du cas ne sont pas vérifiés pour cette fenêtre."),
+                 t(lang, "This is missing evidence, not an observed absence of links. Earlier snapshots are not reused as evidence for this window.",
+                         "La preuve manque ; cela ne démontre pas une absence de liens. Les instantanés antérieurs ne sont pas réutilisés comme preuve pour cette fenêtre.")]
+        svg = S.Svg(width, title, notes[0])
+        y = S.header(svg, title, notes, width, compact)
+        y = S.footer(svg, y, ctx.footer(lang, ["catalog.json"]), width)
+        return svg.render(y), [{"site_id": case["site_id"], "status": "not_available", "reason": "source_unavailable",
+                                "graph_snapshot_id": None, "relations": None}]
     links = [r for r in _rows(ctx, "links.csv") if r["source_site"] == case["site_id"]]
     nodes = case["nodes"]
     layer_of = {node["path"]: node["layer"] for node in nodes}

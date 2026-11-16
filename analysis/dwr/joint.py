@@ -136,6 +136,18 @@ def cross_check(rows: list[dict], marginals: dict) -> dict:
     export_http = {(h["site_id"], h["http_method"], h["http_status"]): h["requests"] for h in marginals["http"]}
     bad_http = [k for k in set(http) | set(export_http) if http.get(k, 0) != export_http.get(k, 0)]
     checks.append({"check": "per_site_method_status", "compared": len(export_http), "mismatches": len(bad_http)})
+    if "path_http" in marginals:
+        # Future windows have an explicit SQL marginal; do not infer M1's HTTP combinations.
+        direct = defaultdict(int)
+        for row in rows:
+            direct[(row["site_id"], row["path"], row["http_method"], row["http_status"])] += row["request_count"]
+        exported = {(r["site_id"], r["path"], r["http_method"], r["http_status"]): r["requests"]
+                    for r in marginals["path_http"]}
+        bad = sum(direct.get(k) != exported.get(k) for k in set(direct) | set(exported))
+        bad += len(marginals["path_http"]) - len(exported)
+        checks.append({"check": "per_path_method_status", "compared": len(exported), "mismatches": bad})
+        return {"nature": "two readings of the same producer table; consistency, not independent validation",
+                "checks": checks, "all_consistent": all(c["mismatches"] == 0 for c in checks)}
     # The per-path method/status split deduced from zero mass in the export must match the joint split.
     deduced_bad = 0
     combos = defaultdict(int)
