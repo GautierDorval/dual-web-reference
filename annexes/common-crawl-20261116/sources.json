@@ -1,0 +1,88 @@
+{
+  "consulted_on": "2026-11-16",
+  "tools": {
+    "python": "3.14.9",
+    "utility_version": "1.0.1",
+    "external_python_dependencies": []
+  },
+  "repository_files": [
+    {
+      "path": "scripts/common_crawl_annex.py",
+      "sha256": "75673eac55524388ae6d7f074f088421fd6e9b270732f80448dfb878ed246508"
+    },
+    {
+      "path": "tests/test_common_crawl_annex.py",
+      "sha256": "f09fb7623834a0322cb3de14c0dd8ffed441fed9985d79c4784809e45a99fda8"
+    },
+    {
+      "path": "config/edition-calendar.json",
+      "sha256": "aa0d2066042c84f806bfd4329c80f320689bd9a0b0c67b0d1f44ba921cc52363"
+    },
+    {
+      "path": "config/operations.json",
+      "sha256": "2aa934fb595f3e78416ebd91a620667a0fdc8064faccd6f651bda74406a7ef09"
+    },
+    {
+      "path": "data/status.json",
+      "sha256": "82d1e1fe200df9f73a65fb4392c4faf0742280b8cbb591e27464fb77bd5c9192"
+    },
+    {
+      "path": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "sha256": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656"
+    },
+    {
+      "path": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "sha256": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c"
+    },
+    {
+      "path": "data/editions/2026-09-15_2026-10-15-r2/catalog.json",
+      "sha256": "69b271bba08d600795b1a81dd08ea023f42842392ba022ca48b4bb30e70efb09"
+    },
+    {
+      "path": "NOTICE.md",
+      "sha256": "b793fde39766e526175aea8ad7a89a7d5e1e34da3f60e44346c704219b34ef16"
+    }
+  ],
+  "primary_web_sources": [
+    {
+      "purpose": "october_period",
+      "url": "https://www.commoncrawl.org/blog/october-2026-crawl-archive-now-available"
+    },
+    {
+      "purpose": "september_period",
+      "url": "https://www.commoncrawl.org/blog/september-2026-crawl-archive-now-available"
+    },
+    {
+      "purpose": "sampling_js_api_politeness",
+      "url": "https://www.commoncrawl.org/faq"
+    },
+    {
+      "purpose": "warc_wat_wet_and_protocol_headers",
+      "url": "https://commoncrawl.org/get-started"
+    },
+    {
+      "purpose": "cdx_and_range_retrieval",
+      "url": "https://www.commoncrawl.org/cdxj-index"
+    },
+    {
+      "purpose": "toolkit_reviewed_not_installed",
+      "url": "https://github.com/commoncrawl/cdx_toolkit"
+    },
+    {
+      "purpose": "warc_structure",
+      "url": "https://iipc.github.io/warc-specifications/specifications/warc-format/warc-1.1/"
+    }
+  ],
+  "catalog": {
+    "url": "https://index.commoncrawl.org/collinfo.json",
+    "private_raw_ref": "run-01/raw/001.bin",
+    "sha256": "a683312f4448cdda63b38f40c7289853fa82eb1e7e3cd5a3674e46142b01891a"
+  },
+  "dwr_public_presentation": {
+    "url": "https://gautierdorval.com/blogue/observation-terrain/dual-web-reference/",
+    "access": "local source only, lines 1-55; no request to studied site",
+    "path": "src/content/blog/fr/dual-web-reference.md",
+    "sha256": "fe011b5010b73b880ab68177a38ac7dcf049701de6532c19189320bc874a776a"
+  },
+  "base_identity": "recorded in private context.json and local Git branch"
+}

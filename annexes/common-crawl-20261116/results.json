@@ -1,0 +1,45 @@
+{
+  "finished_at_utc": "2026-11-16T15:43:54.148915Z",
+  "urls": 9,
+  "indexes_selected": 2,
+  "queries_planned": 18,
+  "index_requests": 18,
+  "catalog_requests": 1,
+  "warc_requests": 1,
+  "download_bytes": 47159,
+  "queries_complete": 8,
+  "captures": 1,
+  "comparable_captures": 1,
+  "stop_reason": null,
+  "selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+  "final_analysis": {
+    "analyzed_at_utc": "2026-11-16T15:49:47.256901Z",
+    "tool_version": "1.0.1",
+    "script_sha256": "75673eac55524388ae6d7f074f088421fd6e9b270732f80448dfb878ed246508",
+    "run_manifest_sha256": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
+    "selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+    "network_requests": 0,
+    "comparable_captures": 1,
+    "snapshot_byte_matches": 1
+  },
+  "network_phase_exit": {
+    "shell_exit_observed": 1,
+    "python_exit_separately_recorded": false,
+    "python_exit_expected_from_source": 2,
+    "meaning": "partial: 10 HTTP 502/504 index errors"
+  },
+  "byte_equal_snapshots": 1,
+  "index_http_status_counts": {
+    "200": 1,
+    "404": 7,
+    "502": 3,
+    "504": 7
+  },
+  "november_index_in_catalog": false,
+  "scope": "Exploratory annex; no M2 preparation or canonical edition modification.",
+  "private_manifests": {
+    "run-01/manifest.json": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
+    "analysis-02/manifest.json": "188c15090af16c6179b5338eff07ab35e726df6642e5a9ccc0fd4d6a31bb3e14"
+  },
+  "private_evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116"
+}

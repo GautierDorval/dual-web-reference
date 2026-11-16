@@ -7,8 +7,8 @@ Decided by the owner on 2026-10-17. Full texts: [LICENSES/MIT.txt](LICENSES/MIT.
 | Part | Licence | Applies to |
 |---|---|---|
 | Code | MIT | `analysis/`, `scripts/`, `tests/`, `site/assets/`, `.github/`, `pyproject.toml`, `.gitattributes`, `.gitignore`, `.python-version` |
-| Documentation | CC BY 4.0 | `README*.md`, `docs/`, `cases/` (except quoted excerpts), `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `NOTICE.md`, `CITATION.cff`, `LICENSES/README.md`, pages of `site/dist/` |
-| Data | CC BY 4.0 | `data/`, `figures/`, `schemas/`, `config/` |
+| Documentation | CC BY 4.0 | `README*.md`, `docs/`, `cases/` (except quoted excerpts), `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `NOTICE.md`, `CITATION.cff`, `LICENSES/README.md`, `annexes/common-crawl-20261116/*.md`, pages of `site/dist/` |
+| Data | CC BY 4.0 | `data/`, `figures/`, `schemas/`, `config/`, `annexes/common-crawl-20261116/*.json`, `annexes/common-crawl-20261116/*.csv` |
 | Licence texts | reproduced unchanged, outside these licences | `LICENSES/MIT.txt`, `LICENSES/CC-BY-4.0.txt` |
 
 To credit the documentation or the data, name "Gautier Dorval, Dual Web Reference", the edition identifier and the licence; see [CITATION.cff](CITATION.cff).
@@ -22,3 +22,5 @@ To credit the documentation or the data, name "Gautier Dorval, Dual Web Referenc
 ## Nature of the results
 
 The data describe HTTP requests recorded by a private collector during a dated window. They do not prove adoption, indexing, compliance or any causal effect. A matching SHA-256 establishes the binary identity of a file, not the truth of the observations.
+
+The Common Crawl exploratory annex documents third-party archive captures separately from canonical editions. Raw archived content and private source material remain outside this repository; the licence mapping does not grant rights over that content.

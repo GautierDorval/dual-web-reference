@@ -1,0 +1,307 @@
+{
+  "schema_version": "dwr-common-crawl-exploratory/1",
+  "frozen_at_utc": "2026-11-16T15:37:16.557953Z",
+  "selection_before_any_sample_cdx_query": true,
+  "scope": "The three existing DWR ecosystem cases only; no protected research hosts, no external sites.",
+  "replacement_policy": "No replacements based on crawl results.",
+  "windows": {
+    "M1": {
+      "start": "2026-09-15T00:00:00Z",
+      "end_exclusive": "2026-10-15T00:00:00Z"
+    },
+    "M2": {
+      "start": "2026-10-15T00:00:00Z",
+      "end_exclusive": "2026-11-15T00:00:00Z",
+      "earliest_preparation": "2026-11-17T00:00:00Z",
+      "preparation_authorized": false
+    }
+  },
+  "indexes": [
+    {
+      "id": "CC-MAIN-2026-43",
+      "crawl_start_date": "2026-10-05",
+      "crawl_end_date_inclusive": "2026-10-18",
+      "published_date": "2026-10-21",
+      "source": "https://www.commoncrawl.org/blog/october-2026-crawl-archive-now-available"
+    },
+    {
+      "id": "CC-MAIN-2026-39",
+      "crawl_start_date": "2026-09-04",
+      "crawl_end_date_inclusive": "2026-09-17",
+      "published_date": "2026-09-19",
+      "source": "https://www.commoncrawl.org/blog/september-2026-crawl-archive-now-available"
+    }
+  ],
+  "budget": {
+    "max_urls": 10,
+    "max_indexes": 3,
+    "max_index_requests": 30,
+    "max_warc_records": 20,
+    "max_download_bytes": 104857600,
+    "interval_seconds": 5,
+    "max_index_response_bytes": 2097152,
+    "max_record_uncompressed_bytes": 16777216,
+    "stop_on_first_rate_limit_or_block": true
+  },
+  "query_policy": {
+    "matchType": "exact",
+    "limit": 1001,
+    "local_exact_original_url_filter": true,
+    "full_selected_index_no_timestamp_filter": true,
+    "pagination": "No follow-up pages; >=1001 rows or clipped body means incomplete.",
+    "warc_selection": "M2 first, then M1, then outside; newest first, sample order for ties; at most 20."
+  },
+  "source_hashes": {
+    "data/editions/2026-09-15_2026-10-15-r2/resources.csv": "9bec765630ae60167036cccef550ecc335b115a6c5960193d4e1967cdddd1656",
+    "data/editions/2026-09-15_2026-10-15-r2/consultations.csv": "e9f56ca89051409454b92c79eb72dcbbe15f0b11535ee471bcf893da3315b90c",
+    "config/edition-calendar.json": "aa0d2066042c84f806bfd4329c80f320689bd9a0b0c67b0d1f44ba921cc52363"
+  },
+  "sample": [
+    {
+      "sample_id": "U01",
+      "url": "https://gautierdorval.com/llms.txt",
+      "resource_id": "gd:/llms.txt",
+      "format": "txt",
+      "main_population": true,
+      "selection_reason": "Discovery text, compared across the three existing cases.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-gd-20261014-2b4997bf",
+      "documentary_snapshot_sha256": "f27a14915705f4afdc3059cb7dd86b5c0e8dccd41a0a266745e17b6947ebd0bc",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U02",
+      "url": "https://gautierdorval.com/.well-known/ai-governance.json",
+      "resource_id": "gd:/.well-known/ai-governance.json",
+      "format": "json",
+      "main_population": true,
+      "selection_reason": "JSON governance entrypoint, independently from linked documents.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-gd-20261014-2b4997bf",
+      "documentary_snapshot_sha256": "ea4e4cfacfb349f2ece7cfbb7b497287fccf5f316a9755bda60522d9f305558f",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U03",
+      "url": "https://gautierdorval.com/entity-graph.jsonld",
+      "resource_id": "gd:/entity-graph.jsonld",
+      "format": "jsonld",
+      "main_population": true,
+      "selection_reason": "JSON-LD identity graph, independently from discovery pointers.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-gd-20261014-2b4997bf",
+      "documentary_snapshot_sha256": "b200673a3db19917f7177be499f909495b06f12a07e90ab28c26c64a93c264e0",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U04",
+      "url": "https://pagup.com/llms.txt",
+      "resource_id": "pg:/llms.txt",
+      "format": "txt",
+      "main_population": true,
+      "selection_reason": "Discovery text, compared across the three existing cases.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor"
+      ],
+      "graph_snapshot_id": "graph-pg-20261006-f8126bdf",
+      "documentary_snapshot_sha256": "d3a5ef146ef2d3408f94bb69096ce63d1f441662a97750ae13b4122ec139fdc6",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U05",
+      "url": "https://pagup.com/.well-known/ai-governance.json",
+      "resource_id": "pg:/.well-known/ai-governance.json",
+      "format": "json",
+      "main_population": true,
+      "selection_reason": "JSON governance entrypoint, independently from linked documents.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-pg-20261006-f8126bdf",
+      "documentary_snapshot_sha256": "1d1e29c8cfed1a0f906da3123bef3a00344dc11b3e19b85499823e891941dee8",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U06",
+      "url": "https://pagup.com/entity-graph.jsonld",
+      "resource_id": "pg:/entity-graph.jsonld",
+      "format": "jsonld",
+      "main_population": true,
+      "selection_reason": "JSON-LD identity graph, independently from discovery pointers.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-pg-20261006-f8126bdf",
+      "documentary_snapshot_sha256": "29cfd1012402b4e5d65066a558094e7bb77440ed7038a9e1a227a77c987d3b83",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U07",
+      "url": "https://better-robots.com/llms.txt",
+      "resource_id": "br:/llms.txt",
+      "format": "txt",
+      "main_population": true,
+      "selection_reason": "Discovery text, compared across the three existing cases.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-br-20261006-d7330f09",
+      "documentary_snapshot_sha256": "5ad796b38275f644618928c7c911703e613d7be20f37b1b3ac14efedd5504775",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U08",
+      "url": "https://better-robots.com/.well-known/ai-governance.json",
+      "resource_id": "br:/.well-known/ai-governance.json",
+      "format": "json",
+      "main_population": true,
+      "selection_reason": "JSON governance entrypoint, independently from linked documents.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-br-20261006-d7330f09",
+      "documentary_snapshot_sha256": "b5ade18785eb92ead380a5bc8325f613b20989d15cee8b36b8138e16f849ebac",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    },
+    {
+      "sample_id": "U09",
+      "url": "https://better-robots.com/entity-graph.jsonld",
+      "resource_id": "br:/entity-graph.jsonld",
+      "format": "jsonld",
+      "main_population": true,
+      "selection_reason": "JSON-LD identity graph, independently from discovery pointers.",
+      "resource_source": "data/editions/2026-09-15_2026-10-15-r2/resources.csv",
+      "observation_source": "data/editions/2026-09-15_2026-10-15-r2/consultations.csv",
+      "observation_granularity": "edition aggregate, no transaction timestamp or response body",
+      "observed_http_pairs": [
+        "GET 200",
+        "GET 304",
+        "HEAD 200"
+      ],
+      "recorded_identity_tiers": [
+        "cloudflare_verified_unattributed",
+        "network_verified_claimed_actor",
+        "provider_origin_verified_actor"
+      ],
+      "graph_snapshot_id": "graph-br-20261006-d7330f09",
+      "documentary_snapshot_sha256": "bb7516692bd584f6856c192215fd8e3e3badc34219a5b6f67cec47f7dc4c6476",
+      "historical_version_status": "unknown",
+      "deployment_at_capture": "not established",
+      "transaction_match": "not possible from edition aggregates",
+      "comparison": "pending archive; snapshot digest is not deployment proof"
+    }
+  ],
+  "review_projection": {
+    "created_at_utc": "2026-11-16T16:02:04.555980Z",
+    "original_selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+    "original_location": "private evidence: run-01/selection.json",
+    "removed_field": "base_commit; repository policy keeps Git identifiers in private evidence",
+    "sample_and_budgets_changed": false
+  }
+}
