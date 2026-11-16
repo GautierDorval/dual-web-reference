@@ -8,7 +8,7 @@ Date : 16 novembre 2026. Statut : **correctif local consolidé après audit Co
 - Deux index publiés vérifiés ; 18 interrogations CDX, un catalogue et un WARC. 47 159 octets de corps téléchargés au total, dont 9 003 octets WARC compressés. Aucune pagination, relance, visite des sites ou requête D1.
 - Une capture exploitable, dans M1 : le graphe JSON-LD de gautierdorval.com du 14 octobre à 07:54:39 UTC. Corps archivé de 50 179 octets identique à l’instantané détenu, trois empreintes source SHA-1 concordantes.
 - Sept réponses d’absence explicite et dix erreurs CDX, trois HTTP 502 et sept HTTP 504. Aucune capture exploitable trouvée dans M2 ; aucune conclusion d’absence générale.
-- Utilitaire ponctuel en bibliothèque standard, trente et un tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
+- Utilitaire ponctuel en bibliothèque standard, trente-trois tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
 
 ## Git, fichiers et autorisations
 
@@ -29,8 +29,8 @@ Aucun push, PR, fusion, déploiement, publication, activation ou préparation de
 
 | Contrôle | Résultat observé |
 |---|---|
-| Tests ciblés de l’utilitaire | 31/31 réussis sur la version `1.0.3` |
-| Suite complète après les corrections de l’audit | **208 exécutés : 206 réussis, 2 variantes de plateforme ignorées, aucun échec** |
+| Tests ciblés de l’utilitaire | 33/33 réussis sur la version `1.0.4` |
+| Suite complète après F01–F05, avant l’ajustement F06 | **208 exécutés : 206 réussis, 2 variantes de plateforme ignorées, aucun échec** |
 | Suite complète lors de la passe initiale | 192 exécutés : 189 réussis, 2 variantes de plateforme ignorées, 1 échec de mapping de licences |
 | Correction du mapping dans `NOTICE.md` | 4/4 tests de licences réussis après correction ; la suite complète n’a pas été répétée pour cette seule modification documentaire |
 | Recalcul historique `analyze` | Réussite, mesures canoniques inchangées |
@@ -89,6 +89,10 @@ La version `1.0.3` traite ensemble les cinq constats :
 Huit nouveaux tests portent la suite ciblée à **31 tests réussis**. Les échecs avant correction sont conservés, ainsi que le parcours valide. Le recalcul `analysis-05`, avec réseau désactivé, conserve exactement la matrice, C001 exploitable dans M1, les trois empreintes source concordantes et l’égalité avec l’instantané. Les neuf instantanés sont vérifiés. Parmi les vingt réponses historiques, les douze longueurs HTTP déclarées concordent avec les corps conservés ; ce contrôle ne fournit aucune longueur absente pour les huit autres.
 
 Les preuves de correction sont dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-fixes-01`. Le paquet consolidé destiné à la révision finale du même auditeur est immuable. Son verdict doit être lu dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-02`, avec l’identité exacte du candidat. Les contrôles du producteur ci-dessus ne préjugent pas de ce verdict.
+
+La révision de `1.0.3` confirme les cinq corrections, puis reproduit un **P2 complémentaire F06** : `Content-Length` et `Content-Range` terminés par SP ou HTAB refusent à tort des corps complets. La version `1.0.4` retire uniquement ces espaces de bord pour la validation, sans altérer les en-têtes bruts. Cette règle suit la [syntaxe HTTP, RFC 9112 §5.1](https://www.rfc-editor.org/rfc/rfc9112.html#section-5.1). Les valeurs internes invalides, corps tronqués et tailles totales incohérentes restent refusés.
+
+Deux nouveaux tests, comprenant plusieurs sous-cas positifs et négatifs, portent le résultat à **33 tests ciblés réussis**. La suite globale de 208 tests précède cet ajustement limité ; elle n’est pas présentée comme une nouvelle exécution sur `1.0.4`. Le nouveau recalcul `analysis-06` conserve encore la matrice, les empreintes et l’égalité de C001. Les preuves du complément sont séparées dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-fixes-02`. Les candidats précédents et leurs résultats restent immuables. La révision finale porte sur ce dernier paquet exact et rejoue F01 à F06.
 
 L’auditeur dispose du code et des métadonnées de l’annexe, pas des corps historiques privés. L’égalité réelle de C001 avec l’instantané reste une vérification du producteur, distincte de l’audit indépendant du comportement du code. Aucun nouveau résultat scientifique ou opérationnel n’est déduit de la correction.
 

@@ -25,7 +25,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-VERSION = '1.0.3'
+VERSION = '1.0.4'
 ROOT = Path(__file__).resolve().parents[1]
 MAX_BYTES = 100 * 1024 * 1024
 MAX_EXPANDED = 16 * 1024 * 1024
@@ -157,7 +157,8 @@ class Transport:
                     body = response.read(allowance)
                     # Bounded HTTPResponse.read(n) can return a short body without
                     # raising IncompleteRead. A declared length is independent proof.
-                    lengths = [v for k,v in response.headers.items() if k.lower() == 'content-length']
+                    # RFC 9112 SP/HTAB around values is not part of the value; keep raw headers.
+                    lengths = [v.strip(' \t') for k,v in response.headers.items() if k.lower() == 'content-length']
                     meta['complete'] = len(body) < allowance and len(body) <= cap
                     if lengths:
                         if len(lengths) != 1 or re.fullmatch(r'[0-9]+', lengths[0]) is None:
@@ -471,7 +472,7 @@ def source_digest_matches(data, expected):
 def range_valid(meta, data, cdx):
     try:
         offset, length = int(cdx['offset']), int(cdx['length'])
-        header = next((v for k,v in meta['headers'].items() if k.lower()=='content-range'),'')
+        header = next((v for k,v in meta['headers'].items() if k.lower()=='content-range'),'').strip(' \t')
         match = re.fullmatch(r'bytes ([0-9]+)-([0-9]+)/([0-9]+)', header)
         if not match:
             return False

@@ -296,7 +296,7 @@ class ReviewRegressionTests(unittest.TestCase):
 
 class AuditRegressionTests(unittest.TestCase):
     @contextmanager
-    def collection(self, mode='valid'):
+    def collection(self, mode='valid', ows=' \t'):
         selection=json.loads((cc.ROOT/'annexes/common-crawl-20261116/selection.json').read_text(encoding='utf-8'))
         selection['sample']=selection['sample'][:5]
         selection['indexes']=selection['indexes'][:1]
@@ -324,8 +324,9 @@ class AuditRegressionTests(unittest.TestCase):
                     if mode=='catalog_interrupt': raise KeyboardInterrupt('synthetic interruption')
                     return FakeResponse(200,b'[]')
                 if request.get_header('Range'):
-                    total=1 if mode=='bad_range_total' else len(raw)
-                    return FakeResponse(206,raw,{'Content-Range':f'bytes 0-{len(raw)-1}/{total}'})
+                    total=1 if mode in {'bad_range_total','range_ows_invalid_total'} else len(raw)
+                    suffix=ows if mode.startswith('range_ows') else ''
+                    return FakeResponse(206,raw,{'Content-Range':f'bytes 0-{len(raw)-1}/{total}'+suffix})
                 query_url=parse_qs(cc.urlsplit(request.full_url).query)['url'][0]
                 if query_url!=url:
                     return FakeResponse(404,json.dumps({'message':'No Captures found for: '+query_url}).encode())
@@ -333,7 +334,9 @@ class AuditRegressionTests(unittest.TestCase):
                 if mode=='chunked_cut': return framed(b'3\r\nabc\r\n8\r\ncut',chunked=True)
                 record=dict(row,url=url+'?variant') if mode=='short_variant' else row
                 body=json.dumps(record).encode()+b'\n'
-                return framed(body,len(body)+80 if mode.startswith('short_') else None)
+                declared=len(body)+80 if mode.startswith('short_') else len(body)
+                if mode in {'length_ows','short_ows'}: declared=f'{declared}{ows}'
+                return framed(body,declared)
 
         transport=cc.Transport
         with tempfile.TemporaryDirectory() as temp:
@@ -431,6 +434,32 @@ class AuditRegressionTests(unittest.TestCase):
             result,_=cc.inspect_warc(warc(http_extra=field+'\r\n'),CDX,WINDOWS)
             self.assertEqual(result['state'],'content_partial_redirect_or_revisit')
             self.assertIn('ambiguous_duplicate_header',result['issues'])
+
+    def test_content_length_optional_whitespace_preserves_length_check(self):
+        for ows in [' ', '\t', ' \t']:
+            with self.subTest(ows=repr(ows)), self.collection('length_ows',ows) as result:
+                self.assertEqual(result['code'],0)
+                receipt=result['requests'][1]
+                self.assertTrue(receipt['complete'])
+                self.assertTrue(receipt['headers']['Content-Length'].endswith(ows))
+            with self.subTest(truncated_ows=repr(ows)), self.collection('short_ows',ows) as result:
+                self.assertEqual(result['code'],2)
+                self.assertEqual(result['queries'][0]['state'],'query_failed_or_incomplete')
+                self.assertEqual(result['requests'][1]['error'],'content_length_mismatch')
+
+    def test_content_range_optional_whitespace_preserves_bounds_check(self):
+        for ows in [' ', '\t', ' \t']:
+            with self.subTest(ows=repr(ows)), self.collection('range_ows',ows) as result:
+                self.assertEqual(result['code'],0)
+                self.assertTrue(result['requests'][-1]['headers']['Content-Range'].endswith(ows))
+                replay=result['root']/'analysis'
+                cc.analyze_cached(result['run'],replay)
+                self.assertEqual(json.loads((replay/'captures.json').read_text(encoding='utf-8'))[0]['state'],'content_retrieved_comparable')
+            with self.subTest(invalid_total_ows=repr(ows)), self.collection('range_ows_invalid_total',ows) as result:
+                self.assertEqual(result['code'],2)
+                self.assertEqual(result['captures'][0]['state'],'capture_content_not_retrieved')
+        meta={'status':206,'complete':True,'headers':{'Content-Range':'bytes 9-11/1 2'}}
+        self.assertFalse(cc.range_valid(meta,b'abc',{'offset':'9','length':'3'}))
 
     def test_invalid_range_total_refused_in_collect_and_replay(self):
         with self.collection('bad_range_total') as result:

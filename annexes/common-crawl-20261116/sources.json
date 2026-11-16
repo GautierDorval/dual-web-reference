@@ -2,17 +2,17 @@
   "consulted_on": "2026-11-16",
   "tools": {
     "python": "3.14.9",
-    "utility_version": "1.0.3",
+    "utility_version": "1.0.4",
     "external_python_dependencies": []
   },
   "repository_files": [
     {
       "path": "scripts/common_crawl_annex.py",
-      "sha256": "295128e95be56d6c14e16e081243ea04fcd838b9273f4c687afbf5da8bc9f43b"
+      "sha256": "bd645a2f16b957c6048b9a5e8f289e7c915ec74218e4dc93c2782a309c43f2cd"
     },
     {
       "path": "tests/test_common_crawl_annex.py",
-      "sha256": "df2df38a18fcaf6769902e454167f6dc19c5bdefa8cda0d249f2da5924032f13"
+      "sha256": "0c7e75c1d82363a0d5ec2925c7a21ea4401a789bed76f102477c1daaac168204"
     },
     {
       "path": "config/edition-calendar.json",
@@ -71,6 +71,10 @@
     {
       "purpose": "warc_structure",
       "url": "https://iipc.github.io/warc-specifications/specifications/warc-format/warc-1.1/"
+    },
+    {
+      "purpose": "http_field_value_optional_whitespace",
+      "url": "https://www.rfc-editor.org/rfc/rfc9112.html#section-5.1"
     }
   ],
   "catalog": {

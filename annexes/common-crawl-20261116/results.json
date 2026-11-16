@@ -100,5 +100,38 @@
     "initial_evidence_preserved": true,
     "final_review_record": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-02",
     "private_historical_equality_independently_reproduced": false
+  },
+  "final_http_syntax_correction": {
+    "finding": "F06 P2",
+    "fields": [
+      "Content-Length",
+      "Content-Range"
+    ],
+    "tool_version": "1.0.4",
+    "evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-fixes-02",
+    "analysis_folder": "analysis-06",
+    "analysis": {
+      "analyzed_at_utc": "2026-11-16T17:47:16.570394Z",
+      "tool_version": "1.0.4",
+      "script_sha256": "bd645a2f16b957c6048b9a5e8f289e7c915ec74218e4dc93c2782a309c43f2cd",
+      "run_manifest_sha256": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
+      "selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+      "network_requests": 0,
+      "comparable_captures": 1,
+      "snapshot_byte_matches": 1
+    },
+    "analysis_manifest_sha256": "3b9baa5ca2ec3f0d910934b07952174959c259f49b21ba35a0fb4654a38436e0",
+    "matrix_unchanged": true,
+    "snapshot_bytes_equal": true,
+    "source_digest_checks_unchanged": true,
+    "targeted_tests_passed": 33,
+    "additional_common_crawl_requests": 0,
+    "full_suite_prior_to_this_adjustment": {
+      "executed": 208,
+      "passed": 206,
+      "skipped": 2,
+      "failed": 0
+    },
+    "final_review_record": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-02"
   }
 }
