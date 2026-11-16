@@ -14,15 +14,17 @@ import gzip
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import platform
 import re
 import time
+import zlib
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 ROOT = Path(__file__).resolve().parents[1]
 MAX_BYTES = 100 * 1024 * 1024
 MAX_EXPANDED = 16 * 1024 * 1024
@@ -193,20 +195,20 @@ def split_headers(data):
     return lines[0], headers, body
 
 
-def bounded_gunzip(data):
+def bounded_gunzip(data, limit=MAX_EXPANDED):
     with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
-        expanded = stream.read(MAX_EXPANDED + 1)
-    if len(expanded) > MAX_EXPANDED:
+        expanded = stream.read(limit + 1)
+    if len(expanded) > limit:
         raise ValueError('expanded_record_limit')
     return expanded
 
 
-def inspect_warc(data, cdx, windows):
+def inspect_warc(data, cdx, windows, expanded_limit=MAX_EXPANDED):
     """Preserve raw bytes and report unsupported encodings instead of guessing."""
     result = {'state':'content_partial_redirect_or_revisit', 'issues':[], 'body_available':False}
     artifacts = {}
     try:
-        raw = bounded_gunzip(data)
+        raw = bounded_gunzip(data, expanded_limit)
         artifacts['record.warc'] = raw
         version, warc, block = split_headers(raw)
         result['warc'] = warc
@@ -241,6 +243,13 @@ def inspect_warc(data, cdx, windows):
         result.update({'http_status':status, 'http_headers':http, 'content_type':http.get('content-type'),
                        'location':http.get('location'), 'body_available':bool(payload)})
         artifacts['payload.bin'] = payload
+        # Both collection and offline analysis must qualify the same source bytes.
+        checks = {'warc_payload':source_digest_matches(payload, result['source_payload_digest']),
+                  'warc_block':source_digest_matches(block, result['source_block_digest']),
+                  'cdx_payload':source_digest_matches(payload, 'sha1:'+cdx['digest']) if cdx.get('digest') else None}
+        result['source_digest_checks'] = checks
+        if False in checks.values():
+            result['issues'].append('source_digest_mismatch')
         if str(status) != str(cdx.get('status')):
             result['issues'].append('warc_cdx_status_mismatch')
         if 300 <= status < 400:
@@ -256,7 +265,7 @@ def inspect_warc(data, cdx, windows):
             return result, artifacts
         encoding = http.get('content-encoding', 'identity').lower()
         if encoding == 'gzip':
-            decoded = bounded_gunzip(payload)
+            decoded = bounded_gunzip(payload, expanded_limit)
         elif encoding in ('identity', ''):
             decoded = payload
         else:
@@ -276,7 +285,7 @@ def inspect_warc(data, cdx, windows):
             result['normalization'] = 'unavailable; binary byte comparison only'
         if not result['issues']:
             result['state'] = 'content_retrieved_comparable'
-    except (ValueError, KeyError, OSError, EOFError) as exc:
+    except (ValueError, KeyError, OSError, EOFError, zlib.error) as exc:
         result['issues'].append(str(exc))
     return result, artifacts
 
@@ -373,7 +382,7 @@ def collect(selection_path, output):
                         or not re.fullmatch(rf'bytes {offset}-{offset+length-1}/\d+', content_range)):
                     capture['retrieval_issue'] = 'invalid_or_incomplete_range_response'
                     continue
-                inspection, artifacts = inspect_warc(data, row, selection['windows'])
+                inspection, artifacts = inspect_warc(data, row, selection['windows'], selection['budget']['max_record_uncompressed_bytes'])
                 capture.update(inspection)
                 folder = output/'captures'/capture['capture_id']
                 folder.mkdir(parents=True)
@@ -398,12 +407,14 @@ def collect(selection_path, output):
                    'comparable_captures':sum(c['state']=='content_retrieved_comparable' for c in captures),
                    'stop_reason':transport.stop_reason,'selection_sha256':digest(selection_bytes)})
         seal(output)
-    return 0 if transport.stop_reason is None and all(q['complete'] for q in queries) else 2
+    complete = (transport.stop_reason is None and all(q['complete'] for q in queries)
+                and all(c['state']=='content_retrieved_comparable' for c in captures))
+    return 0 if complete else 2
 
 
 def seal(folder):
     artifacts = [{'path':p.relative_to(folder).as_posix(),'bytes':p.stat().st_size,'sha256':digest(p.read_bytes())}
-                 for p in sorted(folder.rglob('*')) if p.is_file() and p.name != 'manifest.json']
+                 for p in sorted(folder.rglob('*')) if p.is_file() and p != folder/'manifest.json']
     write_json(folder/'manifest.json', {'algorithm':'SHA-256','self_exclusion':'manifest.json','artifacts':artifacts})
 
 
@@ -417,7 +428,7 @@ def verify(folder):
         if path.stat().st_size != item['bytes'] or digest(path.read_bytes()) != item['sha256']:
             raise ValueError('artifact mismatch:' + item['path'])
         expected.add(item['path'])
-    actual = {p.relative_to(folder).as_posix() for p in folder.rglob('*') if p.is_file() and p.name!='manifest.json'}
+    actual = {p.relative_to(folder).as_posix() for p in folder.rglob('*') if p.is_file() and p != folder/'manifest.json'}
     if expected != actual:
         raise ValueError('artifact set mismatch')
     print(f'PASS {len(expected)} artifact hashes and exact file set')
@@ -497,10 +508,10 @@ def analyze_cached(run, output, snapshot_root=None):
         if request:
             data=(run/request['body_path']).read_bytes()
             if range_valid(request,data,c['cdx']):
-                inspection,artifacts=inspect_warc(data,c['cdx'],selection['windows'])
+                inspection,artifacts=inspect_warc(data,c['cdx'],selection['windows'],selection['budget']['max_record_uncompressed_bytes'])
                 c.update(inspection)
                 c['request_id']=request['request_id']
-                c['compressed_artifact']='../'+run.name+'/'+request['body_path']
+                c['compressed_artifact']=Path(os.path.relpath(run/request['body_path'],output)).as_posix()
                 folder=output/'captures'/c['capture_id']
                 folder.mkdir(parents=True)
                 c['artifacts']=[]
@@ -508,14 +519,6 @@ def analyze_cached(run, output, snapshot_root=None):
                     path=folder/name
                     path.write_bytes(value)
                     c['artifacts'].append({'path':path.relative_to(output).as_posix(),'bytes':len(value),'sha256':digest(value)})
-                if 'payload.bin' in artifacts:
-                    checks={'warc_payload':source_digest_matches(artifacts['payload.bin'],c.get('source_payload_digest')),
-                            'warc_block':source_digest_matches(artifacts['http-message.bin'],c.get('source_block_digest')),
-                            'cdx_payload':source_digest_matches(artifacts['payload.bin'],'sha1:'+c['cdx']['digest'])}
-                    c['source_digest_checks']=checks
-                    if False in checks.values():
-                        c['state']='content_partial_redirect_or_revisit'
-                        c['issues'].append('source_digest_mismatch')
                 source=next(e for e in source_evidence if e['sample_id']==c['sample_id'])
                 if source['snapshot_verified'] and 'decoded.bin' in artifacts:
                     local=(output/source['artifact_path']).read_bytes()

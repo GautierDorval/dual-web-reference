@@ -91,6 +91,8 @@ Le premier parseur refusait à tort les deux champs `WARC-Protocol`, pourtant il
 
 Common Crawl n’exécute pas JavaScript. Aucun rendu navigateur n’entre dans cette comparaison et aucune capture HTML n’est utilisée pour inférer la collecte d’un fichier lié. [FAQ officielle](https://www.commoncrawl.org/faq)
 
+La relecture locale a ensuite corrigé les voies d’erreur et de preuve de l’utilitaire (`1.0.2`) ; le [reçu](RECEIPT.md) donne les six défauts et les tests avant/après. Un nouveau recalcul hors ligne des mêmes octets confirme une matrice et une conclusion inchangées. Les erreurs HTTP initiales ne sont ni rejouées ni transformées en absences.
+
 ## Limites et prochaine action utile
 
 Une capture établit ici une concordance de contenu bornée. Aucune capture exploitable dans M2 n’a été retrouvée dans cette passe ; les erreurs d’index empêchent toute conclusion d’absence générale. Aucun utilisateur ou modèle n’est identifié à partir d’un `User-Agent`. L’égalité du fichier ne restitue ni le déclencheur ni le parcours de découverte.

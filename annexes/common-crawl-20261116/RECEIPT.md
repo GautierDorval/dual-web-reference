@@ -8,7 +8,7 @@ Date : 16 novembre 2026. Statut : **correctif local prêt à revoir, couvertur
 - Deux index publiés vérifiés ; 18 interrogations CDX, un catalogue et un WARC. 47 159 octets de corps téléchargés au total, dont 9 003 octets WARC compressés. Aucune pagination, relance, visite des sites ou requête D1.
 - Une capture exploitable, dans M1 : le graphe JSON-LD de gautierdorval.com du 14 octobre à 07:54:39 UTC. Corps archivé de 50 179 octets identique à l’instantané détenu, trois empreintes source SHA-1 concordantes.
 - Sept réponses d’absence explicite et dix erreurs CDX, trois HTTP 502 et sept HTTP 504. Aucune capture exploitable trouvée dans M2 ; aucune conclusion d’absence générale.
-- Utilitaire ponctuel en bibliothèque standard, quinze tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
+- Utilitaire ponctuel en bibliothèque standard, vingt-trois tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
 
 ## Git, fichiers et autorisations
 
@@ -29,8 +29,8 @@ Aucun push, PR, fusion, déploiement, publication, audit externe, activation ou 
 
 | Contrôle | Résultat observé |
 |---|---|
-| Tests ciblés de l’utilitaire | 15/15 réussis sur la version finale |
-| Suite existante avec les nouveaux tests | 192 exécutés : 189 réussis, 2 variantes de plateforme ignorées, 1 échec de mapping de licences |
+| Tests ciblés de l’utilitaire | 23/23 réussis sur la version corrigée finale |
+| Suite complète lors de la passe initiale | 192 exécutés : 189 réussis, 2 variantes de plateforme ignorées, 1 échec de mapping de licences |
 | Correction du mapping dans `NOTICE.md` | 4/4 tests de licences réussis après correction ; la suite complète n’a pas été répétée pour cette seule modification documentaire |
 | Recalcul historique `analyze` | Réussite, mesures canoniques inchangées |
 | `build-site` local | Réussite, 43 pages et 325 fichiers ; aucune annexe ajoutée au rendu |
@@ -49,6 +49,27 @@ Les premiers échecs sont conservés dans les preuves, sans être renommés en r
 - le premier lancement de collecte rapporte un code shell 1 ; le code Python n’a pas été consigné séparément. Le code 2 est celui prévu par la source pour les dix erreurs CDX, pas une mesure ajoutée rétroactivement.
 
 L’export temporaire sert uniquement à la validation, puis est retiré après vérification de son chemin et de l’absence de travail unique. Sa liste de fichiers et leurs empreintes demeurent dans les preuves privées. Aucun audit indépendant n’est revendiqué.
+
+## Relecture locale à la reprise
+
+La reprise reste dans le mandat local. Les mêmes neuf URL, les requêtes acquises, leurs budgets et la sélection originale restent inchangés. Aucune nouvelle requête Common Crawl ni visite de site n’a été exécutée.
+
+La version `1.0.2` corrige six défauts reproduits hors ligne :
+
+| Défaut reproduit | Correction et contrôle |
+|---|---|
+| `collect` pouvait retourner `0` après un échec WARC | Retour `2` lorsque la récupération ou la qualification d’une capture reste incomplète ; un parcours valide conserve `0` |
+| Les empreintes source étaient contrôlées seulement au recalcul | Vérification commune aux voies de collecte et de recalcul ; chacun des trois désaccords est refusé |
+| Une limite de décompression réduite dans la sélection était ignorée | Application de la limite configurée aux enregistrements et aux corps HTTP gzip |
+| Un flux DEFLATE corrompu interrompait le parseur | Conservation du résultat partiel et du diagnostic, sans qualification comme contenu exploitable |
+| Les fichiers `manifest.json` imbriqués échappaient au manifeste parent | Exclusion du seul manifeste racine ; toute modification d’un manifeste imbriqué est détectée |
+| La référence de l’archive supposait des dossiers de même parent | Calcul du chemin relatif réel ; reproduction dans un autre parent vérifiée |
+
+Huit tests supplémentaires portent la suite ciblée à **23 tests réussis**. Les échecs avant correction sont conservés. Il s’agit d’une relecture du producteur, pas d’un audit indépendant.
+
+Le recalcul final `analysis-04`, sur les mêmes octets, confirme une matrice strictement identique, les trois empreintes source concordantes et l’égalité du corps de C001 avec l’instantané. L’analyse historique `analysis-02` reste une preuve valide et immuable ; `results.json` distingue cette preuve du nouveau contrôle hors ligne. La couverture d’index demeure partielle, sans preuve nouvelle dans M2.
+
+Les preuves de reprise sont dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-review-01`, sous `PAGUP_COLD_STORAGE`. Le paquet initial scellé est préservé. Le reçu privé de cette reprise porte le candidat exact, les contrôles, le manifeste et l’état de clôture.
 
 ## Procédures, stockage et limites
 

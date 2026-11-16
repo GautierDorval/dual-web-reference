@@ -1,11 +1,15 @@
 """Synthetic tests for temporal and evidence boundaries; no network access."""
+import base64
 import gzip
+import hashlib
 import importlib.util
 import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+from urllib.parse import parse_qs
 
 SPEC = importlib.util.spec_from_file_location('cc_annex', Path(__file__).resolve().parents[1]/'scripts/common_crawl_annex.py')
 cc = importlib.util.module_from_spec(SPEC)
@@ -13,7 +17,7 @@ SPEC.loader.exec_module(cc)
 WINDOWS = {'M1':{'start':'2026-09-15T00:00:00Z','end_exclusive':'2026-10-15T00:00:00Z'},
            'M2':{'start':'2026-10-15T00:00:00Z','end_exclusive':'2026-11-15T00:00:00Z'}}
 URL = 'https://example.org/llms.txt'
-CDX = {'url':URL,'timestamp':'20261015000000','status':'200','digest':'SOURCE_DIGEST'}
+CDX = {'url':URL,'timestamp':'20261015000000','status':'200','digest':base64.b32encode(hashlib.sha1(b'hello\r\n').digest()).decode()}
 
 
 def warc(body=b'hello\r\n', kind='response', extra='', status=200, url=URL, date='2026-10-15T00:00:00Z'):
@@ -171,6 +175,118 @@ class TransportBudgetTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'artifact set mismatch'):
                 cc.verify(folder)
             (folder/'one').write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'artifact mismatch'):
+                cc.verify(folder)
+
+
+
+class ReviewRegressionTests(unittest.TestCase):
+    def collect_fixture(self, *, warc_status=206, bad_digest=False, expanded_limit=None, replay=False):
+        selection=json.loads((cc.ROOT/'annexes/common-crawl-20261116/selection.json').read_text(encoding='utf-8'))
+        selection['sample']=selection['sample'][:5]
+        selection['indexes']=selection['indexes'][:1]
+        if expanded_limit is not None:
+            selection['budget']['max_record_uncompressed_bytes']=expanded_limit
+        url=selection['sample'][0]['url']
+        raw=warc(url=url)
+        row=dict(CDX,url=url,offset='0',length=str(len(raw)),
+                 filename=f"crawl-data/{selection['indexes'][0]['id']}/segments/fixture/fixture.warc.gz")
+        if bad_digest:
+            row['digest']='A'*32
+        calls=[]
+
+        class FixtureOpener:
+            def open(self, request, **kwargs):
+                calls.append(request.full_url)
+                if request.full_url.endswith('/collinfo.json'):
+                    return FakeResponse(200,b'[]')
+                if request.get_header('Range'):
+                    return FakeResponse(warc_status,raw,{'Content-Range':f'bytes 0-{len(raw)-1}/{len(raw)}'})
+                query_url=parse_qs(cc.urlsplit(request.full_url).query)['url'][0]
+                if query_url==url:
+                    return FakeResponse(200,json.dumps(row).encode())
+                return FakeResponse(404,json.dumps({'message':'No Captures found for: '+query_url}).encode())
+
+        original_transport=cc.Transport
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            selection_path=root/'selection.json'
+            cc.write_json(selection_path,selection)
+            output=root/'run'
+            with patch.object(cc,'Transport',lambda folder,budget: original_transport(folder,budget,FixtureOpener(),lambda _:None)):
+                code=cc.collect(selection_path,output)
+            cc.verify(output)
+            capture=json.loads((output/'captures.json').read_text(encoding='utf-8'))[0]
+            summary=json.loads((output/'summary.json').read_text(encoding='utf-8'))
+            if replay:
+                replay_parent=root/'separate-parent'
+                replay_parent.mkdir()
+                replay_output=replay_parent/'analysis'
+                cc.analyze_cached(output,replay_output)
+                replay_capture=json.loads((replay_output/'captures.json').read_text(encoding='utf-8'))[0]
+                compressed=(replay_output/replay_capture['compressed_artifact']).resolve()
+                self.assertEqual(compressed,(output/'raw/007.bin').resolve())
+                self.assertEqual(compressed.read_bytes(),raw)
+                self.assertEqual(replay_capture['source_digest_checks'],capture['source_digest_checks'])
+        self.assertEqual(len(calls),7)
+        self.assertEqual(summary['queries_complete'],5)
+        return code,capture,summary
+
+    def test_collect_usable_capture_succeeds(self):
+        code,capture,summary=self.collect_fixture()
+        self.assertEqual(code,0)
+        self.assertEqual(capture['state'],'content_retrieved_comparable')
+        self.assertEqual(summary['comparable_captures'],1)
+
+    def test_offline_replay_keeps_compressed_artifact_resolvable(self):
+        self.collect_fixture(replay=True)
+
+    def test_collect_missing_warc_is_incomplete(self):
+        code,capture,summary=self.collect_fixture(warc_status=502)
+        self.assertEqual(capture['state'],'capture_content_not_retrieved')
+        self.assertEqual(summary['comparable_captures'],0)
+        self.assertEqual(code,2)
+
+    def test_collect_source_digest_mismatch_is_incomplete(self):
+        code,capture,summary=self.collect_fixture(bad_digest=True)
+        self.assertEqual(code,2)
+        self.assertFalse(capture['source_digest_checks']['cdx_payload'])
+        self.assertEqual(capture['state'],'content_partial_redirect_or_revisit')
+        self.assertEqual(summary['comparable_captures'],0)
+
+    def test_each_source_digest_mismatch_is_not_comparable(self):
+        for extra,row,check in [('',dict(CDX,digest='A'*32),'cdx_payload'),
+                ('WARC-Payload-Digest: sha1:'+'A'*32+'\r\n',CDX,'warc_payload'),
+                ('WARC-Block-Digest: sha1:'+'A'*32+'\r\n',CDX,'warc_block')]:
+            with self.subTest(check=check):
+                result,_=cc.inspect_warc(warc(extra=extra),row,WINDOWS)
+                self.assertEqual(result['state'],'content_partial_redirect_or_revisit')
+                self.assertFalse(result['source_digest_checks'][check])
+                self.assertIn('source_digest_mismatch',result['issues'])
+
+    def test_configured_expansion_limit_applies_to_collection(self):
+        code,capture,_=self.collect_fixture(expanded_limit=64)
+        self.assertEqual(code,2)
+        self.assertIn('expanded_record_limit',capture['issues'])
+
+    def test_invalid_deflate_is_recorded_as_partial(self):
+        raw=bytearray(warc())
+        raw[10]=(raw[10]&0xf8)|7  # Reserved DEFLATE block type, inside a valid gzip header.
+        result,_=cc.inspect_warc(bytes(raw),CDX,WINDOWS)
+        self.assertEqual(result['state'],'content_partial_redirect_or_revisit')
+        self.assertTrue(result['issues'])
+
+    def test_nested_manifest_is_covered(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            (folder/'nested').mkdir()
+            nested=folder/'nested'/'manifest.json'
+            nested.write_bytes(b'{"proof":"original"}')
+            cc.seal(folder)
+            cc.verify(folder)
+            entries=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))['artifacts']
+            self.assertEqual([item['path'] for item in entries],['nested/manifest.json'])
+            nested.write_bytes(b'{"proof":"modified"}')
             with self.assertRaisesRegex(ValueError,'artifact mismatch'):
                 cc.verify(folder)
 

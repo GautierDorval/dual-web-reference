@@ -41,5 +41,27 @@
     "run-01/manifest.json": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
     "analysis-02/manifest.json": "188c15090af16c6179b5338eff07ab35e726df6642e5a9ccc0fd4d6a31bb3e14"
   },
-  "private_evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116"
+  "private_evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116",
+  "offline_review": {
+    "evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116-review-01",
+    "analysis_folder": "analysis-04",
+    "analysis": {
+      "analyzed_at_utc": "2026-11-16T16:31:46.395281Z",
+      "tool_version": "1.0.2",
+      "script_sha256": "8ac84e7f83023cd136d36ae83b245e81dce0db526744a0881fda5ae054683871",
+      "run_manifest_sha256": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
+      "selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+      "network_requests": 0,
+      "comparable_captures": 1,
+      "snapshot_byte_matches": 1
+    },
+    "analysis_manifest_sha256": "1ff19bc580c57cf89e97ef43934ac2e8f58bc91f9770f040d036478ea94466ed",
+    "matrix_unchanged": true,
+    "source_digest_checks_unchanged": true,
+    "snapshot_bytes_equal": true,
+    "targeted_tests_passed": 23,
+    "additional_common_crawl_requests": 0,
+    "initial_analysis_preserved": true,
+    "independent_audit": false
+  }
 }
