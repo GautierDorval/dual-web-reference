@@ -46,7 +46,7 @@ if ((Get-FileHash "$replay\matrix.csv").Hash -ne (Get-FileHash 'annexes\common-c
 }
 ```
 
-Les sorties nouvelles sont placées à côté du paquet original scellé, jamais dedans. Cette commande n’instancie aucun client réseau. Elle refuse un dossier de sortie existant et vérifie d’abord les empreintes et l’ensemble exact des fichiers de `run-01`. Les horodatages d’analyse changent ; la matrice et les octets extraits demeurent reproductibles. Sans `--snapshot-root`, seule l’archive est relue et aucune égalité avec les octets d’un instantané local n’est revendiquée.
+Les sorties nouvelles sont placées à côté du paquet original scellé, jamais dedans. Cette commande n’instancie aucun client réseau. Elle refuse une sortie égale ou descendante de `run` ou de `snapshot-root`, ainsi qu’un dossier de sortie existant, et vérifie les empreintes et l’ensemble exact des fichiers de `run-01`. Les horodatages d’analyse changent ; la matrice et les octets extraits demeurent reproductibles. Sans `--snapshot-root`, seule l’archive est relue et aucune égalité avec les octets d’un instantané local n’est revendiquée.
 
 Les chemins `artifact_path` de `source-evidence.json` et `artifacts` de `captures.json` sont relatifs à `analysis-02`. `compressed_artifact` est relatif au même dossier. Les `private_raw_ref` des requêtes sont relatifs à `$evidence`. Les métadonnées intégrales et les corps restent sur le stockage froid, hors de Git.
 
@@ -65,7 +65,9 @@ Write-Output "COLLECT_EXIT=$collectExit"
 
 Plafonds : dix URL, trois index, trente requêtes CDX, vingt WARC, 100 MiB pour l’ensemble des corps téléchargés, cinq secondes entre départs. Le fichier figé retient neuf URL et deux index. `limit=1001` sert de sentinelle ; atteindre cette limite ou une limite de taille rend la réponse incomplète, sans pagination implicite. La limite de décompression déclarée par la sélection est appliquée à chaque enregistrement et corps HTTP gzip, avec un plafond de 16 MiB.
 
-Aucune relance ni redirection. Un 403, 429 ou 503 arrête la passe et conserve `Retry-After` ; l’absence de réessai évite de raccourcir ce délai. Les erreurs de transport arrêtent aussi la passe. Un statut 200 qui ignorerait la plage WARC arrête le téléchargement avant lecture du corps. Les 502/504 sont enregistrés comme échecs sans relance. Un répertoire existant n’est jamais écrasé.
+Aucune relance ni redirection. Un 403, 429 ou 503 arrête la passe et conserve `Retry-After` ; l’absence de réessai évite de raccourcir ce délai. Les erreurs de transport et de protocole HTTP arrêtent aussi la passe. Chaque tentative est journalisée avant l’appel et finalisée après une erreur ou une interruption ; une interruption est propagée, jamais présentée comme une réussite. Un statut 200 qui ignorerait la plage WARC arrête le téléchargement avant lecture du corps. Les 502/504 sont enregistrés comme échecs sans relance. Un répertoire existant n’est jamais écrasé.
+
+Une longueur `Content-Length` déclarée doit être valide et égale au corps conservé pour qualifier la réponse comme complète. Les plages WARC doivent aussi respecter `0 ≤ début ≤ fin < total`, la plage CDX et sa longueur. Si une interruption ou une exception empêche de connaître tous les octets reçus, `download_bytes_exact` vaut `false` : `download_bytes` est alors une borne inférieure des octets exposés par la bibliothèque, et aucun nouvel appel n’est lancé.
 
 Code prévu : `0` si les interrogations sont complètes et toutes les captures trouvées ont un contenu exploitable, `2` sinon. Un WARC non récupéré, un contenu partiel ou une empreinte source discordante empêche donc une sortie `0`. Une réponse sans capture reste un résultat complet lorsque les interrogations sont complètes. Le premier lancement n’a pas sauvegardé `$LASTEXITCODE` séparément ; le shell a rapporté `1`. Le reçu conserve cette limite de journalisation. L’analyse ne dépend pas de ce code : `requests.json`, `queries.json` et les corps bruts établissent les résultats.
 

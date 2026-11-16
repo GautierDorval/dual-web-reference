@@ -63,5 +63,42 @@
     "additional_common_crawl_requests": 0,
     "initial_analysis_preserved": true,
     "independent_audit": false
+  },
+  "independent_audit_corrections": {
+    "initial_audit": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-01",
+    "initial_verdict": "NO_GO",
+    "initial_findings": {
+      "P1": 1,
+      "P2": 4
+    },
+    "corrected_findings": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05"
+    ],
+    "evidence_relative_to_PAGUP_COLD_STORAGE": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-fixes-01",
+    "analysis_folder": "analysis-05",
+    "analysis": {
+      "analyzed_at_utc": "2026-11-16T17:27:50.274646Z",
+      "tool_version": "1.0.3",
+      "script_sha256": "295128e95be56d6c14e16e081243ea04fcd838b9273f4c687afbf5da8bc9f43b",
+      "run_manifest_sha256": "0fb7b45b97659fea14087451489b2390325ca4ec00d1929eecbc50be822fd7f0",
+      "selection_sha256": "6e10b5e00c7d9dc8c5e2d33052b5f984ddca0cd32c76885a70b0e0ed92eeedd5",
+      "network_requests": 0,
+      "comparable_captures": 1,
+      "snapshot_byte_matches": 1
+    },
+    "analysis_manifest_sha256": "0b1aba5e39b076697326951bf845776f47ad34f651243d3e9ff521a43bf0449d",
+    "matrix_unchanged": true,
+    "source_digest_checks_unchanged": true,
+    "snapshot_bytes_equal": true,
+    "snapshots_verified": 9,
+    "targeted_tests_passed": 31,
+    "additional_common_crawl_requests": 0,
+    "initial_evidence_preserved": true,
+    "final_review_record": "Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-02",
+    "private_historical_equality_independently_reproduced": false
   }
 }

@@ -91,7 +91,7 @@ Le premier parseur refusait à tort les deux champs `WARC-Protocol`, pourtant il
 
 Common Crawl n’exécute pas JavaScript. Aucun rendu navigateur n’entre dans cette comparaison et aucune capture HTML n’est utilisée pour inférer la collecte d’un fichier lié. [FAQ officielle](https://www.commoncrawl.org/faq)
 
-La relecture locale a ensuite corrigé les voies d’erreur et de preuve de l’utilitaire (`1.0.2`) ; le [reçu](RECEIPT.md) donne les six défauts et les tests avant/après. Un nouveau recalcul hors ligne des mêmes octets confirme une matrice et une conclusion inchangées. Les erreurs HTTP initiales ne sont ni rejouées ni transformées en absences.
+La relecture locale a ensuite corrigé les voies d’erreur et de preuve de l’utilitaire (`1.0.2`) ; le [reçu](RECEIPT.md) donne les six défauts et les tests avant/après. Un nouveau recalcul hors ligne des mêmes octets confirme une matrice et une conclusion inchangées. Les erreurs HTTP initiales ne sont ni rejouées ni transformées en absences. Un audit Codex indépendant a ensuite reproduit cinq défauts supplémentaires, corrigés ensemble dans `1.0.3` avec huit nouveaux tests. Le recalcul hors ligne confirme encore la même matrice et la même égalité de C001 ; le [reçu](RECEIPT.md) distingue le verdict initial, les corrections du producteur et la révision finale indépendante.
 
 ## Limites et prochaine action utile
 

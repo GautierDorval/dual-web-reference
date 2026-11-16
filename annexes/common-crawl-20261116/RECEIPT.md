@@ -1,6 +1,6 @@
 # Reçu local du mandat Common Crawl
 
-Date : 16 novembre 2026. Statut : **correctif local prêt à revoir, couverture d’archive partielle**. Résultat détaillé dans [le rapport](REPORT.fr.md) et [la matrice](matrix.csv).
+Date : 16 novembre 2026. Statut : **correctif local consolidé après audit Codex, couverture d’archive partielle**. Résultat détaillé dans [le rapport](REPORT.fr.md) et [la matrice](matrix.csv).
 
 ## Travail livré
 
@@ -8,7 +8,7 @@ Date : 16 novembre 2026. Statut : **correctif local prêt à revoir, couvertur
 - Deux index publiés vérifiés ; 18 interrogations CDX, un catalogue et un WARC. 47 159 octets de corps téléchargés au total, dont 9 003 octets WARC compressés. Aucune pagination, relance, visite des sites ou requête D1.
 - Une capture exploitable, dans M1 : le graphe JSON-LD de gautierdorval.com du 14 octobre à 07:54:39 UTC. Corps archivé de 50 179 octets identique à l’instantané détenu, trois empreintes source SHA-1 concordantes.
 - Sept réponses d’absence explicite et dix erreurs CDX, trois HTTP 502 et sept HTTP 504. Aucune capture exploitable trouvée dans M2 ; aucune conclusion d’absence générale.
-- Utilitaire ponctuel en bibliothèque standard, vingt-trois tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
+- Utilitaire ponctuel en bibliothèque standard, trente et un tests ciblés, matrice, sources, métadonnées, commandes et manifestes SHA-256. Les corps et métadonnées privées restent sur le stockage froid.
 
 ## Git, fichiers et autorisations
 
@@ -23,13 +23,14 @@ Fichiers du lot :
 - `tests/test_common_crawl_annex.py` ;
 - les fichiers de cette annexe : `selection.json`, `matrix.csv`, `queries.json`, `captures.json`, `source-evidence.json`, `results.json`, `sources.json`, `REPORT.fr.md`, `REPRODUCTION.md`, `RECEIPT.md` et `manifest.json`.
 
-Aucun push, PR, fusion, déploiement, publication, audit externe, activation ou préparation de M2. Les éventuels commits de ce lot sont uniquement locaux. La livraison publique n’est pas autorisée par ce reçu.
+Aucun push, PR, fusion, déploiement, publication, activation ou préparation de M2. L’audit Codex indépendant a été autorisé séparément par Gautier. Les éventuels commits de ce lot sont uniquement locaux. La livraison publique n’est pas autorisée par ce reçu.
 
 ## Vérifications exécutées
 
 | Contrôle | Résultat observé |
 |---|---|
-| Tests ciblés de l’utilitaire | 23/23 réussis sur la version corrigée finale |
+| Tests ciblés de l’utilitaire | 31/31 réussis sur la version `1.0.3` |
+| Suite complète après les corrections de l’audit | **208 exécutés : 206 réussis, 2 variantes de plateforme ignorées, aucun échec** |
 | Suite complète lors de la passe initiale | 192 exécutés : 189 réussis, 2 variantes de plateforme ignorées, 1 échec de mapping de licences |
 | Correction du mapping dans `NOTICE.md` | 4/4 tests de licences réussis après correction ; la suite complète n’a pas été répétée pour cette seule modification documentaire |
 | Recalcul historique `analyze` | Réussite, mesures canoniques inchangées |
@@ -48,7 +49,7 @@ Les premiers échecs sont conservés dans les preuves, sans être renommés en r
 - `verify` global du checkout incluant un identifiant dans le `CLAUDE.md` ignoré et préexistant. Ce pointeur n’a pas été modifié. La validation positive porte sur l’export exact des fichiers du candidat, sans les fichiers locaux ignorés ;
 - le premier lancement de collecte rapporte un code shell 1 ; le code Python n’a pas été consigné séparément. Le code 2 est celui prévu par la source pour les dix erreurs CDX, pas une mesure ajoutée rétroactivement.
 
-L’export temporaire sert uniquement à la validation, puis est retiré après vérification de son chemin et de l’absence de travail unique. Sa liste de fichiers et leurs empreintes demeurent dans les preuves privées. Aucun audit indépendant n’est revendiqué.
+L’export temporaire sert uniquement à la validation, puis est retiré après vérification de son chemin et de l’absence de travail unique. Sa liste de fichiers et leurs empreintes demeurent dans les preuves privées. Ces contrôles du producteur ne constituent pas l’audit indépendant décrit ci-dessous.
 
 ## Relecture locale à la reprise
 
@@ -71,6 +72,26 @@ Le recalcul final `analysis-04`, sur les mêmes octets, confirme une matrice str
 
 Les preuves de reprise sont dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-review-01`, sous `PAGUP_COLD_STORAGE`. Le paquet initial scellé est préservé. Le reçu privé de cette reprise porte le candidat exact, les contrôles, le manifeste et l’état de clôture.
 
+## Audit Codex et correctif consolidé
+
+À la demande explicite de Gautier, un agent Codex indépendant a examiné le paquet Git exact. Son premier verdict est **NO_GO : un P1 et quatre P2**, avec des contre-exemples exécutés. Ce verdict et ses preuves restent immuables dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-01`, sous `PAGUP_COLD_STORAGE`.
+
+La version `1.0.3` traite ensemble les cinq constats :
+
+| Constat | Correction vérifiée hors réseau |
+|---|---|
+| F01, P1 : CDX tronqué admis comme complet, voire comme absence | Vérification indépendante de `Content-Length` après lecture bornée ; les réponses tronquées restent incomplètes |
+| F02, P2 : tentative perdue après exception HTTP ou interruption | Reçu écrit avant l’appel, finalisé même en cas d’échec ; octets partiels exposés conservés ; interruption propagée et arrêt explicite |
+| F03, P2 : recalcul imbriqué modifiant la preuve source | Refus d’une sortie égale ou descendante d’un dossier d’entrée, avant toute écriture |
+| F04, P2 : répétitions HTTP valides refusées | Conservation des champs de liste répétés, avec refus maintenu des ambiguïtés de cadrage et de décodage |
+| F05, P2 : taille totale `Content-Range` incohérente admise | Validation numérique commune à la collecte et au recalcul : `0 ≤ début ≤ fin < total`, plage et longueur conformes au CDX |
+
+Huit nouveaux tests portent la suite ciblée à **31 tests réussis**. Les échecs avant correction sont conservés, ainsi que le parcours valide. Le recalcul `analysis-05`, avec réseau désactivé, conserve exactement la matrice, C001 exploitable dans M1, les trois empreintes source concordantes et l’égalité avec l’instantané. Les neuf instantanés sont vérifiés. Parmi les vingt réponses historiques, les douze longueurs HTTP déclarées concordent avec les corps conservés ; ce contrôle ne fournit aucune longueur absente pour les huit autres.
+
+Les preuves de correction sont dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-fixes-01`. Le paquet consolidé destiné à la révision finale du même auditeur est immuable. Son verdict doit être lu dans `Preuves-Audits/dual-web-reference/common-crawl-20261116-codex-audit-02`, avec l’identité exacte du candidat. Les contrôles du producteur ci-dessus ne préjugent pas de ce verdict.
+
+L’auditeur dispose du code et des métadonnées de l’annexe, pas des corps historiques privés. L’égalité réelle de C001 avec l’instantané reste une vérification du producteur, distincte de l’audit indépendant du comportement du code. Aucun nouveau résultat scientifique ou opérationnel n’est déduit de la correction.
+
 ## Procédures, stockage et limites
 
 Démarrage Pagup, readiness, frontière de navigation, cycle des dépôts, protocole Codex/Claude, confidentialité DWR, calendrier, stockage et applicabilité visuelle ont été consultés. `context.json` privé consigne les documents réellement lus, les portions lues, la révision disponible et les limites, dont les sorties initialement tronquées. Le doctor est rouge pour des configurations hors de ce mandat ; Python et les commandes réellement nécessaires fonctionnent. La revue mensuelle des outils n’est pas due. Aucun outil n’a été mis à jour.
@@ -85,4 +106,4 @@ La date M2 est une borne d’admissibilité déjà documentée, pas une nouvelle
 
 ## Prochaine action
 
-Revue locale du paquet et de ses preuves. Les dix interrogations échouées et l’absence de rapprochement transactionnel restent des limites explicites. Toute nouvelle passe réseau doit conserver l’échantillon et comptabiliser ses budgets ; toute publication ou livraison externe exige son autorisation propre. Le résultat actuel reste une corroboration documentaire ponctuelle dans M1.
+Lire le verdict final indépendant lié au candidat exact avant toute décision de livraison. Les dix interrogations échouées et l’absence de rapprochement transactionnel restent des limites explicites. Toute nouvelle passe réseau doit conserver l’échantillon et comptabiliser ses budgets ; toute publication ou livraison externe exige son autorisation propre. Le résultat actuel reste une corroboration documentaire ponctuelle dans M1.

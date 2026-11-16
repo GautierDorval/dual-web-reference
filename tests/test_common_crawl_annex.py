@@ -2,6 +2,8 @@
 import base64
 import gzip
 import hashlib
+import http.client
+from contextlib import contextmanager
 import importlib.util
 import io
 import json
@@ -20,8 +22,8 @@ URL = 'https://example.org/llms.txt'
 CDX = {'url':URL,'timestamp':'20261015000000','status':'200','digest':base64.b32encode(hashlib.sha1(b'hello\r\n').digest()).decode()}
 
 
-def warc(body=b'hello\r\n', kind='response', extra='', status=200, url=URL, date='2026-10-15T00:00:00Z'):
-    http = (f'HTTP/1.1 {status} OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {len(body)}\r\n\r\n').encode()+body
+def warc(body=b'hello\r\n', kind='response', extra='', status=200, url=URL, date='2026-10-15T00:00:00Z', http_extra=''):
+    http = (f'HTTP/1.1 {status} OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {len(body)}\r\n'+http_extra+'\r\n').encode()+body
     head = (f'WARC/1.0\r\nWARC-Type: {kind}\r\nWARC-Target-URI: {url}\r\nWARC-Date: {date}\r\nContent-Length: {len(http)}\r\n'+extra+'\r\n').encode()
     return gzip.compress(head+http+b'\r\n\r\n')
 
@@ -289,6 +291,159 @@ class ReviewRegressionTests(unittest.TestCase):
             nested.write_bytes(b'{"proof":"modified"}')
             with self.assertRaisesRegex(ValueError,'artifact mismatch'):
                 cc.verify(folder)
+
+
+
+class AuditRegressionTests(unittest.TestCase):
+    @contextmanager
+    def collection(self, mode='valid'):
+        selection=json.loads((cc.ROOT/'annexes/common-crawl-20261116/selection.json').read_text(encoding='utf-8'))
+        selection['sample']=selection['sample'][:5]
+        selection['indexes']=selection['indexes'][:1]
+        url=selection['sample'][0]['url']
+        raw=warc(url=url)
+        row=dict(CDX,url=url,offset='0',length=str(len(raw)),
+                 filename=f"crawl-data/{selection['indexes'][0]['id']}/segments/fixture/fixture.warc.gz")
+        calls=[]
+
+        class LocalSocket:
+            def __init__(self, wire): self.wire=wire
+            def makefile(self, *args, **kwargs): return io.BytesIO(self.wire)
+
+        def framed(body, declared=None, chunked=False):
+            framing='Transfer-Encoding: chunked' if chunked else f'Content-Length: {len(body) if declared is None else declared}'
+            response=http.client.HTTPResponse(LocalSocket(f'HTTP/1.1 200 OK\r\n{framing}\r\n\r\n'.encode()+body))
+            response.begin()
+            response.code=response.status
+            return response
+
+        class Opener:
+            def open(self, request, **kwargs):
+                calls.append(request.full_url)
+                if request.full_url.endswith('/collinfo.json'):
+                    if mode=='catalog_interrupt': raise KeyboardInterrupt('synthetic interruption')
+                    return FakeResponse(200,b'[]')
+                if request.get_header('Range'):
+                    total=1 if mode=='bad_range_total' else len(raw)
+                    return FakeResponse(206,raw,{'Content-Range':f'bytes 0-{len(raw)-1}/{total}'})
+                query_url=parse_qs(cc.urlsplit(request.full_url).query)['url'][0]
+                if query_url!=url:
+                    return FakeResponse(404,json.dumps({'message':'No Captures found for: '+query_url}).encode())
+                if mode=='bad_status': raise http.client.BadStatusLine('synthetic malformed status')
+                if mode=='chunked_cut': return framed(b'3\r\nabc\r\n8\r\ncut',chunked=True)
+                record=dict(row,url=url+'?variant') if mode=='short_variant' else row
+                body=json.dumps(record).encode()+b'\n'
+                return framed(body,len(body)+80 if mode.startswith('short_') else None)
+
+        transport=cc.Transport
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            selection_path=root/'selection.json'
+            cc.write_json(selection_path,selection)
+            output=root/'run'
+            code=None;exception=None
+            try:
+                with patch.object(cc,'Transport',lambda folder,budget: transport(folder,budget,Opener(),lambda _:None)), \
+                     patch('socket.socket',side_effect=AssertionError('network is disabled')):
+                    code=cc.collect(selection_path,output)
+            except BaseException as exc:
+                exception=type(exc).__name__
+            cc.verify(output)
+            requests_path=output/'requests.json'
+            yield {'root':root,'run':output,'code':code,'exception':exception,'calls':len(calls),
+                   'summary':json.loads((output/'summary.json').read_text(encoding='utf-8')),
+                   'queries':json.loads((output/'queries.json').read_text(encoding='utf-8')),
+                   'captures':json.loads((output/'captures.json').read_text(encoding='utf-8')),
+                   'requests':json.loads(requests_path.read_text(encoding='utf-8')) if requests_path.exists() else []}
+
+    def test_truncated_cdx_cannot_become_absence_or_complete(self):
+        for mode in ['short_exact','short_variant']:
+            with self.subTest(mode=mode), self.collection(mode) as result:
+                self.assertEqual(result['code'],2)
+                self.assertIsNone(result['exception'])
+                self.assertFalse(result['queries'][0]['complete'])
+                self.assertEqual(result['queries'][0]['state'],'query_failed_or_incomplete')
+                self.assertEqual(result['summary']['queries_complete'],4)
+                self.assertEqual(result['captures'],[])
+
+    def test_framed_complete_response_preserves_success(self):
+        with self.collection() as result:
+            self.assertEqual(result['code'],0)
+            self.assertIsNone(result['exception'])
+            self.assertEqual(result['summary']['queries_complete'],5)
+            self.assertEqual(result['captures'][0]['state'],'content_retrieved_comparable')
+            self.assertEqual(result['calls'],len(result['requests']))
+
+    def test_incomplete_chunk_keeps_attempt_and_exposed_bytes(self):
+        with self.collection('chunked_cut') as result:
+            self.assertEqual(result['code'],2)
+            self.assertIsNone(result['exception'])
+            self.assertEqual(result['calls'],2)
+            self.assertEqual(len(result['requests']),2)
+            self.assertEqual(result['summary']['stop_reason'],'transport_failure')
+            receipt=result['requests'][-1]
+            self.assertIn('IncompleteRead',receipt['error'])
+            self.assertEqual((result['run']/receipt['body_path']).read_bytes(),b'abc')
+            self.assertFalse(receipt['complete'])
+            self.assertFalse(result['summary']['download_bytes_exact'])
+
+    def test_catalog_interrupt_is_journaled_and_propagated(self):
+        with self.collection('catalog_interrupt') as result:
+            self.assertEqual(result['exception'],'KeyboardInterrupt')
+            self.assertIsNone(result['code'])
+            self.assertEqual(result['calls'],1)
+            self.assertEqual(len(result['requests']),1)
+            self.assertEqual(result['summary']['catalog_requests'],1)
+            self.assertEqual(result['summary']['stop_reason'],'interrupted')
+            self.assertIn('KeyboardInterrupt',result['requests'][0]['error'])
+
+    def test_http_protocol_exception_stops_with_receipt(self):
+        with self.collection('bad_status') as result:
+            self.assertEqual(result['code'],2)
+            self.assertIsNone(result['exception'])
+            self.assertEqual(result['calls'],len(result['requests']))
+            self.assertEqual(result['summary']['stop_reason'],'transport_failure')
+            self.assertIn('BadStatusLine',result['requests'][-1]['error'])
+
+    def test_replay_refuses_output_under_either_input_root(self):
+        with self.collection() as result:
+            run=result['run'];before=(run/'manifest.json').read_bytes()
+            for output in [run,run/'analysis']:
+                with self.subTest(output=output.name), self.assertRaises(ValueError):
+                    cc.analyze_cached(run,output)
+                self.assertEqual((run/'manifest.json').read_bytes(),before)
+                cc.verify(run)
+            self.assertFalse((run/'analysis').exists())
+            snapshot=result['root']/'snapshot-input';snapshot.mkdir()
+            with self.assertRaises(ValueError):
+                cc.analyze_cached(run,snapshot/'analysis',snapshot)
+            self.assertEqual(list(snapshot.iterdir()),[])
+            cc.verify(run)
+
+    def test_http_lists_preserved_without_relaxing_framing(self):
+        repeated='Cache-Control: public\r\nCache-Control: max-age=300\r\nVary: Accept-Encoding\r\nVary: Accept-Language\r\n'
+        result,artifacts=cc.inspect_warc(warc(http_extra=repeated),CDX,WINDOWS)
+        self.assertEqual(result['state'],'content_retrieved_comparable')
+        self.assertEqual(artifacts['payload.bin'],b'hello\r\n')
+        self.assertEqual(result['http_headers']['cache-control'],['public','max-age=300'])
+        self.assertEqual(result['http_headers']['vary'],['Accept-Encoding','Accept-Language'])
+        for field in ['Content-Length: 7','Content-Type: text/plain']:
+            result,_=cc.inspect_warc(warc(http_extra=field+'\r\n'),CDX,WINDOWS)
+            self.assertEqual(result['state'],'content_partial_redirect_or_revisit')
+            self.assertIn('ambiguous_duplicate_header',result['issues'])
+
+    def test_invalid_range_total_refused_in_collect_and_replay(self):
+        with self.collection('bad_range_total') as result:
+            self.assertEqual(result['code'],2)
+            self.assertEqual(result['captures'][0]['state'],'capture_content_not_retrieved')
+            replay=result['root']/'analysis'
+            cc.analyze_cached(result['run'],replay)
+            capture=json.loads((replay/'captures.json').read_text(encoding='utf-8'))[0]
+            self.assertEqual(capture['state'],'capture_content_not_retrieved')
+            self.assertEqual(capture['retrieval_issue'],'invalid_or_incomplete_range_response')
+        for total,expected in [(0,False),(11,False),(12,True)]:
+            meta={'status':206,'complete':True,'headers':{'Content-Range':f'bytes 9-11/{total}'}}
+            self.assertEqual(cc.range_valid(meta,b'abc',{'offset':'9','length':'3'}),expected)
 
 
 if __name__ == '__main__':

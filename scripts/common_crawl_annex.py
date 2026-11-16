@@ -12,6 +12,7 @@ from datetime import UTC, datetime
 from email.message import Message
 import gzip
 import hashlib
+from http.client import HTTPException, IncompleteRead
 import io
 import json
 import os
@@ -24,7 +25,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 ROOT = Path(__file__).resolve().parents[1]
 MAX_BYTES = 100 * 1024 * 1024
 MAX_EXPANDED = 16 * 1024 * 1024
@@ -136,6 +137,11 @@ class Transport:
             headers['Range'] = range_header
         body = b''
         response = None
+        allowance = min(cap + 1, self.budget['max_download_bytes'] - self.bytes)
+        meta.update({'body_path':f'raw/{number:03d}.bin', 'download_bytes_exact':True})
+        # Persist the dispatched attempt before I/O, including catalog requests.
+        self.requests.append(meta)
+        write_json(self.output/'requests.json', self.requests)
         try:
             try:
                 response = self.opener.open(Request(url, headers=headers), timeout=30)
@@ -148,31 +154,46 @@ class Transport:
                     meta['error'] = 'range_ignored_body_not_read'
                     self.stop_reason = 'range_ignored'
                 else:
-                    allowance = min(cap + 1, self.budget['max_download_bytes'] - self.bytes)
                     body = response.read(allowance)
-                    # A cap-sized unknown-length response is conservatively incomplete.
+                    # Bounded HTTPResponse.read(n) can return a short body without
+                    # raising IncompleteRead. A declared length is independent proof.
+                    lengths = [v for k,v in response.headers.items() if k.lower() == 'content-length']
                     meta['complete'] = len(body) < allowance and len(body) <= cap
-        except (URLError, OSError, TimeoutError) as exc:
-            meta['error'] = type(exc).__name__ + ': ' + str(exc)
-            # No transport fallback or retry after a connection failure.
+                    if lengths:
+                        if len(lengths) != 1 or re.fullmatch(r'[0-9]+', lengths[0]) is None:
+                            meta.update(complete=False, error='invalid_content_length')
+                        elif len(body) != int(lengths[0]):
+                            meta.update(complete=False, error='content_length_mismatch')
+        except IncompleteRead as exc:
+            # httplib exposes completed chunks but may discard the current chunk.
+            # Preserve what it exposes; the byte count is then only a lower bound.
+            body = exc.partial[:allowance]
+            meta.update(complete=False, error=type(exc).__name__ + ': ' + str(exc), download_bytes_exact=False)
             self.stop_reason = 'transport_failure'
-        self.bytes += len(body)
-        meta.update({'finished_at_utc':utcnow(), 'bytes':len(body), 'sha256':digest(body)})
-        meta['body_path'] = f'raw/{number:03d}.bin'
-        (self.output / meta['body_path']).write_bytes(body)
-        if meta['status'] in (403, 429, 503):
-            self.stop_reason = f'provider_stop_http_{meta["status"]}'
-            meta['retry_after'] = next((v for k,v in meta['headers'].items() if k.lower() == 'retry-after'), None)
-            # Stopping, with no retry, honors Retry-After without assuming a shorter delay.
-        if self.bytes >= self.budget['max_download_bytes']:
-            self.stop_reason = 'download_budget_exhausted'
-        self.requests.append(meta)
-        write_json(self.output/'requests.json', self.requests)
-        print(f'{meta["request_id"]} {kind} status={meta["status"]} bytes={len(body)} stop={self.stop_reason}', flush=True)
+        except (HTTPException, URLError, OSError, TimeoutError) as exc:
+            meta.update(complete=False, error=type(exc).__name__ + ': ' + str(exc), download_bytes_exact=False)
+            # No transport fallback or retry after a connection/protocol failure.
+            self.stop_reason = 'transport_failure'
+        except (KeyboardInterrupt, SystemExit) as exc:
+            meta.update(complete=False, error=type(exc).__name__ + ': ' + str(exc), download_bytes_exact=False)
+            self.stop_reason = 'interrupted'
+            raise
+        finally:
+            self.bytes += len(body)
+            meta.update({'finished_at_utc':utcnow(), 'bytes':len(body), 'sha256':digest(body)})
+            (self.output / meta['body_path']).write_bytes(body)
+            if meta['status'] in (403, 429, 503):
+                self.stop_reason = self.stop_reason or f'provider_stop_http_{meta["status"]}'
+                meta['retry_after'] = next((v for k,v in meta['headers'].items() if k.lower() == 'retry-after'), None)
+                # Stopping, with no retry, honors Retry-After without assuming a shorter delay.
+            if self.bytes >= self.budget['max_download_bytes']:
+                self.stop_reason = self.stop_reason or 'download_budget_exhausted'
+            write_json(self.output/'requests.json', self.requests)
+            print(f'{meta["request_id"]} {kind} status={meta["status"]} bytes={len(body)} stop={self.stop_reason}', flush=True)
         return meta, body
 
 
-def split_headers(data):
+def split_headers(data, http=False):
     raw, separator, body = data.partition(b'\r\n\r\n')
     if not separator or len(raw) > 65536:
         raise ValueError('missing_or_oversize_headers')
@@ -184,9 +205,10 @@ def split_headers(data):
         if not sep:
             raise ValueError('invalid_header')
         if key in headers:
-            # Common Crawl repeats WARC-Protocol (HTTP/TLS); WARC allows concurrent-to.
-            # Repeated HTTP list fields/cookies are also legal; framing fields stay strict.
-            if key not in {'warc-protocol', 'warc-concurrent-to', 'set-cookie', 'link', 'warning', 'via', 'server-timing'}:
+            # Keep HTTP list fields verbatim; fields used to interpret the body
+            # remain single-valued. WARC repetition follows its separate rules.
+            critical = {'content-length', 'content-type', 'content-encoding', 'transfer-encoding', 'location'}
+            if (http and key in critical) or (not http and key not in {'warc-protocol', 'warc-concurrent-to'}):
                 raise ValueError('ambiguous_duplicate_header')
             prior = headers[key]
             headers[key] = (prior if isinstance(prior, list) else [prior]) + [value.strip()]
@@ -235,7 +257,7 @@ def inspect_warc(data, cdx, windows, expanded_limit=MAX_EXPANDED):
             result['issues'].append('revisit_requires_resolution' if warc.get('warc-type') == 'revisit' else 'not_response')
             return result, artifacts
         artifacts['http-message.bin'] = block
-        status_line, http, payload = split_headers(block)
+        status_line, http, payload = split_headers(block, http=True)
         match = re.fullmatch(r'HTTP/\d(?:\.\d)? (\d{3})(?: .*)?', status_line)
         if not match:
             raise ValueError('invalid_http_status')
@@ -377,9 +399,7 @@ def collect(selection_path, output):
                     continue
                 meta, data = response
                 capture['request_id'] = meta['request_id']
-                content_range = next((v for k,v in meta['headers'].items() if k.lower()=='content-range'),'')
-                if (meta['status'] != 206 or not meta['complete'] or len(data) != length
-                        or not re.fullmatch(rf'bytes {offset}-{offset+length-1}/\d+', content_range)):
+                if not range_valid(meta, data, row):
                     capture['retrieval_issue'] = 'invalid_or_incomplete_range_response'
                     continue
                 inspection, artifacts = inspect_warc(data, row, selection['windows'], selection['budget']['max_record_uncompressed_bytes'])
@@ -396,6 +416,9 @@ def collect(selection_path, output):
                 capture['deployment_at_capture'] = 'not established; digest equality would not establish deployment time'
             except (ValueError, KeyError, TypeError) as exc:
                 capture['retrieval_issue'] = str(exc)
+    except BaseException as exc:
+        transport.stop_reason = transport.stop_reason or ('interrupted' if isinstance(exc, (KeyboardInterrupt, SystemExit)) else 'collection_aborted')
+        raise
     finally:
         write_json(output/'queries.json', queries)
         write_json(output/'captures.json', captures)
@@ -403,6 +426,7 @@ def collect(selection_path, output):
                    'indexes_selected':len(selection['indexes']),'queries_planned':len(selection['sample'])*len(selection['indexes']),
                    'index_requests':transport.index_requests,'catalog_requests':sum(r['kind']=='catalog' for r in transport.requests),
                    'warc_requests':transport.warc_requests,'download_bytes':transport.bytes,
+                   'download_bytes_exact':all(r.get('download_bytes_exact',True) for r in transport.requests),
                    'queries_complete':sum(q['complete'] for q in queries),'captures':len(captures),
                    'comparable_captures':sum(c['state']=='content_retrieved_comparable' for c in captures),
                    'stop_reason':transport.stop_reason,'selection_sha256':digest(selection_bytes)})
@@ -445,10 +469,18 @@ def source_digest_matches(data, expected):
 
 
 def range_valid(meta, data, cdx):
-    offset, length = int(cdx['offset']), int(cdx['length'])
-    header = next((v for k,v in meta['headers'].items() if k.lower()=='content-range'),'')
-    return (meta['status']==206 and meta['complete'] and len(data)==length
-            and re.fullmatch(rf'bytes {offset}-{offset+length-1}/\d+',header) is not None)
+    try:
+        offset, length = int(cdx['offset']), int(cdx['length'])
+        header = next((v for k,v in meta['headers'].items() if k.lower()=='content-range'),'')
+        match = re.fullmatch(r'bytes ([0-9]+)-([0-9]+)/([0-9]+)', header)
+        if not match:
+            return False
+        start, end, total = map(int, match.groups())
+        return (meta['status']==206 and meta['complete'] and len(data)==length
+                and 0 < length <= MAX_EXPANDED and 0 <= start <= end < total
+                and start==offset and end==offset+length-1)
+    except (ValueError, TypeError, KeyError):
+        return False
 
 
 def window_state(captures, complete, window):
@@ -467,10 +499,13 @@ def window_state(captures, complete, window):
 
 def analyze_cached(run, output, snapshot_root=None):
     """Re-analyze immutable downloaded bytes; never creates a Transport."""
+    run, output = run.resolve(), output.resolve()
+    if snapshot_root is not None:
+        snapshot_root = snapshot_root.resolve()
+    for protected in [ROOT, run] + ([snapshot_root] if snapshot_root is not None else []):
+        if output == protected or protected in output.parents:
+            raise ValueError('analysis output must stay outside repository and input roots')
     verify(run)
-    output=output.resolve()
-    if output == ROOT or ROOT in output.parents:
-        raise ValueError('private analysis must stay outside repository')
     selection=json.loads((run/'selection.json').read_text(encoding='utf-8'))
     validate_selection(selection)
     queries=json.loads((run/'queries.json').read_text(encoding='utf-8'))

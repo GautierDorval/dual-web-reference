@@ -2,17 +2,17 @@
   "consulted_on": "2026-11-16",
   "tools": {
     "python": "3.14.9",
-    "utility_version": "1.0.2",
+    "utility_version": "1.0.3",
     "external_python_dependencies": []
   },
   "repository_files": [
     {
       "path": "scripts/common_crawl_annex.py",
-      "sha256": "8ac84e7f83023cd136d36ae83b245e81dce0db526744a0881fda5ae054683871"
+      "sha256": "295128e95be56d6c14e16e081243ea04fcd838b9273f4c687afbf5da8bc9f43b"
     },
     {
       "path": "tests/test_common_crawl_annex.py",
-      "sha256": "9acd89eea5830214ac9131ebc2ee18d82bf299604521db996a3b5d78ec34bdd6"
+      "sha256": "df2df38a18fcaf6769902e454167f6dc19c5bdefa8cda0d249f2da5924032f13"
     },
     {
       "path": "config/edition-calendar.json",
