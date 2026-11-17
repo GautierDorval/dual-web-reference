@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from tests import __init__
-from tests.test_next_edition import prepare_inputs
+from tests.test_next_edition import prepare_inputs, prepare_projection_fixture
 from dwr import dates, edition_rules, future_projection, joint, maintenance, measurement, pipeline, png, project, render, revisions, write_guard
 from dwr.common import REPO_ROOT, DwrError, canonical_json, load_json, write_json, write_text
 
@@ -173,7 +173,7 @@ class EpochAndContract(unittest.TestCase):
             for row in norm["joint_rows"]:
                 row.setdefault("classifier_version",norm["measurement_provenance"]["days"][row["date_utc"]]["epochs"][0]["classifier_version"])
             write_json(path,norm)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["preparation_status"],"complete_private",result)
             target=private/"preparation/candidates"/eid
             catalog=load_json(target/"payload/catalog.json")
@@ -260,14 +260,14 @@ class MonthlyCursor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             private=Path(tmp);eid=prepare_inputs(private)
             with patch.object(maintenance,"atomic_json",side_effect=RuntimeError("synthetic state interruption")),self.assertRaises(RuntimeError):
-                maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+                prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             target=private/"preparation/candidates"/eid
             before=write_guard.fingerprint(target)
-            recovered=maintenance.prepare(private,datetime(2026,11,18,tzinfo=timezone.utc))
+            recovered=prepare_projection_fixture(private,datetime(2026,11,18,tzinfo=timezone.utc))
             self.assertTrue(recovered["recovered_existing_candidate"])
             self.assertNotEqual(recovered["outcome"],"unchanged")
             self.assertEqual(before,write_guard.fingerprint(target))
-            repeated=maintenance.prepare(private,datetime(2026,11,19,tzinfo=timezone.utc))
+            repeated=prepare_projection_fixture(private,datetime(2026,11,19,tzinfo=timezone.utc))
             self.assertEqual(repeated["outcome"],"unchanged")
             self.assertEqual(load_json(private/"preparation/status.json")["latest_available_data_date"],"2026-11-14")
 
@@ -282,14 +282,14 @@ class MonthlyCursor(unittest.TestCase):
             counts=joint.path_counts(norm["joint_rows"])
             for resource in qual["resources"]:resource["counts"]=counts.get((resource["site_id"],resource["path"]))
             write_json(path/"normalized.json",norm);write_json(path/"qualified.json",qual)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["preparation_status"],"complete_private",result)
             statepath=private/"preparation/status.json";state=load_json(statepath)
             self.assertEqual(state["latest_available_data_date"],"2026-11-13")
             self.assertEqual(state["last_processed_window_end_exclusive"],"2026-11-15")
             # Synthetic explicit disposition; no approval or promotion operation.
             state["pending_window_start"]=None;write_json(statepath,state)
-            result=maintenance.prepare(private,datetime(2026,12,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,12,17,tzinfo=timezone.utc))
             self.assertEqual(result["edition_id"],"2026-11-15_2026-12-15-r1")
             self.assertEqual(result["outcome"],"source_unavailable")
             self.assertEqual(load_json(statepath)["latest_available_data_date"],"2026-11-13")
@@ -298,13 +298,13 @@ class MonthlyCursor(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             private=Path(tmp);eid=prepare_inputs(private)
             with patch.object(maintenance.render,"render_figures",side_effect=OSError("synthetic")):
-                result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+                result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["outcome"],"validation_failed")
             self.assertFalse((private/"preparation/candidates"/eid).exists())
             self.assertEqual(list((private/"preparation/candidates").iterdir()),[])
             statepath=private/"preparation/status.json";state=load_json(statepath)
             state["pending_window_start"]="2026-11-14";write_json(statepath,state)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["outcome"],"validation_failed")
             self.assertEqual(result["reason"],"monthly_window_not_anchored")
 
@@ -315,4 +315,4 @@ class MonthlyCursor(unittest.TestCase):
             self.assertEqual((window.days,window.end_exclusive.isoformat()),(days,end))
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);write_text(root/"preparation/preparation.lock","synthetic stale lock")
-            with self.assertRaises(DwrError):maintenance.prepare(root)
+            with self.assertRaises(DwrError):prepare_projection_fixture(root)

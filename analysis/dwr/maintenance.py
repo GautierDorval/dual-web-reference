@@ -182,9 +182,9 @@ def _prepare_locked(private, now):
         normalized, qualified = (load_json(inputs / name) for name in names)
         if normalized.get("edition_id") != edition_id or qualified.get("edition_id") != edition_id:
             raise DwrError("source_edition_mismatch")
-        if normalized.get("source_provenance_contract") == "private-next-inputs/1.0.0":
-            from .next_inputs import verify_preparation_inputs
-            verify_preparation_inputs(private, normalized, qualified)
+        # Admission belongs to this command, never to an optional input marker.
+        from .next_inputs import verify_preparation_inputs
+        verify_preparation_inputs(private, normalized, qualified)
         validate_inputs(normalized, qualified, window)
         manifest = {name: sha256_file(inputs / name) for name in names}
         manifest.update({p.relative_to(REPO_ROOT).as_posix(): sha256_file(p) for folder in ("analysis/dwr", "config")

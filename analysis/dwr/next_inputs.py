@@ -170,7 +170,9 @@ def normalize(private, *, verify_only=False):
                 {"site_id": r["domain"], "path": r["path"], "producer_category": r["category"], "window_rows": 0}
                 for r in data["q03_registry"] if (r["domain"], r["path"]) not in seen],
         }
-        expected_daily = {(str(day), site) for day in period.dates() for site in SITE_IDS}
+        # GROUP BY omits a site/day with no producer rows. Match the observed
+        # groups; only an available archive can attest a zero for a missing one.
+        expected_daily = {(r["date_utc"], r["site_id"]) for r in rows}
         if (len(marginals["daily"]) != len(expected_daily)
                 or {(r["date_utc"], r["site_id"]) for r in marginals["daily"]} != expected_daily):
             raise DwrError("daily_rows_incomplete")
@@ -188,7 +190,8 @@ def normalize(private, *, verify_only=False):
         for day in inventory["days"]:
             if day["archive_status"] == "archived" and day["aggregate_count"] != by_day[day["date_utc"]]:
                 raise DwrError("archive_joint_daily_mismatch", day["date_utc"])
-            if day["archive_status"] == "archived" and day["site_counts"] != dict(by_site_day[day["date_utc"]]):
+            observed = {site: by_site_day[day["date_utc"]].get(site, 0) for site in SITE_IDS}
+            if day["archive_status"] == "archived" and day["site_counts"] != observed:
                 raise DwrError("archive_joint_site_daily_mismatch", day["date_utc"])
         digest = sha256_file(acquisition / "acquisition-log.json")
         normalized = {
@@ -235,6 +238,8 @@ def qualify_next(private):
 
 def verify_preparation_inputs(private, normalized, qualified):
     """Recompute this contract's inputs before preparing a private candidate."""
+    if normalized.get("source_provenance_contract") != "private-next-inputs/1.0.0":
+        raise DwrError("source_provenance_contract_required")
     if normalized != normalize(private, verify_only=True):
         raise DwrError("normalized_inputs_differ_from_sources")
     if qualified != qualify.qualify(normalized, private):

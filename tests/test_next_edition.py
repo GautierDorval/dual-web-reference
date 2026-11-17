@@ -4,9 +4,21 @@ import unittest
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import patch
 from tests import __init__
 from dwr import dates, joint, maintenance, qualify
 from dwr.common import REPO_ROOT, SITE_IDS, load_json, write_json, sha256_file
+
+
+def prepare_projection_fixture(private, now=None):
+    """Exercise projection/state rules after simulated admission, never source trust.
+
+    These hand-built epoch fixtures cannot be produced by the current rollup
+    schema. Source admission is exercised without this double by the SQLite
+    receipts in test_private_next_inputs.
+    """
+    with patch("dwr.next_inputs.verify_preparation_inputs"):
+        return maintenance.prepare(private, now)
 
 
 def prepare_inputs(private, *, protected=False):
@@ -55,7 +67,7 @@ class ManualPreparationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp);eid=prepare_inputs(private)
             before={p:sha256_file(REPO_ROOT/p) for p in ("data/status.json","data/latest.json","config/editions.json")}
-            first=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            first=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(first["outcome"],"distribution_blocked_pending_policy_approval",first)
             target=private/"preparation/candidates"/eid
             report=load_json(target/"measurement-report.json")
@@ -69,7 +81,7 @@ class ManualPreparationTests(unittest.TestCase):
             self.assertTrue(all(r["request_count"]=="" and r["observation_status"]=="observation_unavailable" for r in unavailable))
 
             self.assertEqual(len(list((target/"figures").glob("*.svg"))),48)
-            second=maintenance.prepare(private,datetime(2026,11,18,tzinfo=timezone.utc))
+            second=prepare_projection_fixture(private,datetime(2026,11,18,tzinfo=timezone.utc))
             self.assertEqual(second["outcome"],"unchanged",second)
             self.assertEqual(load_json(private/"preparation/status.json")["latest_available_data_date"],"2026-11-14")
             self.assertEqual(before,{p:sha256_file(REPO_ROOT/p) for p in before})
@@ -78,9 +90,9 @@ class ManualPreparationTests(unittest.TestCase):
     def test_no_skipped_window_no_freshness_on_unavailable_and_consolidation_boundary(self):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp)
-            before=maintenance.prepare(private,datetime(2026,11,16,23,59,59,tzinfo=timezone.utc))
+            before=prepare_projection_fixture(private,datetime(2026,11,16,23,59,59,tzinfo=timezone.utc))
             self.assertEqual(before["outcome"],"unchanged")
-            failed=maintenance.prepare(private,datetime(2027,2,1,tzinfo=timezone.utc))
+            failed=prepare_projection_fixture(private,datetime(2027,2,1,tzinfo=timezone.utc))
             self.assertEqual(failed["outcome"],"source_unavailable")
             self.assertEqual(failed["edition_id"],"2026-10-15_2026-11-15-r1")
             state=load_json(private/"preparation/status.json")
@@ -90,7 +102,7 @@ class ManualPreparationTests(unittest.TestCase):
     def test_new_protected_cells_remain_private_with_blocked_distribution(self):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp);prepare_inputs(private,protected=True)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["outcome"],"distribution_blocked_pending_contract",result)
             self.assertEqual(result["distribution_status"],"not_assessed")
             self.assertFalse(result["public_mutation"])
@@ -100,6 +112,6 @@ class ManualPreparationTests(unittest.TestCase):
             private=Path(temp);eid=prepare_inputs(private)
             p=private/"working"/eid/"normalized.json";n=load_json(p)
             n["joint_rows"][0]["request_count"]=-1;write_json(p,n)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result["outcome"],"validation_failed")
             self.assertFalse((private/"preparation/candidates"/eid).exists())

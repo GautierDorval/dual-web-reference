@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 from tests import __init__
 from tests import test_corrective_controls as controls
-from tests.test_next_edition import prepare_inputs
+from tests.test_next_edition import prepare_inputs, prepare_projection_fixture
 from dwr import typo, common, disclosure, edition_rules, frozen, maintenance, pipeline, render, site_build, verify
 from dwr.common import REPO_ROOT, DwrError, load_json, write_json, read_csv
 
@@ -133,10 +133,10 @@ class AuditFollowupTests(unittest.TestCase):
     def test_preparation_refuses_changed_inputs_even_when_counts_still_match(self):
         with tempfile.TemporaryDirectory() as temp:
             private=Path(temp);eid=prepare_inputs(private)
-            self.assertEqual(maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))['outcome'],'distribution_blocked_pending_policy_approval')
+            self.assertEqual(prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))['outcome'],'distribution_blocked_pending_policy_approval')
             path=private/'working'/eid/'normalized.json';source=load_json(path)
             source['joint_extracted_at']['end']='2026-11-17T00:00:02Z';write_json(path,source)
-            result=maintenance.prepare(private,datetime(2026,11,18,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,18,tzinfo=timezone.utc))
             self.assertEqual(result['outcome'],'validation_failed')
             self.assertEqual(result['reason'],'existing_candidate_changed_inputs_requires_revision')
 
@@ -146,7 +146,7 @@ class AuditFollowupTests(unittest.TestCase):
                 private=Path(temp);eid=prepare_inputs(private);path=private/'working'/eid/'normalized.json';source=load_json(path)
                 if key=='archive_inventory':source[key]['days'][0]['aggregate_count']=999
                 else:source[key]['daily'][0]['all_requests']=999
-                write_json(path,source);result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+                write_json(path,source);result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
                 self.assertEqual(result['outcome'],'validation_failed');self.assertEqual(result['reason'],reason)
                 self.assertFalse((private/'preparation/candidates'/eid).exists())
                 self.assertEqual(load_json(private/'preparation/status.json')['latest_available_data_date'],'2026-10-14')
@@ -168,7 +168,7 @@ class AuditFollowupTests(unittest.TestCase):
                 from dwr import public_checks
                 if target=='check_tables':ctx=patch.object(verify,target,side_effect=lambda report,directory:report.add('synthetic_invalid_schema',False))
                 else:ctx=patch.object(public_checks,target,return_value={'synthetic_marginal_error':False})
-                with ctx:result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+                with ctx:result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
                 self.assertEqual(result['outcome'],'validation_failed')
                 self.assertEqual(result['reason'],'prepared_projection_schema_or_reconciliation_failed')
 
@@ -234,7 +234,7 @@ class AuditFollowupTests(unittest.TestCase):
             resource=next(r for r in source['resources'] if r.get('counts'))
             resource['counts']['days']+=1
             write_json(path,source)
-            result=maintenance.prepare(private,datetime(2026,11,17,tzinfo=timezone.utc))
+            result=prepare_projection_fixture(private,datetime(2026,11,17,tzinfo=timezone.utc))
             self.assertEqual(result['outcome'],'validation_failed')
             self.assertEqual(result['reason'],'qualified_counts_differ_from_joint')
 

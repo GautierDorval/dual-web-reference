@@ -75,7 +75,7 @@ class PrivateNextInputsTests(unittest.TestCase):
             return next_inputs.acquire_next(self.private, execute=True,
                                            confirm_scope="2026-10-15..2026-11-15", now=NOW)
 
-    def make_archive(self):
+    def make_archive(self, *, omit_site_day=None):
         tables = {name: [] for name in archive.TABLES}
         for day in self.period.dates():
             stamp = str(day)
@@ -92,7 +92,12 @@ class PrivateNextInputsTests(unittest.TestCase):
             tables["windows"].append({"snapshot_id": sid, "report_date": stamp, "kind": "coverage", "window_index": 0,
                                        "start": stamp + "T00:00:00Z", "end_exclusive": stamp + "T23:59:59Z", "source": "synthetic"})
             for site in SITE_IDS:
-                tables["site_counts"].append({"snapshot_id": sid, "report_date": stamp, "site": site, "count": count // 3})
+                if (stamp, site) == omit_site_day:
+                    continue
+                site_count = self.db.execute(
+                    "SELECT COALESCE(SUM(hits),0) FROM governance_daily_rollups WHERE event_date=? AND domain=?",
+                    (stamp, site)).fetchone()[0]
+                tables["site_counts"].append({"snapshot_id": sid, "report_date": stamp, "site": site, "count": site_count})
         files = []
         folder = self.private / "sources/archive"
         for month in ("2026-10", "2026-11"):
@@ -240,6 +245,67 @@ class PrivateNextInputsTests(unittest.TestCase):
         result = maintenance.prepare(self.private, NOW)
         self.assertEqual(result["reason"], "qualified_inputs_differ_from_sources")
         self.assertFalse((self.private / "preparation/candidates" / self.eid).exists())
+
+    def test_private_candidate_cannot_downgrade_source_contract(self):
+        self.capture(); next_inputs.normalize(self.private); next_inputs.qualify_next(self.private)
+        path = self.private / "working" / self.eid / "normalized.json"
+        original = load_json(path)
+        for marker in (None, "unknown-contract", "private-next-inputs/1.0.0"):
+            with self.subTest(marker=marker):
+                changed = copy.deepcopy(original)
+                changed["measurement_provenance"] = {"days": {str(day): {"epochs": [{
+                    "epoch_id": "invented", "classifier_version": "invented", "attribution_rules": "invented",
+                    "deployment_evidence": "invented"}]} for day in self.period.dates()}}
+                if marker is None:
+                    changed.pop("source_provenance_contract")
+                else:
+                    changed["source_provenance_contract"] = marker
+                write_json(path, changed)
+                result = maintenance.prepare(self.private, NOW)
+                expected = ("normalized_inputs_differ_from_sources" if marker == "private-next-inputs/1.0.0"
+                            else "source_provenance_contract_required")
+                self.assertEqual(result["reason"], expected, result)
+                self.assertFalse((self.private / "preparation/candidates" / self.eid).exists())
+                self.assertEqual(load_json(self.private / "preparation/status.json")["latest_available_data_date"], "2026-10-14")
+        write_json(path, original)
+        self.assertEqual(maintenance.prepare(self.private, NOW)["preparation_status"], "complete_private")
+
+    def test_archived_zero_site_day_passes_without_filling_missing_archives(self):
+        for stamp in ("2026-10-20", "2026-10-16"):
+            self.db.execute("DELETE FROM governance_daily_rollups WHERE event_date=? AND domain=?", (stamp, "pagup.com"))
+        self.make_archive()
+        self.capture(); next_inputs.normalize(self.private); next_inputs.qualify_next(self.private)
+        normalized = load_json(self.private / "working" / self.eid / "normalized.json")
+        self.assertFalse(any(r["date_utc"] == "2026-10-20" and r["site_id"] == "pagup.com"
+                             for r in normalized["marginals"]["daily"]))
+        day = next(d for d in normalized["archive_inventory"]["days"] if d["date_utc"] == "2026-10-20")
+        self.assertEqual(day["site_counts"]["pagup.com"], 0)
+        self.assertEqual(maintenance.prepare(self.private, NOW)["preparation_status"], "complete_private")
+        from dwr.common import read_csv
+        daily = read_csv(self.private / "preparation/candidates" / self.eid / "payload/daily-family-summary.csv")
+        missing = [r for r in daily if r["date_utc"] == "2026-10-16"]
+        self.assertTrue(missing)
+        self.assertTrue(all(r["request_count"] == "" and r["observation_status"] == "observation_unavailable" for r in missing))
+
+    def test_zero_site_day_requires_explicit_archive_site_count(self):
+        stamp, site = "2026-10-20", "pagup.com"
+        self.db.execute("DELETE FROM governance_daily_rollups WHERE event_date=? AND domain=?", (stamp, site))
+        self.make_archive(omit_site_day=(stamp, site))
+        self.capture()
+        with self.assertRaisesRegex(DwrError, "archive_joint_site_daily_mismatch"):
+            next_inputs.normalize(self.private)
+
+    def test_missing_positive_sql_group_is_not_treated_as_zero(self):
+        actual_client = self.client
+        def truncated(config, sql):
+            rows, meta, elapsed = actual_client(config, sql)
+            if sql.startswith("SELECT event_date AS date_utc"):
+                rows = rows[1:]
+            return rows, meta, elapsed
+        with patch.object(self, "client", side_effect=truncated):
+            self.capture()
+        with self.assertRaisesRegex(DwrError, "daily_rows_incomplete"):
+            next_inputs.normalize(self.private)
 
     def test_acquisition_source_and_client_version_are_bound(self):
         path = self.private / "lock/acquisition-config.json"
