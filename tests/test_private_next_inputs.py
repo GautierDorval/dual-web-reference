@@ -2,9 +2,11 @@
 import copy
 import csv
 import json
+import os
 import sqlite3
 import subprocess
 import tempfile
+import threading
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -291,6 +293,65 @@ class PrivateNextInputsTests(unittest.TestCase):
         with self.assertRaisesRegex(DwrError, "private_root_inside_public_repository"):
             with next_inputs.input_lock(REPO_ROOT):
                 self.fail("public destination admitted")
+
+    @unittest.skipUnless(os.name == "nt", "Native Windows directory sharing lock")
+    def test_real_windows_directory_lock_clears_before_atomic_install(self):
+        import ctypes
+        from ctypes import wintypes
+        source, target = self.private / "locked", self.private / "installed"
+        source.mkdir()
+        create = ctypes.windll.kernel32.CreateFileW
+        create.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p,
+                           wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        create.restype = wintypes.HANDLE
+        close = ctypes.windll.kernel32.CloseHandle
+        close.argtypes = [wintypes.HANDLE]
+        close.restype = wintypes.BOOL
+        handle = create(str(source), 1, 3, None, 3, 0x02000000, None)
+        self.assertNotEqual(handle, ctypes.c_void_p(-1).value)
+        try:
+            with self.assertRaises(OSError) as blocked:
+                os.rename(source, target)
+            self.assertIn(blocked.exception.winerror, (32, 33))
+        except BaseException:
+            close(handle)
+            raise
+        release = threading.Timer(0.15, close, (handle,))
+        release.start()
+        try:
+            maintenance.retry_sharing_violation(os.rename, source, target)
+        finally:
+            release.join()
+        self.assertTrue(target.is_dir())
+        self.assertFalse(source.exists())
+
+    def test_persistent_install_and_cleanup_locks_preserve_failure_and_inputs(self):
+        self.capture(); next_inputs.normalize(self.private); next_inputs.qualify_next(self.private)
+        locked = PermissionError("synthetic sharing lock"); locked.winerror = 32
+        with patch.object(maintenance.os, "rename", side_effect=locked), \
+             patch.object(maintenance.shutil, "rmtree", side_effect=locked), \
+             patch.object(maintenance.time, "sleep"):
+            result = maintenance.prepare(self.private, NOW)
+        self.assertEqual(result["outcome"], "validation_failed")
+        self.assertEqual(result["reason"], "local_input_or_output_invalid")
+        self.assertEqual(result["cleanup_status"], "pending")
+        self.assertTrue((self.private / "preparation/candidates" / result["cleanup_stage"]).is_dir())
+        self.assertFalse((self.private / "preparation/candidates" / self.eid).exists())
+        self.assertEqual(load_json(self.private / "preparation/status.json")["latest_available_data_date"], "2026-10-14")
+        self.assertTrue((self.private / "working" / self.eid / "qualified.json").is_file())
+        # The normal path still succeeds after the external lock is gone.
+        self.assertEqual(maintenance.prepare(self.private, NOW)["preparation_status"], "complete_private")
+        recovered = load_json(self.private / "preparation/status.json")
+        self.assertNotIn("reason", recovered)
+        self.assertEqual(recovered["candidate_edition"], self.eid)
+        self.assertEqual(recovered["preparation"]["real_next_window"], "local_candidate_available")
+
+    def test_unrelated_filesystem_errors_are_not_retried(self):
+        denied = PermissionError("synthetic permission failure"); denied.winerror = 5
+        with patch.object(maintenance.time, "sleep") as sleeper:
+            with self.assertRaises(PermissionError):
+                maintenance.retry_sharing_violation(lambda: (_ for _ in ()).throw(denied))
+            sleeper.assert_not_called()
 
 
 if __name__ == "__main__":

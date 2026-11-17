@@ -9,6 +9,7 @@ from pathlib import Path
 import os
 import shutil
 import tempfile
+import time
 from . import dates, disclosure, edition_rules, joint, metrics, pipeline, project, render
 from .common import (REPO_ROOT, DwrError, load_json, write_json, write_text, csv_text, sha256_file,
                      sha256_bytes, canonical_json, validate_path, validate_site, ACTOR_ROLES, IDENTITY_TIERS, HTTP_METHODS)
@@ -82,6 +83,25 @@ def prepare(private: Path, now=None):
         lock.unlink()
 
 
+def retry_sharing_violation(operation, *args):
+    """Allow a short Windows sharing lock to clear; never retry unrelated errors."""
+    for delay in (0.1, 0.25, 0.5, 1, 2, None):
+        try:
+            return operation(*args)
+        except OSError as error:
+            if getattr(error, "winerror", None) not in (32, 33) or delay is None:
+                raise
+            time.sleep(delay)
+
+
+def discard_stage(private, stage):
+    from .write_guard import checked_path
+    checked_path(private, stage)
+    if stage.parent != private / "preparation/candidates" or not stage.name.startswith(".staging-"):
+        raise DwrError("preparation_cleanup_outside_stage")
+    retry_sharing_violation(shutil.rmtree, stage)
+
+
 def atomic_json(path, value):
     """Replace a complete JSON file; never leave a truncated state document."""
     from .write_guard import checked_path
@@ -93,7 +113,7 @@ def atomic_json(path, value):
             stream.write(canonical_json(value))
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, path)
+        retry_sharing_violation(os.replace, temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -128,11 +148,18 @@ def _prepare_locked(private, now):
     checked_path(private, state_path)
     previous = load_json(state_path) if state_path.is_file() else load_json(REPO_ROOT / "data/status.json")
     state = {**previous, "planning_activated": False}
+    state.pop("reason", None)
     edition_id, stage = None, None
 
     def finish(outcome, **extra):
         result = edition_rules.apply_run(state, outcome, run_at=timestamp)
         result.update(extra)
+        if extra.get("preparation_status") == "complete_private":
+            result["candidate_edition"] = edition_id
+            result["preparation"] = {**result.get("preparation", {}),
+                "code_ready_scope": "private_next_window_inputs_and_candidate",
+                "real_next_window": "local_candidate_available",
+                "source_qualification": "local_consistency_checked_limits_retained"}
         atomic_json(state_path, result)
         return {"edition_id": edition_id, "outcome": outcome, "run_at": timestamp,
                 "public_mutation": False, "planning_activated": False, **extra}
@@ -245,13 +272,21 @@ def _prepare_locked(private, now):
         write_json(stage / "preparation-receipt.json", {"input_digest": digest, "input_manifest": manifest, "files": files,
                    "distribution_status": decision["status"], "state": outcome, "preparation_status": "complete_private",
                    "cursor": cursor, "public_mutation": False})
-        os.rename(stage, target)
+        retry_sharing_violation(os.rename, stage, target)
         stage = None
         state.update(cursor)
         return finish(outcome, preparation_status="complete_private", candidate_state=outcome, distribution_status=decision["status"],
                       candidate_id=edition_id, source_state="local_inputs_available")
     except (DwrError, KeyError, TypeError, ValueError, OSError) as error:
-        return finish("validation_failed", reason=error.code if isinstance(error, DwrError) else "local_input_or_output_invalid")
+        cleanup = {}
+        if stage is not None:
+            try:
+                discard_stage(private, stage)
+            except (OSError, DwrError):
+                cleanup = {"cleanup_status": "pending", "cleanup_stage": stage.name}
+            stage = None
+        return finish("validation_failed", reason=error.code if isinstance(error, DwrError) else "local_input_or_output_invalid",
+                      **cleanup)
     finally:
         if stage is not None:
-            shutil.rmtree(stage)
+            discard_stage(private, stage)

@@ -40,6 +40,8 @@ Unattested classifier versions remain unknown; a known intraday transition witho
 
 The candidate receipt seals its input manifest and generated files. `complete_private` means the local package was built; distribution remains blocked pending the existing disclosure contract and policy. Review `measurement-report.json`, `delta-report.json`, `disclosure-report.json` and the unavailable states before drawing conclusions. Inspect rendered mobile figures before handoff. Neither these commands nor passing tests authorize a publication, a source repair, an origin crawl or a scheduled collection.
 
+Temporary Windows sharing locks during installation, state replacement or staging cleanup receive a bounded retry (under four seconds of waiting). Other filesystem errors are not retried. A persistent cleanup lock is reported as `cleanup_status: pending` with the exact staging-directory name; it does not replace the original preparation failure or advance the cursor. Inspect that owned staging directory before removing it. Qualified inputs remain available for an offline retry without another acquisition.
+
 ## Français
 
 Ce parcours manuel prépare la fenêtre désignée par le curseur dans un espace privé distinct. Il ne modifie ni les données publiques ni le registre des éditions. Il n’active aucune planification et n’autorise aucune diffusion. `prepare-next` fonctionne hors ligne. Seule l’exécution explicite de `acquire-next`, avec confirmation exacte de la période, lit la base du producteur au moyen de requêtes SELECT bornées aux trois sites. Aucun site mesuré n’est appelé.
@@ -53,3 +55,5 @@ Toutes les lignes du producteur restent privées. Une journée sans archive rest
 Sans instantané documentaire qualifié, les preuves de présence et les relations restent nulles, les cas ne sont pas déclarés vérifiés et les figures G09 affichent leur indisponibilité en français et en anglais. La classification du périmètre repose toujours sur le registre versionné ; elle ne prouve pas le contenu actuel des fichiers.
 
 Le statut `complete_private` atteste uniquement la construction locale du paquet. Les rapports de mesure, de comparaison et de divulgation, les états indisponibles et les captures mobiles doivent être examinés avant remise. La publication, la réparation des sources, les appels aux origines et les collectes planifiées nécessitent leurs autorisations propres.
+
+Un verrou de partage Windows temporaire reçoit une reprise bornée à moins de quatre secondes d’attente. Les autres erreurs ne sont pas réessayées. Si le nettoyage reste bloqué, le résultat indique `cleanup_status: pending` et le nom du dossier temporaire concerné, sans masquer l’échec initial ni avancer le curseur. Les entrées qualifiées sont conservées pour une reprise hors ligne.
