@@ -25,6 +25,8 @@ If the exact normalized and qualified files were already copied and verified wit
 
 Outputs are installed atomically under `automated/candidates/<window-r1>/`. The contract identifier plus the window identify this separate candidate. An existing candidate is immutable: unchanged inputs and exact regenerated output bytes permit an idempotent readback; changed inputs require a distinct workspace/revision. Recovery may restore only `automated/status.json`. `preparation/status.json` and its legacy cursor are not written.
 
+Readback reconstructs all four private diagnostics as well as the projection, enforces the exact file/directory set and the receipt's invariant fields, and rejects a coherently edited diagnostic/receipt before restoring status. The historical preparation timestamp must be canonical UTC and after consolidation; it is not replaced by the current time. Its original value is authenticated only by the independently retained receipt/archive fingerprint, not reconstructed from source observations.
+
 ### Output boundaries
 
 | Surface | Contract |
@@ -67,6 +69,8 @@ Inspect actual FR/EN mobile and desktop captures of the new private reports and 
 Utiliser un nouvel espace privé extérieur aux dépôts Git, distinct de toute candidate existante. Réutiliser l'acquisition native acceptée et les sources épinglées, sans en modifier les octets. Les commandes PowerShell ci-dessus normalisent et qualifient ces sources selon [PRIVATE_NEXT.md](PRIVATE_NEXT.md). Si ces entrées sont déjà présentes et vérifiées, seule `prepare-automated` est nécessaire ; elle reconstruit quand même les données attendues depuis les reçus. Aucune collecte, destination publique, substitution diagnostique ou simulation synthétique n'est offerte.
 
 La candidate est installée sous `automated/candidates/<fenêtre-r1>/`, identifiée conjointement par son contrat et sa fenêtre. Le curseur historique, `latest`, les éditions et la politique antérieure restent inchangés. Une candidate existante doit reproduire exactement les sources et sorties attendues ; sinon, une révision distincte est nécessaire. Seul l'état séparé `automated/status.json` peut être rétabli après interruption.
+
+La reprise reconstruit aussi les quatre diagnostics privés, impose l'ensemble exact des fichiers et dossiers ainsi que les champs invariants du reçu, puis refuse toute falsification cohérente avant de rétablir l'état. La date historique de préparation doit être canonique en UTC et postérieure à la consolidation ; elle n'est jamais remplacée par l'heure courante. Sa valeur d'origine est authentifiée seulement par l'empreinte indépendante conservée du reçu ou de l'archive, sans être reconstruite depuis les observations.
 
 Les détails de chemins et d'acteurs sont mensuels, sans jour, compte de jours actifs, première/dernière date ou partition d'époque. Les séries quotidiennes croisent séparément jour/site/rôle et jour/famille/rôle. Tous les comptes, inventaires et dérivés sont calculés après sélection. Les accès à la demande suivent U0 : un bloc constant `withheld_not_zero`, compte null et provenance d'initiation inconnue, quelle que soit leur présence réelle.
 

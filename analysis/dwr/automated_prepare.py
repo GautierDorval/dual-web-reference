@@ -41,6 +41,57 @@ def input_manifest(private):
     return result
 
 
+def _receipt_metadata(receipt, edition, period, delay):
+    fields = {"contract", "edition_id", "input_digest", "input_manifest", "files", "preparation_status", "state",
+              "distribution_authorized", "public_mutation", "planning_activated", "legacy_cursor_changed", "prepared_at"}
+    if (type(receipt) is not dict or set(receipt) != fields or receipt["contract"] != automated.CONTRACT
+            or receipt["edition_id"] != edition or receipt["preparation_status"] != "complete_private"
+            or receipt["state"] != "distribution_blocked_pending_release_review"):
+        raise DwrError("automated_receipt_metadata_invalid")
+    if any(receipt[k] is not False for k in ("distribution_authorized", "public_mutation", "planning_activated", "legacy_cursor_changed")):
+        raise DwrError("automated_receipt_approval_invalid")
+    # Validate a historical timestamp, never substitute the current time or claim
+    # to authenticate it. Its exact value is bound by the independently kept seal.
+    try:
+        value = receipt["prepared_at"]
+        if type(value) is not str or not value.endswith("Z"):
+            raise ValueError()
+        stamp = datetime.fromisoformat(value)
+        if (stamp.astimezone(timezone.utc).isoformat().replace("+00:00", "Z") != value
+                or not dates.consolidation_ready(period, stamp, delay)):
+            raise ValueError()
+    except (ValueError, TypeError) as error:
+        raise DwrError("automated_receipt_timestamp_invalid") from error
+
+
+def _diagnostics(normalized, qualified, document, verification):
+    """Reconstruct private evidence on creation and on every idempotent readback."""
+    admitted, _, excluded = projection_inputs(normalized, qualified)
+    measured = measurement.qualify(admitted["joint_rows"], normalized["archive_inventory"]["days"],
+                                   normalized.get("measurement_provenance", {}))
+    history = disclosure.inventory()
+    return {"source-exclusions.private.json": excluded,
+            "measurement-report.private.json": {k: v for k, v in measured.items() if k != "rows"},
+            "disclosure-report.private.json": {**automated.validate(document),
+                "historical_inventory_status": history["status"], "historical_releases_considered": len(history.get("releases", [])),
+                "release_review_status": "not_performed", "distribution_authorized": False,
+                "prior_policy_unchanged": True, "projection_verification": verification},
+            "delta-report.private.json": {**document["comparison"],
+                "reasons": ["different_population_contract", "source_comparability_not_qualified"], "is_growth": False}}
+
+
+def _verify_private_evidence(target, actual, document, diagnostics):
+    # Every expected byte comes from admitted sources, never the stored receipt.
+    expected = {"projection/" + name: sha256_bytes(content)
+                for name, content in automated_render.files(document).items()}
+    expected.update({"diagnostics/" + name: sha256_bytes(canonical_json(value).encode("utf-8"))
+                     for name, value in diagnostics.items()})
+    directories = {p.as_posix() for name in expected for p in Path(name).parents if p != Path('.')}
+    if (actual != expected or any(path.is_dir() and path.relative_to(target).as_posix() not in directories
+                                  for path in target.rglob('*'))):
+        raise DwrError("automated_private_evidence_or_surfaces_changed")
+
+
 def prepare(value, now=None):
     private = private_workspace(value)
     folder = checked_path(private, private / "automated")
@@ -88,18 +139,18 @@ def _prepare(private, now):
         if not receipt_path.is_file():
             raise DwrError("incomplete_candidate_requires_inspection")
         receipt = load_json(receipt_path)
+        _receipt_metadata(receipt, edition, period, calendar["consolidation_delay_hours"])
         if (receipt.get("contract") != automated.CONTRACT or receipt.get("input_digest") != digest
                 or receipt.get("input_manifest") != manifest):
             raise DwrError("existing_candidate_changed_inputs_requires_revision")
-        if any(receipt.get(k) is not False for k in ("distribution_authorized", "public_mutation", "planning_activated", "legacy_cursor_changed")):
-            raise DwrError("automated_receipt_approval_invalid")
         actual = fingerprint(target)
         actual.pop("preparation-receipt.json")
         if actual != receipt.get("files"):
             raise DwrError("existing_candidate_bytes_changed")
         # Verify against fresh source-derived bytes, not an edited candidate plus
         # a newly forged self-consistent manifest/receipt.
-        automated_render.verify(target / "projection", document)
+        verification = automated_render.verify(target / "projection", document)
+        _verify_private_evidence(target, actual, document, _diagnostics(normalized, qualified, document, verification))
         if input_manifest(private) != manifest:
             raise DwrError("automated_inputs_changed_during_preparation")
         state_path = checked_path(private, private / "automated/status.json")
@@ -120,21 +171,10 @@ def _prepare(private, now):
         verification = automated_render.verify(output, document)
         diagnostics = stage / "diagnostics"
         diagnostics.mkdir()
-        admitted, _, excluded = projection_inputs(normalized, qualified)
-        measured = measurement.qualify(admitted["joint_rows"], normalized["archive_inventory"]["days"],
-                                       normalized.get("measurement_provenance", {}))
         # Private measurement diagnostics may contain all-source metadata. This
         # directory is never part of the closed projection manifest or renderer.
-        write_json(diagnostics / "source-exclusions.private.json", excluded)
-        write_json(diagnostics / "measurement-report.private.json", {k: v for k, v in measured.items() if k != "rows"})
-        history = disclosure.inventory()
-        decision = automated.validate(document)
-        write_json(diagnostics / "disclosure-report.private.json", {**decision,
-            "historical_inventory_status": history["status"], "historical_releases_considered": len(history.get("releases", [])),
-            "release_review_status": "not_performed", "distribution_authorized": False,
-            "prior_policy_unchanged": True, "projection_verification": verification})
-        write_json(diagnostics / "delta-report.private.json", {**document["comparison"],
-            "reasons": ["different_population_contract", "source_comparability_not_qualified"], "is_growth": False})
+        for name, value in _diagnostics(normalized, qualified, document, verification).items():
+            write_json(diagnostics / name, value)
         if input_manifest(private) != manifest:
             raise DwrError("automated_inputs_changed_during_preparation")
         files = fingerprint(stage)
