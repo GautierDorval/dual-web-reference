@@ -136,6 +136,24 @@ class AutomatedProjectionTests(unittest.TestCase):
         with self.assertRaises(DwrError):projection([{**ROW,"date_utc":"2099-02-01"}])
         with self.assertRaises(DwrError):projection([{**ROW,"actor_name":"=FORMULA()"}])
 
+    def test_persisted_canonical_json_and_object_key_order_preserve_all_output_bytes(self):
+        def reverse_keys(value):
+            if isinstance(value, dict):
+                return {key: reverse_keys(value[key]) for key in reversed(value)}
+            if isinstance(value, list):
+                return [reverse_keys(item) for item in value]
+            return value
+
+        for rows in ([ROW], []):
+            document = projection(rows)
+            expected = r.files(document)
+            reloaded = json.loads(expected["projection.json"])
+            for label, equivalent in (("canonical_json", reloaded),
+                                      ("reordered_keys", reverse_keys(reloaded))):
+                with self.subTest(empty=not rows, variant=label):
+                    self.assertEqual(equivalent, document)
+                    self.assertEqual(r.files(equivalent), expected)
+
     def test_output_allowlist_bytes_and_bilingual_figures(self):
         doc=projection()
         files=r.files(doc)

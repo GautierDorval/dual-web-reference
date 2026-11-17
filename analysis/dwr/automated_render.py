@@ -129,8 +129,8 @@ def _jobs(doc):
     for r in doc["tables"]["families"]:
         family[r["family"]] += r["request_count"]
     return {"G01": [{"date_utc": r["date_utc"], "request_count": r["request_count"], "coverage_status": r["coverage_status"]} for r in doc["tables"]["coverage"]],
-            "G02": [{"actor_role": k, "request_count": v} for k, v in doc["metrics"]["by_role"].items()],
-            "G03": [{"site_id": k, "request_count": v} for k, v in doc["metrics"]["by_site"].items()],
+            "G02": [{"actor_role": k, "request_count": doc["metrics"]["by_role"][k]} for k in A.ROLES],
+            "G03": [{"site_id": k, "request_count": doc["metrics"]["by_site"][k]} for k in A.SITE_IDS],
             "G06": [{"family": k, "request_count": v} for k, v in sorted(family.items())],
             "G08": doc["tables"]["coverage"],
             **{"G09-" + r["site_id"]: [r] for r in doc["graphs"]}}
@@ -192,7 +192,13 @@ def files(document):
     jobs = _jobs(document)
     registry = []
     for identifier, rows in jobs.items():
-        fields = list(rows[0]) if rows else ["family", "request_count"]
+        # Persisted JSON object order is not semantic. Preserve the contract's CSV order.
+        if identifier == "G08":
+            fields = A.TABLES["coverage"]
+        elif identifier.startswith("G09-"):
+            fields = ("site_id", "status", "reason")
+        else:
+            fields = list(rows[0]) if rows else ["family", "request_count"]
         result[f"figures/{identifier}.csv"] = csv_text(fields, rows)
         for lang in ("en", "fr"):
             for compact in (False, True):
