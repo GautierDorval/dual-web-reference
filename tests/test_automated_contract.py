@@ -5,6 +5,7 @@ path itself has no 'synthetic' override and always admits native input receipts.
 """
 import copy
 import json
+import subprocess
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
@@ -260,7 +261,63 @@ class AutomatedPreparationTests(unittest.TestCase):
         lock.unlink()
         (self.private/'preparation/candidates').mkdir(parents=True)
         with self.assertRaisesRegex(DwrError,'separate_private_workspace'):p.prepare(self.private,fixtures.NOW)
-        with self.assertRaisesRegex(DwrError,'inside_git_repository'):p.prepare(REPO_ROOT,fixtures.NOW)
+        git_root=self.private/'git-fixture'
+        subprocess.run(['git','init','-q',str(git_root)],check=True,capture_output=True)
+        with self.assertRaisesRegex(DwrError,'inside_git_repository'):p.prepare(git_root,fixtures.NOW)
+        self.assertFalse((git_root/'automated').exists())
+
+    def test_coherent_private_diagnostics_and_extra_surfaces_are_refused(self):
+        self.admitted();p.prepare(self.private,fixtures.NOW)
+        candidate=self.candidate()
+        original={name:(candidate/name).read_bytes() for name in fingerprint(candidate)}
+        state=(self.private/'automated/status.json').read_bytes()
+        changes={
+            'source-exclusions.private.json': {'excluded_requests':0,'excluded_rows':0},
+            'measurement-report.private.json': {'classification_attested':True},
+            'disclosure-report.private.json': {'distribution_authorized':True,'release_review_status':'approved'},
+            'delta-report.private.json': {'growth':0.5,'comparable':True},
+        }
+        for case in (*changes,'extra-file','extra-empty-directory'):
+            with self.subTest(case=case):
+                extra=candidate/('extra-private-summary.json' if case=='extra-file' else 'extra-private-directory')
+                if case=='extra-file':write_json(extra,{'unapproved_surface':True})
+                elif case=='extra-empty-directory':extra.mkdir()
+                else:
+                    path=candidate/'diagnostics'/case
+                    value=load_json(path);value.update(changes[case]);write_json(path,value)
+                    self.assertNotEqual(path.read_bytes(),original['diagnostics/'+case])
+                receipt=load_json(candidate/'preparation-receipt.json')
+                receipt['files']=fingerprint(candidate);receipt['files'].pop('preparation-receipt.json')
+                write_json(candidate/'preparation-receipt.json',receipt)
+                forged=fingerprint(candidate)
+                with self.assertRaisesRegex(DwrError,'automated_private_evidence_or_surfaces_changed'):
+                    p.prepare(self.private,fixtures.NOW)
+                self.assertEqual(fingerprint(candidate),forged)
+                self.assertEqual((self.private/'automated/status.json').read_bytes(),state)
+                if extra.is_file():extra.unlink()
+                elif extra.is_dir():extra.rmdir()
+                for name,content in original.items():(candidate/name).write_bytes(content)
+        self.assertEqual(p.prepare(self.private,fixtures.NOW)['outcome'],'unchanged')
+
+    def test_receipt_shape_invariants_and_timestamp_are_checked_without_rewriting(self):
+        self.admitted();p.prepare(self.private,fixtures.NOW)
+        receipt_path=self.candidate()/'preparation-receipt.json'
+        original=receipt_path.read_bytes()
+        state=(self.private/'automated/status.json').read_bytes()
+        changes=[('state','approved_for_publication'),('preparation_status','fabricated_status'),
+                 ('edition_id','unexpected'),('unknown_claim',True),('distribution_authorized',0),
+                 ('prepared_at',None),('prepared_at','2026-11-17T00:00:00'),
+                 ('prepared_at','2026-11-01T00:00:00Z')]
+        for key,value in changes:
+            with self.subTest(key=key,value=value):
+                receipt=json.loads(original);receipt[key]=value;write_json(receipt_path,receipt)
+                forged=receipt_path.read_bytes()
+                with self.assertRaisesRegex(DwrError,'automated_receipt_'):
+                    p.prepare(self.private,fixtures.NOW)
+                self.assertEqual(receipt_path.read_bytes(),forged)
+                self.assertEqual((self.private/'automated/status.json').read_bytes(),state)
+        receipt_path.write_bytes(original)
+        self.assertEqual(p.prepare(self.private,fixtures.NOW)['outcome'],'unchanged')
 
     def test_failed_output_never_installs_a_partial_candidate(self):
         self.admitted()
