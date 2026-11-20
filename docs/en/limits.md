@@ -87,3 +87,13 @@ Restricts: the level of detail that is published.
 - **Established**: r1 preserves its historical grains; r2 follows a privacy revision defined after results, documented in [small-cell-policy.json](../../config/small-cell-policy.json). No IP address, user agent, cookie, session or device identifier, token, free referrer, query string, transcript, or first and last access dates per cell or per path. Day-level outputs never carry a path or an actor name.
 - **Not established**: universal non-reconstruction. Combining marginals or revisions can reveal aggregate detail. The historical policy was approved on 2026-10-17; the corrected policy’s distribution review is recorded in the external edition registry.
 - **Does not allow denying**: patterns that would only appear at a finer grain. See [privacy.md](privacy.md).
+
+## 11. Access, retrieval and reconstruction in an answer
+
+Restricts: what an access allows anyone to say about an answer.
+
+- **Established**: accesses recorded by the collector, with their method, status, actor and tier, aggregated per resource over the window.
+- **Not established**: retrieval, that is, a client receiving the expected bytes and making them available to a system that produces answers; and reconstruction, that is, what an answer states from that resource. No answer is collected in this repository, so the fidelity of a reconstruction cannot be assessed from these tables.
+- **Does not allow denying**, or asserting, that an accessed file was retrieved by an answering system, used in an answer or faithfully reconstructed in one.
+
+The fidelity of a reconstruction is defined as [interpretive fidelity](https://gautierdorval.com/en/definitions/interpretive-fidelity/), for which reconstruction fidelity is the entry term in the context of AI-generated answers. The [reconstruction fidelity guide](https://gautierdorval.com/en/reconstruction-fidelity/) explains how to assess it on a preserved answer, against its sources and a task, and the [fidelity term map](https://github.com/GautierDorval/interpretive-governance-manifest/blob/main/concepts/fidelity-term-map.md) keeps retrieval evidence, integrity verification and fidelity assessment apart.

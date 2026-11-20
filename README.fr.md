@@ -78,6 +78,8 @@ Ces présentations relient DWR au concept de Dual Web et à l’écosystème. Le
 
 Trois sites d’un seul écosystème ne sont pas trois réplications indépendantes. La couverture est partielle, les voies de découverte ne sont pas établies et l’origine fournisseur reste une classification du producteur. Un GET 200 ne prouve ni lecture sémantique, ni adoption, ni meilleure réponse, ni effet SEO. Les données privées de collecte ne sont pas réexécutables depuis ce dépôt. [Limites détaillées](docs/fr/limites.md).
 
+Accès, récupération et restitution dans une réponse sont distincts : un accès ne montre ni qu’un système a récupéré le fichier ni ce qu’une réponse en restitue. La fidélité de cette restitution est définie comme [fidélité interprétative](https://gautierdorval.com/definitions/fidelite-interpretative/) et exige des réponses, que ce dépôt ne collecte pas (limite 11).
+
 ## Dates, éditions et maintenance
 
 <!-- dwr:begin dates -->
