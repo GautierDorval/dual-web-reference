@@ -150,30 +150,64 @@ class ProfileBPreparationTests(unittest.TestCase):
         self.addCleanup(self.fixture.doCleanups)
         self.private=self.fixture.private
 
-    def test_cross_version_race_cannot_claim_both_namespaces(self):
+    def race_then_replay(self, delayed_contract=None):
+        self.admit()
         original=p.private_workspace
-        barrier=threading.Barrier(2,timeout=3)
-        errors=[]
+        barrier=threading.Barrier(2,timeout=10)
+        winner_finished=threading.Event()
+        results={};errors={}
         def initial_check(value,contract=a.CONTRACT):
             result=original(value,contract)
-            # Each thread waits only on its first check, before mkdir.
             if not getattr(threading.current_thread(),'profile_checked',False):
                 threading.current_thread().profile_checked=True
                 barrier.wait()
+                if contract==delayed_contract and not winner_finished.wait(30):
+                    raise RuntimeError('race_winner_did_not_finish')
             return result
         def run(contract):
-            try:p.prepare(self.private,native.NOW,contract=contract)
-            except DwrError as error:errors.append(error.code)
-        with patch.object(p,'private_workspace',side_effect=initial_check),patch.object(p,'_prepare',return_value={}) as writer:
+            try:results[contract]=p.prepare(self.private,native.NOW,contract=contract)
+            except Exception as error:errors[contract]=error
+            finally:
+                if contract!=delayed_contract:winner_finished.set()
+        # Only scheduling is controlled: admission, outputs and receipts are real.
+        with patch.object(p,'private_workspace',side_effect=initial_check):
             threads=[threading.Thread(target=run,args=(contract,),daemon=True)
                      for contract in (a.CONTRACT,a.PROFILE_B_CONTRACT)]
             for thread in threads:thread.start()
-            for thread in threads:thread.join(5)
+            for thread in threads:thread.join(40)
             self.assertTrue(all(not thread.is_alive() for thread in threads))
-            self.assertLessEqual(writer.call_count,1)
-        self.assertGreaterEqual(len(errors),1)
-        self.assertTrue(all(code=='automated_requires_separate_contract_workspace' for code in errors))
+        self.assertEqual(len(results),1,(results,errors))
+        self.assertEqual(len(errors),1,(results,errors))
+        winner=next(iter(results));loser=next(iter(errors))
+        if delayed_contract is not None:self.assertEqual(loser,delayed_contract)
+        self.assertIsInstance(errors[loser],DwrError)
+        self.assertIn(errors[loser].code,('automated_preparation_busy','automated_requires_separate_contract_workspace'))
+        self.assertEqual(results[winner]['outcome'],'new_private_candidate')
+        self.assertTrue((self.private/p.workspace_folder(winner)).is_dir())
+        self.assertFalse((self.private/p.workspace_folder(loser)).exists())
         self.assertFalse(list(self.private.rglob('preparation.lock')))
+        self.assertFalse((self.private/'.automated-preparation.lock').exists())
+        sealed=fingerprint(self.private)
+        self.assertEqual(p.prepare(self.private,native.NOW,contract=winner)['outcome'],'unchanged')
+        with self.assertRaisesRegex(DwrError,'separate_contract_workspace'):
+            p.prepare(self.private,native.NOW,contract=loser)
+        self.assertEqual(p.prepare(self.private,native.NOW,contract=winner)['outcome'],'unchanged')
+        self.assertEqual(fingerprint(self.private),sealed)
+
+    def test_cross_version_race_preserves_winner_replay(self):
+        self.race_then_replay()
+
+    def test_stale_initial_check_cannot_poison_completed_other_version(self):
+        self.race_then_replay(delayed_contract=a.CONTRACT)
+
+    def test_common_reservation_busy_does_not_create_namespace_or_remove_owner_lock(self):
+        reservation=self.private/'.automated-preparation.lock'
+        reservation.write_bytes(b'other-cooperating-preparation')
+        for contract in (a.CONTRACT,a.PROFILE_B_CONTRACT):
+            with self.assertRaisesRegex(DwrError,'automated_preparation_busy'):
+                p.prepare(self.private,native.NOW,contract=contract)
+            self.assertFalse((self.private/p.workspace_folder(contract)).exists())
+            self.assertEqual(reservation.read_bytes(),b'other-cooperating-preparation')
 
     def admit(self):
         self.fixture.capture();next_inputs.normalize(self.private);next_inputs.qualify_next(self.private)
