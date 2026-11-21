@@ -2,6 +2,8 @@
 
 [English](../en/updates.md) · [Accueil du dépôt](../../README.fr.md)
 
+M2 est maintenant inscrite comme candidate locale du profil B ; voir sa [méthode et ses limites](edition-automatisee.md). Le statut M1 et l’historique de préparation synthétique ci-dessous restent explicitement historiques. `latest_candidate_edition` et `latest_published_edition` sont deux champs distincts ; le second exige toujours un reçu d’approbation de référence correspondant. L’ancrage privé `preparation_anchor` reste M1 r2 : afficher M2 ne fait avancer ni une acquisition ni un curseur privé.
+
 <!-- dwr:begin edition-state -->
 Édition r2 : accessible publiquement ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 reste accessible comme édition historique figée et non approuvée.
 <!-- dwr:end edition-state -->

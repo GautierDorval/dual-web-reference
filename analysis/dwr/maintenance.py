@@ -146,7 +146,8 @@ def _prepare_locked(private, now):
     state_path = private / "preparation/status.json"
     from .write_guard import checked_path, fingerprint
     checked_path(private, state_path)
-    previous = load_json(state_path) if state_path.is_file() else load_json(REPO_ROOT / "data/status.json")
+    from .next_inputs import initial_state
+    previous = initial_state(private)
     state = {**previous, "planning_activated": False}
     state.pop("reason", None)
     edition_id, stage = None, None

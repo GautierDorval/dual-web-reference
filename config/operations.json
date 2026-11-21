@@ -31,14 +31,14 @@
   "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "private_prepare_next_synthetic_qualification_only",
-    "command": "prepare-next",
-    "future_distribution": "blocked_pending_contract_and_policy_approval",
+    "code_ready_scope": "profile_b_real_inputs_qualified_privately_public_integration_awaiting_review",
+    "command": "prepare-automated-profile-b",
+    "future_distribution": "local_candidate_awaiting_review_and_owner_publication_authorization",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
-    "real_next_window": "not_available",
-    "source_qualification": "real_next_window_not_available"
+    "real_next_window": "qualified_profile_b_local_candidate",
+    "source_qualification": "existing_native_receipts_admitted_offline"
   },
   "publication_preparation": {
     "cadence_enabled": false,
@@ -72,6 +72,13 @@
       "edition_id": "2026-09-15_2026-10-15-r2",
       "kind": "public_branch_review_preparation",
       "note": "Correction prepared for a public review branch and draft pull request; no new observations, reference approval or scientific review.",
+      "state": "awaiting_review"
+    },
+    {
+      "date": "2026-11-21",
+      "edition_id": "2026-10-15_2026-11-15-r1",
+      "kind": "local_profile_b_public_integration",
+      "note": "Existing M2 inputs qualified privately. Public integration prepared locally; no publication authorization, reference approval or independent scientific review implied.",
       "state": "awaiting_review"
     }
   ],

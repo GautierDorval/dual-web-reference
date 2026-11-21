@@ -28,6 +28,12 @@ def isolated_repository():
         root = base / "repo"
         root.mkdir()
         copy_candidate(root)
+        config = load_json(root / "config/editions.json")
+        config["candidate"] = R2
+        config["editions"] = [e for e in config["editions"] if e["edition_id"] != "2026-10-15_2026-11-15-r1"]
+        write_json(root / "config/editions.json", config)
+        shutil.rmtree(root / "data/editions/2026-10-15_2026-11-15-r1")
+        (root / "config/automated-distribution.json").unlink()
         for name in ("analysis", "scripts"):
             shutil.copytree(SOURCE_ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__"))
         for module in (cli, common, frozen, maintenance, pipeline, png, qualify, render, revisions, verify):

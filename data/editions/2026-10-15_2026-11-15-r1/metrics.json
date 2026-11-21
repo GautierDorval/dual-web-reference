@@ -1,0 +1,14 @@
+{
+  "by_role": {
+    "ai_search": 120,
+    "ai_training": 103
+  },
+  "by_site": {
+    "better-robots.com": 114,
+    "gautierdorval.com": 89,
+    "pagup.com": 20
+  },
+  "selected_distinct_resources": 135,
+  "selected_distinct_software_actors": 3,
+  "selected_requests": 223
+}

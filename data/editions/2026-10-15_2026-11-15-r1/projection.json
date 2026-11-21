@@ -1,0 +1,5214 @@
+{
+  "availability_status": "local_release_candidate",
+  "comparison": {
+    "comparable": false,
+    "growth": null,
+    "reason": "automated_baseline_not_qualified"
+  },
+  "contract": "dwr-automated/2.0.0",
+  "disclosure_profile": {
+    "daily_dimensions": [
+      "site_id",
+      "actor_role"
+    ],
+    "id": "profile_b",
+    "monthly_dimensions": [
+      "site_id",
+      "path",
+      "family",
+      "actor_family",
+      "actor_name",
+      "actor_role"
+    ]
+  },
+  "graphs": [
+    {
+      "reason": "source_graph_not_qualified_for_contract",
+      "site_id": "gautierdorval.com",
+      "status": "not_available"
+    },
+    {
+      "reason": "source_graph_not_qualified_for_contract",
+      "site_id": "pagup.com",
+      "status": "not_available"
+    },
+    {
+      "reason": "source_graph_not_qualified_for_contract",
+      "site_id": "better-robots.com",
+      "status": "not_available"
+    }
+  ],
+  "measurement": {
+    "attribution_assessment": "recorded_classification_reliability_under_review",
+    "classifier_status": "unknown",
+    "epoch_resolution": "mixed_epoch_unresolved",
+    "time_grain": "edition_without_epoch_partitions"
+  },
+  "metrics": {
+    "by_role": {
+      "ai_search": 120,
+      "ai_training": 103
+    },
+    "by_site": {
+      "better-robots.com": 114,
+      "gautierdorval.com": 89,
+      "pagup.com": 20
+    },
+    "selected_distinct_resources": 135,
+    "selected_distinct_software_actors": 3,
+    "selected_requests": 223
+  },
+  "nature": "observed_aggregates_unapproved",
+  "on_demand": {
+    "initiation_provenance": "unknown",
+    "option": "U0",
+    "request_count": null,
+    "suppression_status": "withheld_not_zero"
+  },
+  "public_output_approved": false,
+  "residual_cases": [
+    "Daily site/role and monthly detail margins can still determine automated cells in small groups.",
+    "A sole selected automated actor can be inferred from its role.",
+    "Historical releases and unknown auxiliary data remain accessible.",
+    "No universal non-reconstruction or person-anonymity guarantee."
+  ],
+  "selection": {
+    "actor_roles": [
+      "ai_training",
+      "ai_search"
+    ],
+    "http_method": "GET",
+    "http_status": 200,
+    "population": "main_documentary",
+    "stored_identity_tier": "provider_origin_verified_actor"
+  },
+  "tables": {
+    "actors": [
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "request_count": 25,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "request_count": 88,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "perplexity",
+        "actor_name": "PerplexityBot",
+        "actor_role": "ai_search",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "request_count": 58,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "request_count": 29,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "perplexity",
+        "actor_name": "PerplexityBot",
+        "actor_role": "ai_search",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "request_count": 20,
+        "site_id": "pagup.com"
+      }
+    ],
+    "consultations": [
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "policy",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/.well-known/anti-plausibility.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/.well-known/attested-interpretive-units.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/.well-known/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/.well-known/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/.well-known/claim-authority-classes.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/.well-known/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/.well-known/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/.well-known/official-vs-external-source-conflicts.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/.well-known/output-constraints.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/qlayer.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/response-legitimacy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/.well-known/situational-applicability-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/.well-known/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/.well-known/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/ai-bots-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/ai-manifest.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/ai-manifest.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "policy",
+        "path": "/ai-usage-policy.md",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/ai-usage-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/archive-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "claims",
+        "path": "/attested-interpretive-units.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/attested-interpretive-units.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "identity",
+        "path": "/author.md",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/authority-scope-matrix.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/bad-bots-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "applicability",
+        "path": "/causal-context-map.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/claim-authority-classes.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/compatibility-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/content-signal-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/crawl-traps-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/datasets.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/doctrine-index.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "relations",
+        "path": "/entity-graph.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "relations",
+        "path": "/entity-relations.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/fr/ai-usage-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "policy",
+        "path": "/fr/politique-ia.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "product-scope",
+        "path": "/geographic-scope.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "relations",
+        "path": "/governance-ecosystem.md",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "relations",
+        "path": "/governance-ecosystem.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "glossary",
+        "path": "/governance-glossary.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/governance.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/hardening-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "perplexity",
+        "actor_name": "PerplexityBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/infrastructure-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/limitations-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/links.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/llm-guidelines.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/llm-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/llms-files-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/llms-full.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/llms.txt",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/llms.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/modes-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "product-scope",
+        "path": "/modules-index.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/non-goals.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/official-vs-external-source-conflicts.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/organization.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "product-scope",
+        "path": "/plugin-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "product-scope",
+        "path": "/plugin-scope.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/preset-behavior.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/product.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/robots-txt-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/site-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/source-weighting-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/ssa-e-authority-index.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/version-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/virtual-vs-physical-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/well-known/ai-governance.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/well-known/anti-plausibility.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/well-known/attested-interpretive-units.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/well-known/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/well-known/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/well-known/claim-authority-classes.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/well-known/interpretation-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/well-known/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/well-known/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/well-known/official-vs-external-source-conflicts.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/well-known/output-constraints.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/well-known/qlayer.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/well-known/response-legitimacy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "path": "/well-known/situational-applicability-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/well-known/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/well-known/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "context",
+        "path": "/woocommerce-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "entrypoint",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "entrypoint",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/.well-known/eac-registry.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/.well-known/eac-registry.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "policy",
+        "path": "/.well-known/governance-profiles.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/governance-profiles.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "entrypoint",
+        "path": "/ai-governance.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "entrypoint",
+        "path": "/ai-governance.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "vocabulary",
+        "path": "/bridge-vocabulary.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "causal-context",
+        "path": "/causal-context-map.md",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "causal-context",
+        "path": "/causal-context-map.md",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "claims",
+        "path": "/claim-authority-classes.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/claim-authority-classes.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "claims",
+        "path": "/claims.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "claims",
+        "path": "/claims.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "dataset",
+        "path": "/datasets.jsonld",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "dataset",
+        "path": "/datasets.jsonld",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "authority",
+        "path": "/distributed-authority-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "perplexity",
+        "actor_name": "PerplexityBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/eac-claims.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "identity",
+        "path": "/entity-graph.jsonld",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/entity-graph.jsonld",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "intents",
+        "path": "/llm-intent-map.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "intents",
+        "path": "/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "llms",
+        "path": "/llms-full.txt",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "llms",
+        "path": "/llms-full.txt",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "llms",
+        "path": "/llms.txt",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "llms",
+        "path": "/llms.txt",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "llms",
+        "path": "/readme.llm.txt",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "llms",
+        "path": "/readme.llm.txt",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "routing",
+        "path": "/semantic-router.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/semantic-router.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/semantic-schema-index.jsonld",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "index",
+        "path": "/semantic-schema-index.jsonld",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "perplexity",
+        "actor_name": "PerplexityBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/serp-ownership.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "routing",
+        "path": "/serp-ownership.md",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "coherence",
+        "path": "/site-coherence-map.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "coherence",
+        "path": "/site-coherence-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "coherence",
+        "path": "/site-coherence-map.md",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "coherence",
+        "path": "/site-coherence-map.md",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "inventory",
+        "path": "/site-content-index.json",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "inventory",
+        "path": "/site-content-index.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "OAI-SearchBot",
+        "actor_role": "ai_search",
+        "family": "inventory",
+        "path": "/site-route-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "sources",
+        "path": "/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "attested-units",
+        "path": "/attested-interpretive-units.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "authorship",
+        "path": "/author.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "identity",
+        "path": "/canon.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "weighting-policy",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_family": "openai",
+        "actor_name": "GPTBot",
+        "actor_role": "ai_training",
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      }
+    ],
+    "coverage": [
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "observation_unavailable",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "evidence_status": "not_established",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "source_qualification": "not_qualified",
+        "suppression_status": "observation_unavailable"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 11,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 12,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 27,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "observation_unavailable",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "evidence_status": "not_established",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "source_qualification": "not_qualified",
+        "suppression_status": "observation_unavailable"
+      },
+      {
+        "archive_status": "observation_unavailable",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "evidence_status": "not_established",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "source_qualification": "not_qualified",
+        "suppression_status": "observation_unavailable"
+      },
+      {
+        "archive_status": "observation_unavailable",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "evidence_status": "not_established",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "source_qualification": "not_qualified",
+        "suppression_status": "observation_unavailable"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 88,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 27,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 2,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 10,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 0,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 11,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 2,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 1,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      },
+      {
+        "archive_status": "archived",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "evidence_status": "declared",
+        "observation_status": "observed",
+        "request_count": 27,
+        "source_qualification": "qualified",
+        "suppression_status": "not_suppressed"
+      }
+    ],
+    "daily": [
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-15",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-16",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-17",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 10,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-18",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 11,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-19",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-20",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-21",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 27,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-22",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-23",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-24",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-25",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-26",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "observation_unavailable",
+        "date_utc": "2026-10-27",
+        "observation_status": "observation_unavailable",
+        "request_count": null,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-28",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-29",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-30",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 11,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 77,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-10-31",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 27,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-01",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-02",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-03",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-04",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-05",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 10,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-06",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-07",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-08",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-09",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-10",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 11,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-11",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 2,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-12",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-13",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "better-robots.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 27,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "actor_role": "ai_training",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      },
+      {
+        "actor_role": "ai_search",
+        "coverage_status": "partial_declared",
+        "date_utc": "2026-11-14",
+        "observation_status": "observed",
+        "request_count": 0,
+        "site_id": "pagup.com"
+      }
+    ],
+    "families": [
+      {
+        "actor_role": "ai_search",
+        "family": "applicability",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "applicability",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "attested-units",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "authority",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "authorship",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "causal-context",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "causal-context",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "claims",
+        "request_count": 8
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "claims",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "coherence",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "coherence",
+        "request_count": 4
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "context",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "dataset",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "dataset",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "entrypoint",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "entrypoint",
+        "request_count": 4
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "glossary",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "identity",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "identity",
+        "request_count": 8
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "index",
+        "request_count": 10
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "index",
+        "request_count": 14
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "intents",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "intents",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "inventory",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "inventory",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "limits",
+        "request_count": 21
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "limits",
+        "request_count": 3
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "llms",
+        "request_count": 3
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "llms",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "manifest",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "manifest",
+        "request_count": 4
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "policy",
+        "request_count": 15
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "policy",
+        "request_count": 9
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "product-scope",
+        "request_count": 4
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "relations",
+        "request_count": 4
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "relations",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "routing",
+        "request_count": 6
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "routing",
+        "request_count": 2
+      },
+      {
+        "actor_role": "ai_search",
+        "family": "sources",
+        "request_count": 19
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "sources",
+        "request_count": 11
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "vocabulary",
+        "request_count": 1
+      },
+      {
+        "actor_role": "ai_training",
+        "family": "weighting-policy",
+        "request_count": 2
+      }
+    ],
+    "resource_summary": [
+      {
+        "family": "policy",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/anti-plausibility.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/.well-known/attested-interpretive-units.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/.well-known/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/.well-known/claim-authority-classes.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/.well-known/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/official-vs-external-source-conflicts.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/output-constraints.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/qlayer.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/response-legitimacy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/.well-known/situational-applicability-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/ai-bots-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/ai-manifest.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/ai-usage-policy.md",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/archive-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/attested-interpretive-units.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/author.md",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/bad-bots-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/causal-context-map.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claim-authority-classes.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/compatibility-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/content-signal-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/crawl-traps-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/datasets.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/doctrine-index.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/entity-graph.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/entity-relations.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/fr/ai-usage-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/fr/politique-ia.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/geographic-scope.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/governance-ecosystem.md",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "glossary",
+        "path": "/governance-glossary.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/governance.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/hardening-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 2,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/infrastructure-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/limitations-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/links.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/llm-guidelines.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/llm-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/llms-files-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/llms-full.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/llms.txt",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/modes-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/modules-index.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/non-goals.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/official-vs-external-source-conflicts.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/organization.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/plugin-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/plugin-scope.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/preset-behavior.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/product.jsonld",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/robots-txt-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/site-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "request_count": 3,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/source-weighting-policy.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/ssa-e-authority-index.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/version-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/virtual-vs-physical-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/ai-governance.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/anti-plausibility.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/well-known/attested-interpretive-units.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/authority-scope-matrix.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/well-known/causal-context-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/well-known/claim-authority-classes.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/interpretation-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/interpretive-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/well-known/llm-intent-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/official-vs-external-source-conflicts.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/output-constraints.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/qlayer.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/response-legitimacy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/well-known/situational-applicability-map.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/woocommerce-context.md",
+        "request_count": 1,
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "entrypoint",
+        "path": "/.well-known/ai-governance.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/eac-registry.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/governance-profiles.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "entrypoint",
+        "path": "/ai-governance.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "vocabulary",
+        "path": "/bridge-vocabulary.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.md",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claim-authority-classes.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claims.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "dataset",
+        "path": "/datasets.jsonld",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "authority",
+        "path": "/distributed-authority-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/eac-claims.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "identity",
+        "path": "/entity-graph.jsonld",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "identity",
+        "path": "/humans.txt",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "intents",
+        "path": "/llm-intent-map.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/llms-full.txt",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/llms.txt",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/readme.llm.txt",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/semantic-router.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "index",
+        "path": "/semantic-schema-index.jsonld",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/serp-ownership.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/serp-ownership.md",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "coherence",
+        "path": "/site-coherence-map.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "coherence",
+        "path": "/site-coherence-map.md",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "inventory",
+        "path": "/site-content-index.json",
+        "request_count": 3,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "inventory",
+        "path": "/site-route-map.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/source-weighting-policy.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.json",
+        "request_count": 1,
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "attested-units",
+        "path": "/attested-interpretive-units.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "authorship",
+        "path": "/author.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "identity",
+        "path": "/canon.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "weighting-policy",
+        "path": "/interpretive-weighting-policy.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "request_count": 2,
+        "site_id": "pagup.com"
+      }
+    ],
+    "resources": [
+      {
+        "family": "policy",
+        "path": "/.well-known/ai-governance.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/anti-plausibility.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/.well-known/attested-interpretive-units.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/authority-scope-matrix.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/.well-known/causal-context-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/.well-known/claim-authority-classes.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/interpretive-weighting-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/.well-known/llm-intent-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/official-vs-external-source-conflicts.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/output-constraints.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/qlayer.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/response-legitimacy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/.well-known/situational-applicability-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/source-weighting-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/.well-known/weighting-abuse-boundaries.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/ai-bots-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/ai-manifest.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/ai-usage-policy.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/archive-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/attested-interpretive-units.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/author.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/bad-bots-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/causal-context-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claim-authority-classes.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/compatibility-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/content-signal-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/crawl-traps-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/datasets.jsonld",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/doctrine-index.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/entity-graph.jsonld",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/entity-relations.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/fr/ai-usage-policy.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/fr/politique-ia.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/geographic-scope.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "relations",
+        "path": "/governance-ecosystem.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "glossary",
+        "path": "/governance-glossary.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/governance.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/hardening-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/humans.txt",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/infrastructure-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/limitations-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/links.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/llm-guidelines.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/llm-intent-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/llm-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/llms-files-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/llms-full.txt",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/llms.txt",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/modes-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/modules-index.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/non-goals.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/official-vs-external-source-conflicts.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/organization.jsonld",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/plugin-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "product-scope",
+        "path": "/plugin-scope.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/preset-behavior.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "identity",
+        "path": "/product.jsonld",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/robots-txt-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/site-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/source-weighting-policy.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/ssa-e-authority-index.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/version-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/virtual-vs-physical-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/ai-governance.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/anti-plausibility.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/well-known/attested-interpretive-units.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/authority-scope-matrix.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/well-known/causal-context-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "claims",
+        "path": "/well-known/claim-authority-classes.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/interpretation-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/interpretive-weighting-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "routing",
+        "path": "/well-known/llm-intent-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/official-vs-external-source-conflicts.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/output-constraints.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/qlayer.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "policy",
+        "path": "/well-known/response-legitimacy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/well-known/situational-applicability-map.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "sources",
+        "path": "/well-known/source-weighting-policy.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "limits",
+        "path": "/well-known/weighting-abuse-boundaries.json",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "context",
+        "path": "/woocommerce-context.md",
+        "site_id": "better-robots.com"
+      },
+      {
+        "family": "entrypoint",
+        "path": "/.well-known/ai-governance.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/.well-known/eac-registry.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/governance-profiles.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "policy",
+        "path": "/.well-known/interpretation-policy.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "entrypoint",
+        "path": "/ai-governance.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/authority-scope-matrix.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "vocabulary",
+        "path": "/bridge-vocabulary.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.md",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claim-authority-classes.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "claims",
+        "path": "/claims.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "limits",
+        "path": "/common-misinterpretations.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "dataset",
+        "path": "/datasets.jsonld",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "authority",
+        "path": "/distributed-authority-map.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/eac-claims.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "identity",
+        "path": "/entity-graph.jsonld",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "identity",
+        "path": "/humans.txt",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/interpretive-weighting-policy.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "intents",
+        "path": "/llm-intent-map.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/llms-full.txt",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/llms.txt",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "llms",
+        "path": "/readme.llm.txt",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/semantic-router.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "index",
+        "path": "/semantic-schema-index.jsonld",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/serp-ownership.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "routing",
+        "path": "/serp-ownership.md",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "coherence",
+        "path": "/site-coherence-map.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "coherence",
+        "path": "/site-coherence-map.md",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "inventory",
+        "path": "/site-content-index.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "inventory",
+        "path": "/site-route-map.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "sources",
+        "path": "/source-weighting-policy.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "limits",
+        "path": "/weighting-abuse-boundaries.json",
+        "site_id": "gautierdorval.com"
+      },
+      {
+        "family": "manifest",
+        "path": "/ai-manifest.json",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "attested-units",
+        "path": "/attested-interpretive-units.json",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "authorship",
+        "path": "/author.md",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "identity",
+        "path": "/canon.md",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "causal-context",
+        "path": "/causal-context-map.json",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "index",
+        "path": "/dualweb-index.md",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "weighting-policy",
+        "path": "/interpretive-weighting-policy.json",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "index",
+        "path": "/readme.llm.txt",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "relations",
+        "path": "/relationships.jsonld",
+        "site_id": "pagup.com"
+      },
+      {
+        "family": "applicability",
+        "path": "/situational-applicability-map.json",
+        "site_id": "pagup.com"
+      }
+    ]
+  },
+  "window": {
+    "end_exclusive": "2026-11-15",
+    "start_inclusive": "2026-10-15",
+    "timezone": "UTC"
+  }
+}

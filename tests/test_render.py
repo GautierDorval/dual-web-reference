@@ -9,7 +9,8 @@ from dwr import render as R
 from dwr import svg as S
 from dwr.common import REPO_ROOT, load_json, read_csv
 
-EDITION = load_json(REPO_ROOT / "config" / "editions.json")["candidate"]
+# This module exercises the historical renderer. Profile B has separate replay tests.
+EDITION = "2026-09-15_2026-10-15-r2"
 
 
 class RenderTests(unittest.TestCase):

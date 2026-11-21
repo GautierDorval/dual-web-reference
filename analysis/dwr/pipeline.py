@@ -75,6 +75,9 @@ def cmd_import(package: Path, private: Path, edition_id: str | None) -> dict:
 def cmd_acquire(private: Path | None, edition_id: str | None, execute: bool, confirm_scope: str | None) -> dict:
     from . import acquire
     entry = edition_entry(edition_id)
+    from .automated_public import is_automated
+    if is_automated(entry):
+        raise DwrError("automated_edition_requires_its_own_contract")
     if not execute:
         return acquire.acquire(Path("."), entry["window"], execute=False, confirm_scope=None)
     return acquire.acquire(private, entry["window"], execute=True, confirm_scope=confirm_scope)
@@ -82,6 +85,9 @@ def cmd_acquire(private: Path | None, edition_id: str | None, execute: bool, con
 
 def cmd_normalize(private: Path, edition_id: str | None) -> dict:
     entry = edition_entry(edition_id)
+    from .automated_public import is_automated
+    if is_automated(entry):
+        raise DwrError("automated_edition_requires_its_own_contract")
     window = entry["window"]
     sources = sources_config(private)
     imports = sorted((private / "import").glob("imp-*/marginals.json"))
@@ -131,6 +137,9 @@ def cmd_normalize(private: Path, edition_id: str | None) -> dict:
 def cmd_qualify(private: Path, edition_id: str | None) -> dict:
     from . import qualify
     entry = edition_entry(edition_id)
+    from .automated_public import is_automated
+    if is_automated(entry):
+        raise DwrError("automated_edition_requires_its_own_contract")
     normalized = load_json(working_dir(private, entry["edition_id"]) / "normalized.json")
     qualified = qualify.qualify(normalized, private)
     target = working_dir(private, entry["edition_id"]) / "qualified.json"
@@ -158,6 +167,9 @@ def cmd_project_public(private: Path, edition_id: str | None) -> dict:
     from . import project
     from .common import csv_text, write_text
     entry = edition_entry(edition_id)
+    from .automated_public import is_automated
+    if is_automated(entry):
+        raise DwrError("automated_edition_requires_its_own_contract")
     from .write_guard import admit
     admit(REPO_ROOT, entry["edition_id"])
     from .write_guard import transaction
@@ -328,6 +340,9 @@ def cmd_render(edition_id: str | None) -> dict:
     historical = verify_frozen(entry["edition_id"])
     if historical:
         return historical
+    from . import automated_public
+    if automated_public.is_automated(entry):
+        return automated_public.render(REPO_ROOT, entry["edition_id"])
     return render.cmd(entry["edition_id"])
 
 
@@ -349,6 +364,9 @@ def cmd_prepare_edition(edition_id: str | None) -> dict:
     """Candidate package: SHA256SUMS.txt over the edition files (never itself) and a delta report."""
     from .common import sha256_file, write_text
     entry = edition_entry(edition_id)
+    from .automated_public import is_automated
+    if is_automated(entry):
+        raise DwrError("automated_edition_requires_its_own_contract")
     from .write_guard import transaction
     # Private local preparation validates its own exact payload/figure contract.
     # This does not admit its new edition directory to the shareable roots.
@@ -446,6 +464,9 @@ def cmd_analyze(edition_id: str | None) -> dict:
     historical = verify_frozen(entry["edition_id"])
     if historical:
         return historical
+    from . import automated_public
+    if automated_public.is_automated(entry):
+        return automated_public.verify_payload(REPO_ROOT, entry["edition_id"])
     target = edition_dir(entry["edition_id"])
     result = {"schema_version": "dwr-metrics/1.0.0", "edition_id": entry["edition_id"], **metrics.compute(target)}
     from .write_guard import state, transaction

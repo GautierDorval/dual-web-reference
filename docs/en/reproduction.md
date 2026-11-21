@@ -6,7 +6,7 @@ This page lists the commands of the calculation chain, what each one reads and w
 
 ## Corrected and historical reproduction
 
-Default commands select r2. To reproduce the published tables and their presentation, run `analyze`, `render`, `build-site`, then `verify`. These commands make no acquisition.
+Default commands now select M2 through its separate [profile B adapter](automated-edition.md). The historical chain below describes M1. To replay M1 r2, append `--edition 2026-09-15_2026-10-15-r2` to `analyze`, `render`, `build-site` and `verify`. Run the default `render` and `build-site` again to restore the current M2 presentation afterward. These commands make no acquisition.
 
 `revise-public` is reserved for preparing a distinct local, unapproved revision. It transforms the inventoried r1 tables, changes the edition key, withholds protected daily rows and coverage complements, and regenerates the candidate catalog. It refuses a target already marked publicly accessible or approved. Do not run it against public r2. With identical eligible local inputs, the transformation is deterministic. `prepare-edition` prepares a local candidate manifest; it is not needed to reproduce published r2.
 

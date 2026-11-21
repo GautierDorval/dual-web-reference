@@ -6,7 +6,7 @@ Cette page présente les commandes de la chaîne de calcul, ce que chacune lit e
 
 ## Reproduction corrigée et historique
 
-Les commandes sélectionnent r2 par défaut. Pour reproduire les tables publiées et leur présentation, exécuter `analyze`, `render`, `build-site`, puis `verify`. Ces commandes ne font aucune acquisition.
+Les commandes sélectionnent maintenant M2 au moyen de son [adaptateur distinct du profil B](edition-automatisee.md). La chaîne historique ci-dessous décrit M1. Pour rejouer M1 r2, ajouter `--edition 2026-09-15_2026-10-15-r2` à `analyze`, `render`, `build-site` et `verify`. Relancer ensuite `render` et `build-site` sans option pour rétablir la présentation courante M2. Ces commandes ne font aucune acquisition.
 
 `revise-public` est réservée à la préparation d’une révision locale distincte et non approuvée. Elle transforme les tables r1 inventoriées, change la clé d’édition, retient les lignes quotidiennes protégées et les compléments de couverture, puis régénère le catalogue candidat. Elle refuse une cible déjà déclarée accessible publiquement ou approuvée. Ne pas l’exécuter sur r2 publique. Avec des intrants locaux admissibles identiques, la transformation est déterministe. `prepare-edition` prépare le manifeste d’une candidate locale ; elle n’est pas nécessaire à la reproduction de r2 publiée.
 
