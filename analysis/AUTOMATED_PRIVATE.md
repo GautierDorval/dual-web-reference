@@ -1,5 +1,9 @@
 # Automated-only private qualification / Qualification privée automatisée
 
+This page documents v1. The separate reduced release candidate is described in [Profile B](AUTOMATED_PROFILE_B.md).
+
+Cette page décrit la v1. La candidate réduite distincte est documentée dans le [profil B](AUTOMATED_PROFILE_B.md).
+
 ## English
 
 `prepare-automated` implements `dwr-automated/1.0.0` as a separate **private-only** contract. It is neither an activation of the synthetic `future_projection` prototype nor a change to the historical small-cell policy. It does not publish, register an edition, change `latest`, move the legacy cursor, acquire data, or activate scheduling.

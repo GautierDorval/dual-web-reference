@@ -1,5 +1,5 @@
 """Command-line interface. Network-free commands: verify, analyze, render, build-site,
-project-public, revise-public, qualify, normalize, qualify-next, normalize-next, status, prepare-edition, prepare-next, prepare-automated,
+project-public, revise-public, qualify, normalize, qualify-next, normalize-next, status, prepare-edition, prepare-next, prepare-automated, prepare-automated-profile-b,
 import-existing, publication-gate.
 Only acquire-readonly and acquire-next can contact the producer database; both
 are dry runs unless --execute and an exact --confirm-scope are given.
@@ -39,6 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     command.add_argument("--confirm-scope", default=None)
     command = add("prepare-next", "prepare the next consolidated window privately, offline", private=True)
     add("prepare-automated", "qualify the automated-only contract in a separate private workspace, offline", private=True)
+    add("prepare-automated-profile-b", "prepare the reduced profile B release candidate locally, offline", private=True)
     command = add("acquire-next", "bounded SELECT for the pending private window (dry run by default)", private=True)
     command.add_argument("--execute", action="store_true")
     command.add_argument("--confirm-scope", default=None)
@@ -75,14 +76,15 @@ def _dispatch(args) -> int:
     from . import pipeline
 
     command = args.command
-    if command == "prepare-automated":
-        from . import automated_prepare
+    if command in ("prepare-automated", "prepare-automated-profile-b"):
+        from . import automated, automated_prepare
         if args.edition is not None:
             raise DwrError("next_window_uses_private_cursor")
         value = args.private_root or os.environ.get("DWR_PRIVATE_ROOT")
         if not value:
             raise DwrError("private_root_missing")
-        _print(automated_prepare.prepare(Path(value)))
+        contract = automated.PROFILE_B_CONTRACT if command == "prepare-automated-profile-b" else automated.CONTRACT
+        _print(automated_prepare.prepare(Path(value), contract=contract))
     elif command in ("acquire-next", "normalize-next", "qualify-next"):
         from . import next_inputs
         if args.edition is not None:

@@ -47,7 +47,9 @@ def _finish(figure, y, doc, lang, source, note=None):
                   f"{partial} jours archivés partiels ; {missing} jours indisponibles. Indisponible ne signifie pas zéro."),
              text(lang, "Recorded roles do not prove training use or citation. On-demand accesses withheld (U0).",
                   "Les rôles consignés ne prouvent ni entraînement ni citation. Accès à la demande retenus (U0)."),
-             text(lang, "Private unapproved candidate. Source: ", "Candidate privée non approuvée. Source : ") + source]
+             (text(lang, "Local profile B candidate. Source: ", "Candidate locale du profil B. Source : ")
+              if doc["contract"] == A.PROFILE_B_CONTRACT else
+              text(lang, "Private unapproved candidate. Source: ", "Candidate privée non approuvée. Source : ")) + source]
     if note:
         lines.insert(0, note)
     output = figure.render(S.footer(figure, y, lines, figure.width))
@@ -153,7 +155,9 @@ def _figure(doc, identifier, rows, lang, compact):
 
 
 def _report(doc, lang, jobs):
-    title = text(lang, "Automated-only private candidate", "Candidate privée : accès automatisés seulement")
+    title = (text(lang, "Automated accesses: profile B candidate", "Accès automatisés : candidate du profil B")
+             if doc["contract"] == A.PROFILE_B_CONTRACT else
+             text(lang, "Automated-only private candidate", "Candidate privée : accès automatisés seulement"))
     other = "en" if lang == "fr" else "fr"
     cov = doc["tables"]["coverage"]
     missing = ", ".join(r["date_utc"] for r in cov if r["observation_status"] != "observed") or text(lang, "none", "aucune")
@@ -163,31 +167,41 @@ def _report(doc, lang, jobs):
     limits = text(lang,
         "On-demand access: withheld (U0), count null. M1/M2 growth: not qualified, null. Unavailable dates are not zeros. A zero only means no selected row recorded under the stated coverage. Monthly resource/actor details contain no daily or epoch partitions. Automated actors or resources may still be inferred from small groups.",
         "Accès à la demande : retenus (U0), compte null. Croissance M1/M2 : non qualifiée, null. Une date indisponible ne vaut pas zéro. Un zéro signifie seulement aucune ligne sélectionnée consignée sous la couverture indiquée. Les détails mensuels de ressources et d'acteurs n'ont aucune partition quotidienne ou par époque. De petits groupes peuvent néanmoins révéler un acteur ou une ressource automatisée.")
+    if doc["contract"] == A.PROFILE_B_CONTRACT:
+        paragraph = text(lang,
+            "This descriptive subset of recorded accesses is a local release candidate. Publication has not been authorized. The provider-origin tier and actor roles are recorded classifications under review; they do not establish actual training, citations or human initiation.",
+            "Cette sélection descriptive d'accès consignés est une candidate locale de diffusion. La publication n'est pas autorisée. Le niveau provider-origin et les rôles sont des classifications enregistrées sous examen ; ils ne démontrent ni entraînement effectif, ni citation, ni initiative humaine.")
+        limits += text(lang,
+            " Daily margins are limited to site and role; documentary family totals are monthly only. These margins can still constrain individual automated cells. Historical releases and auxiliary information remain available; this profile is not anonymization.",
+            " Les marges quotidiennes se limitent au site et au rôle ; les totaux par famille documentaire sont uniquement mensuels. Ces marges peuvent encore contraindre des cellules automatisées individuelles. Les publications historiques et les informations auxiliaires demeurent accessibles ; ce profil n'est pas une anonymisation.")
     classifier = {"unknown": ("unattested", "non attesté"), "attested_in_provenance": ("attested in provenance", "attesté dans la provenance")}
     epochs = {"unknown": ("unknown", "inconnue"), "mixed_epoch_unresolved": ("unresolved intraday transition", "transition intrajournalière non résolue"),
               "single_epoch_resolved": ("single resolved epoch", "époque unique résolue"), "multiple_epochs_resolved": ("multiple resolved epochs", "plusieurs époques résolues")}
     qualification = text(lang, "Classifier status", "Statut du classificateur") + ": " + text(lang, *classifier[doc["measurement"]["classifier_status"]]) + "; " + text(lang, "measurement epoch", "époque de mesure") + ": " + text(lang, *epochs[doc["measurement"]["epoch_resolution"]]) + "."
-    links = " ".join(f'<a href="{escape(name)}">{escape(name)}</a>' for name in (*A.FILENAMES.values(), "projection.json", "catalog.json", "schema.json", "manifest.json"))
+    links = " ".join(f'<a href="{escape(name)}">{escape(name)}</a>' for name in (*A.filenames(doc["contract"]).values(), "projection.json", "catalog.json", "schema.json", "manifest.json"))
     figures = []
     for identifier in jobs:
         figures.append(f'<section><h2>{escape(identifier)}</h2><picture><source media="(max-width:600px)" srcset="figures/{identifier}.{lang}.compact.svg"><img src="figures/{identifier}.{lang}.svg" alt="{escape(identifier)}" width="960"></picture><p><a href="figures/{identifier}.csv">{text(lang,"Figure data (CSV)","Données de la figure (CSV)")}</a></p></section>')
     summary = f'<div class="counts"><p><strong>{doc["metrics"]["selected_requests"]}</strong> {text(lang,"selected requests","accès sélectionnés")}</p><p><strong>{doc["metrics"]["selected_distinct_resources"]}</strong> {text(lang,"distinct site/path resources","ressources distinctes site/chemin")}</p></div>'
     html = f'''<!doctype html><html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'unsafe-inline'"><title>{title}</title><style>
 *{{box-sizing:border-box}}body{{margin:0;color:#172b37;background:#f4f6f8;font:16px/1.6 system-ui,sans-serif}}main{{max-width:1040px;margin:auto;padding:28px;background:white;overflow-wrap:anywhere}}h1{{line-height:1.2}}a{{color:#005c7b}}nav{{display:flex;gap:20px;flex-wrap:wrap}}.counts{{display:flex;gap:24px;flex-wrap:wrap;background:#edf4f8;padding:12px 20px}}.counts strong{{font-size:1.5rem}}img{{max-width:100%;height:auto;display:block}}section{{border-top:1px solid #ccd7df;margin-top:28px;padding-top:8px}}.files a{{display:inline-block;margin:0 14px 12px 0}}@media(max-width:600px){{main{{padding:16px}}h1{{font-size:1.8rem}}.counts{{gap:0;display:block}}}}
-</style></head><body><main><nav><a href="report.{other}.html" hreflang="{other}">{"English" if other == "en" else "Français"}</a><a href="#files">{text(lang,"Read the data","Consulter les données")}</a></nav><h1>{title}</h1><p>{escape(_period(doc,lang))}</p><p>{escape(paragraph)}</p>{summary}<p>{escape(limits)}</p><p>{escape(qualification)}</p><p>{text(lang,"Unavailable dates","Dates indisponibles")} : {escape(missing)}.</p><section id="files"><h2>{text(lang,"Selected data and closed schema","Données sélectionnées et schéma fermé")}</h2><p class="files">{links}</p></section>{''.join(figures)}<p>{escape(A.CONTRACT)} · {text(lang,"No publication authorized. No tracking or external assets.","Aucune publication autorisée. Aucun suivi ni actif externe.")}</p></main></body></html>'''
+</style></head><body><main><nav><a href="report.{other}.html" hreflang="{other}">{"English" if other == "en" else "Français"}</a><a href="#files">{text(lang,"Read the data","Consulter les données")}</a></nav><h1>{title}</h1><p>{escape(_period(doc,lang))}</p><p>{escape(paragraph)}</p>{summary}<p>{escape(limits)}</p><p>{escape(qualification)}</p><p>{text(lang,"Unavailable dates","Dates indisponibles")} : {escape(missing)}.</p><section id="files"><h2>{text(lang,"Selected data and closed schema","Données sélectionnées et schéma fermé")}</h2><p class="files">{links}</p></section>{''.join(figures)}<p>{escape(doc["contract"])} · {text(lang,"No publication authorized. No tracking or external assets.","Aucune publication autorisée. Aucun suivi ni actif externe.")}</p></main></body></html>'''
     return _typography(html, lang)
 
 
 def files(document):
     """Complete allowlist of output bytes. No arbitrary catalogue or extra file."""
     A.validate(document)
-    result = {"projection.json": canonical_json(document), "schema.json": canonical_json(A.schema_document()),
+    contract = document["contract"]
+    fields_by_table = A.table_fields(contract)
+    names = A.filenames(contract)
+    result = {"projection.json": canonical_json(document), "schema.json": canonical_json(A.schema_document(contract)),
               "metrics.json": canonical_json(document["metrics"]), "on-demand.json": canonical_json(document["on_demand"])}
-    for key, name in A.FILENAMES.items():
-        result[name] = csv_text(A.TABLES[key], document["tables"][key])
-    result["catalog.json"] = canonical_json({"contract": A.CONTRACT, "canonical_document": "projection.json",
-        "schema": "schema.json", "manifest": "manifest.json", "availability_status": "private_candidate",
-        "tables": {key: {"path": name, "columns": list(A.TABLES[key])} for key, name in A.FILENAMES.items()},
+    for key, name in names.items():
+        result[name] = csv_text(fields_by_table[key], document["tables"][key])
+    result["catalog.json"] = canonical_json({"contract": contract, "canonical_document": "projection.json",
+        "schema": "schema.json", "manifest": "manifest.json", "availability_status": document["availability_status"],
+        "tables": {key: {"path": name, "columns": list(fields_by_table[key])} for key, name in names.items()},
         "reports": {lang: f"report.{lang}.html" for lang in ("en", "fr")}, "figures": "figures.json"})
     jobs = _jobs(document)
     registry = []
@@ -206,11 +220,11 @@ def files(document):
                 result[f"figures/{identifier}.{lang}{suffix}.svg"] = _figure(document, identifier, rows, lang, compact)
         registry.append({"figure_id": identifier, "status": "not_available" if identifier.startswith("G09-") else "rendered",
                          "data_table": f"figures/{identifier}.csv"})
-    result["figures.json"] = canonical_json({"contract": A.CONTRACT, "figures": registry})
+    result["figures.json"] = canonical_json({"contract": contract, "figures": registry})
     for lang in ("en", "fr"):
         result[f"report.{lang}.html"] = _report(document, lang, jobs)
     encoded = {name: value.encode("utf-8") for name, value in sorted(result.items())}
-    encoded["manifest.json"] = canonical_json({"contract": A.CONTRACT, "canonical_document": "projection.json",
+    encoded["manifest.json"] = canonical_json({"contract": contract, "canonical_document": "projection.json",
         "public_output_approved": False, "files": {name: sha256_bytes(value) for name, value in encoded.items()},
         "self_excluded": "manifest.json"}).encode("utf-8")
     return encoded
@@ -227,4 +241,4 @@ def verify(directory, document):
             raise DwrError("automated_unexpected_output_directory")
     if fingerprint(directory) != expected:
         raise DwrError("automated_output_bytes_or_surfaces_changed")
-    return {"passed": True, "files": len(expected), "contract": A.CONTRACT, "public_output_approved": False}
+    return {"passed": True, "files": len(expected), "contract": document["contract"], "public_output_approved": False}
