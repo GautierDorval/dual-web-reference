@@ -54,7 +54,17 @@ def payload_manifest(edition_id: str, root=None) -> dict:
     root = root or REPO_ROOT
     parse_edition_id(edition_id)
     files = {}
-    for prefix in (f"data/editions/{edition_id}", f"figures/{edition_id}"):
+    from .common import load_json
+    from .automated_public import DISTRIBUTION_CONTRACT
+    from .automated import PROFILE_B_CONTRACT
+    catalog_path = root / "data/editions" / edition_id / "catalog.json"
+    catalog = load_json(catalog_path) if catalog_path.is_file() else {}
+    nested_figures = (catalog.get("schema_version") == DISTRIBUTION_CONTRACT
+                      and catalog.get("edition_id") == edition_id
+                      and catalog.get("data_contract") == PROFILE_B_CONTRACT)
+    prefixes = ((f"data/editions/{edition_id}",) if nested_figures
+                else (f"data/editions/{edition_id}", f"figures/{edition_id}"))
+    for prefix in prefixes:
         directory = root / prefix
         if not directory.is_dir():
             raise DwrError("approval_payload_missing")

@@ -1,0 +1,45 @@
+{
+  "contract": "dwr-automated/2.0.0",
+  "figures": [
+    {
+      "data_table": "figures/G01.csv",
+      "figure_id": "G01",
+      "status": "rendered"
+    },
+    {
+      "data_table": "figures/G02.csv",
+      "figure_id": "G02",
+      "status": "rendered"
+    },
+    {
+      "data_table": "figures/G03.csv",
+      "figure_id": "G03",
+      "status": "rendered"
+    },
+    {
+      "data_table": "figures/G06.csv",
+      "figure_id": "G06",
+      "status": "rendered"
+    },
+    {
+      "data_table": "figures/G08.csv",
+      "figure_id": "G08",
+      "status": "rendered"
+    },
+    {
+      "data_table": "figures/G09-gautierdorval.com.csv",
+      "figure_id": "G09-gautierdorval.com",
+      "status": "not_available"
+    },
+    {
+      "data_table": "figures/G09-pagup.com.csv",
+      "figure_id": "G09-pagup.com",
+      "status": "not_available"
+    },
+    {
+      "data_table": "figures/G09-better-robots.com.csv",
+      "figure_id": "G09-better-robots.com",
+      "status": "not_available"
+    }
+  ]
+}

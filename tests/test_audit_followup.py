@@ -31,6 +31,7 @@ class AuditFollowupTests(unittest.TestCase):
                 stack.enter_context(patch.object(site_build,'DIST',root/'site/dist'))
                 before=edition_rules.payload_manifest(R2,root)['digest']
                 config=load_json(root/'config/editions.json');entry=next(e for e in config['editions'] if e['edition_id']==R2)
+                config['candidate']=R2
                 entry.update(controls.ReviewTests().approved(R2,before));write_json(root/'config/editions.json',config)
                 self.assertTrue(edition_rules.approved(entry))
                 render.cmd(R2);site_build.cmd(R2)
@@ -209,7 +210,10 @@ class AuditFollowupTests(unittest.TestCase):
         self.assertEqual(typo.punctuation_violations('`locale; code` https://example.invalid/a; « citation; exacte » &amp;'),0)
         for name in ('README.fr.md','README.md'):
             text=(REPO_ROOT/name).read_text(encoding='utf-8')
-            self.assertIn('r2',text[:650]);self.assertIn('r1',text[:650])
+            # M2 now leads the landing page; M1 state is still explicit in its
+            # historical block, rather than being mistaken for the current month.
+            block=text.split('<!-- dwr:begin edition-state -->',1)[1].split('<!-- dwr:end edition-state -->',1)[0]
+            self.assertIn('r2',block);self.assertIn('r1',block)
         text=render.case_rows(edition,'fr')
         self.assertIn('(EN ; FR : `/ai-usage-policy/`)',text)
 

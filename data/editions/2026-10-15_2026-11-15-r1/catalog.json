@@ -1,0 +1,90 @@
+{
+  "canonical_document": "projection.json",
+  "data_contract": "dwr-automated/2.0.0",
+  "dates": {
+    "latest_available_data_date": "2026-11-14",
+    "period_end_exclusive": "2026-11-15",
+    "period_start_inclusive": "2026-10-15"
+  },
+  "distribution_scope": "selected automated aggregates; no on-demand counts, daily family margins or private diagnostics",
+  "edition_id": "2026-10-15_2026-11-15-r1",
+  "figures": "figures.json",
+  "manifest": "manifest.json",
+  "operational_state_source": "../../../config/editions.json",
+  "preparation_metadata": "projection.json preserves the unapproved local preparation state; it is not the current availability or review registry",
+  "schema": "schema.json",
+  "schema_version": "dwr-automated-distribution/1.0.0",
+  "tables": {
+    "actors": {
+      "columns": [
+        "site_id",
+        "actor_family",
+        "actor_name",
+        "actor_role",
+        "request_count"
+      ],
+      "path": "actor-summary.csv"
+    },
+    "consultations": {
+      "columns": [
+        "site_id",
+        "path",
+        "family",
+        "actor_family",
+        "actor_name",
+        "actor_role",
+        "request_count"
+      ],
+      "path": "consultations.csv"
+    },
+    "coverage": {
+      "columns": [
+        "date_utc",
+        "archive_status",
+        "observation_status",
+        "source_qualification",
+        "coverage_status",
+        "evidence_status",
+        "request_count",
+        "suppression_status"
+      ],
+      "path": "coverage.csv"
+    },
+    "daily": {
+      "columns": [
+        "date_utc",
+        "site_id",
+        "actor_role",
+        "request_count",
+        "observation_status",
+        "coverage_status"
+      ],
+      "path": "daily-summary.csv"
+    },
+    "families": {
+      "columns": [
+        "family",
+        "actor_role",
+        "request_count"
+      ],
+      "path": "family-summary.csv"
+    },
+    "resource_summary": {
+      "columns": [
+        "site_id",
+        "path",
+        "family",
+        "request_count"
+      ],
+      "path": "resource-summary.csv"
+    },
+    "resources": {
+      "columns": [
+        "site_id",
+        "path",
+        "family"
+      ],
+      "path": "resources.csv"
+    }
+  }
+}

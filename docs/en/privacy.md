@@ -2,6 +2,8 @@
 
 [Français](../fr/confidentialite.md) · [Repository home](../../README.md)
 
+This page describes the M1 r1/r2 disclosure contract. M2 uses the separate [automated profile B contract](automated-edition.md), with no daily family margins or on-demand counts. Its current availability and review decisions are recorded in the shared edition registry.
+
 The [current policy](../../config/small-cell-policy.json) is **version 2.0.0**; its distribution review is recorded in the external edition registry. It describes tested aggregate protections, not universal anonymity or an assurance that no information can be inferred. r1 and its [original rules](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) remain immutable historical evidence.
 
 ## What changed

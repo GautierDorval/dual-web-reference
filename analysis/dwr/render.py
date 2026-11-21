@@ -353,6 +353,10 @@ def fill_blocks(text: str, edition: Edition, lang: str, prefix: str) -> str:
 
     def replace(match):
         key = match.group("key")
+        if key == "current-edition":
+            # This block belongs to the separate profile B renderer. The M1
+            # renderer keeps it byte-for-byte and only regenerates M1 blocks.
+            return match.group(0)
         if key not in builders:
             raise KeyError(f"unknown generated block {key}")
         body = builders[key]()
@@ -520,7 +524,8 @@ def case_page(edition, case, lang, resources, summary, checks, provider) -> str:
 
 
 def render_index(edition: Edition) -> None:
-    editions = load_json(REPO_ROOT / "config" / "editions.json")["editions"]
+    config = load_json(REPO_ROOT / "config" / "editions.json")
+    editions = config["editions"]
     index = {"schema_version": "dwr-index/1.0.0", "editions": [
         {"edition_id": e["edition_id"], "edition_type": e["edition_type"], "status": e["status"],
          "period_start_inclusive": e["period_start_inclusive"], "period_end_exclusive": e["period_end_exclusive"],
@@ -529,12 +534,15 @@ def render_index(edition: Edition) -> None:
          **{k: e.get(k) for k in ("availability_status", "review_status", "reference_release_status", "scientific_review_status", "public_availability_evidence", "approved_release_at")},
          "declared_reference_release_status": e.get("reference_release_status"),
          "reference_release_status": edition_rules.reference_state(e),
-         "catalog": f"data/editions/{e['edition_id']}/catalog.json"} for e in editions]}
+         "catalog": f"data/editions/{e['edition_id']}/catalog.json",
+         **({"data_contract": e["data_contract"]} if "data_contract" in e else {})} for e in editions]}
     write_json(REPO_ROOT / "data" / "index.json", index)
     from .edition_rules import latest_pointer
     latest = latest_pointer(editions)
     write_json(REPO_ROOT / "data" / "latest.json", {
-        "schema_version": "dwr-latest/1.0.0", "latest_published_edition": latest,
+        "schema_version": "dwr-latest/2.0.0", "latest_published_edition": latest,
+        "latest_candidate_edition": config["candidate"],
+        "candidate_rule": "latest candidate is discoverable separately; not publication or reference approval",
         "rule": "shared latest_pointer selects an externally approved public payload with a matching receipt; never a candidate or a successful run",
         "reason": None if latest else "no publicly accessible edition has a matching approved reference receipt"})
     operations = load_json(REPO_ROOT / "config" / "operations.json")

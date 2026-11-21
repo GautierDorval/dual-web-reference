@@ -48,3 +48,9 @@ U0 demeure constant, avec compte null et initiation inconnue. Les limites du cla
 Le lecteur v1 et ses 57 sorties demeurent distincts et reproductibles. Les reçus épinglent les octets du code, fins de ligne comprises : utiliser l’export archivé exact pour le rejeu, sans substituer une copie CRLF à un export LF. Les reçus v1 épinglent le code original : le rejeu d’une préparation historique utilise l’export archivé, sans remplacer les empreintes par celles du nouveau code. Les éditions M1, leurs politiques, leur registre public et leur contrôle de diffusion restent inchangés.
 
 Les tests ci-dessus vérifient la non-divulgation de la marge retirée, les octets déterministes, les bornes contre une énumération exhaustive, les refus d’altération et l’admission native par le véritable répartiteur CLI avec une horloge de test fixe. Les preuves sur les données réelles, les captures FR/EN mobiles et bureau et l’audit indépendant doivent être liées au candidat final exact. Une diffusion ultérieure exige l’autorisation externe nommée et une revue de l’historique à jour ; un GO local ne certifie ni disponibilité publique ni validité scientifique.
+
+## Separate distribution integration / Intégration de diffusion distincte
+
+The private command above remains unchanged in scope. The [public adapter](AUTOMATED_PUBLIC.md) separately derives the registered M2 candidate and its current presentation; preparation does not invoke that adapter or authorize publication.
+
+La portée privée de la commande ci-dessus reste inchangée. L’[adaptateur public](AUTOMATED_PUBLIC.md) dérive séparément la candidate M2 inscrite et sa présentation courante ; la préparation ne lance pas cet adaptateur et n’autorise aucune publication.

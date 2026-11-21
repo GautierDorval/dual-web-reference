@@ -1,0 +1,8 @@
+site_id,actor_family,actor_name,actor_role,request_count
+better-robots.com,openai,GPTBot,ai_training,25
+better-robots.com,openai,OAI-SearchBot,ai_search,88
+better-robots.com,perplexity,PerplexityBot,ai_search,1
+gautierdorval.com,openai,GPTBot,ai_training,58
+gautierdorval.com,openai,OAI-SearchBot,ai_search,29
+gautierdorval.com,perplexity,PerplexityBot,ai_search,2
+pagup.com,openai,GPTBot,ai_training,20

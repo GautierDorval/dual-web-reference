@@ -1,5 +1,5 @@
 """Licences and citation: every tracked file maps to exactly one row of NOTICE.md, the legal code is the official text,
-and CITATION.cff is the file validated with cffconvert 2.0.0 against CFF 1.2.0 on 2026-10-19 (pinned by digest)."""
+and CITATION.cff is the file validated with cffconvert 2.0.0 against CFF 1.2.0 on 2026-11-21 (pinned by digest)."""
 import fnmatch
 import hashlib
 import re
@@ -12,8 +12,8 @@ from dwr.common import REPO_ROOT
 
 # SHA-256 of https://creativecommons.org/licenses/by/4.0/legalcode.txt, retrieved on 2026-10-17.
 CC_BY_4_SHA256 = "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
-# SHA-256 of CITATION.cff as validated with cffconvert 2.0.0 (schema 1.2.0) on 2026-10-19.
-CITATION_SHA256 = "e5b2b47c947e33185bfc1d6bf4c00e4c07c1ad90b9e163e94ca5f502a964c291"
+# SHA-256 of CITATION.cff as validated with cffconvert 2.0.0 (schema 1.2.0) on 2026-11-21.
+CITATION_SHA256 = "68ccc45b2136a5b5f5ba1229ec30fe6b9ec71304c7d613ec429090a3b4452efd"
 
 
 def licence_rows() -> dict:

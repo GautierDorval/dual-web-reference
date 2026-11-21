@@ -59,6 +59,9 @@ SOURCE_FILES = frozenset((
     'schemas/v2/resource-summary.schema.json',
     'schemas/v2/resources.schema.json',
 ))
+AUTOMATED_MANIFEST = "config/automated-distribution.json"
+AUTOMATED_MANIFEST_SHA256 = "5b917c6cead128311a96b64827e5312ed333cea52efa5115ae0bbd9a937b0060"
+
 SOURCE_ONLY = frozenset(('config/workflow-templates/monthly-edition.yml.example', 'config/workflow-templates/weekly-preparation.yml.example'))
 
 
@@ -140,6 +143,23 @@ def expected(read):
     # availability remains authoritative even if a current entry is downgraded.
     if not admitted <= {e.get("edition_id") for e in entries}:
         fail("historical_edition_missing")
+    from .automated_public import EDITION, DISTRIBUTION_CONTRACT
+    from .automated import PROFILE_B_CONTRACT
+    selected = [e for e in entries if e["edition_id"] == EDITION]
+    if selected:
+        if selected[0].get("data_contract") != PROFILE_B_CONTRACT:
+            fail("automated_contract_invalid")
+        encoded = read(AUTOMATED_MANIFEST)
+        if sha(encoded) != AUTOMATED_MANIFEST_SHA256:
+            fail("automated_authority_changed")
+        manifest = json_object(encoded)
+        if (manifest.get("schema_version") != DISTRIBUTION_CONTRACT
+                or manifest.get("edition_id") != EDITION
+                or manifest.get("data_contract") != PROFILE_B_CONTRACT):
+            fail("automated_contract_invalid")
+        wanted[AUTOMATED_MANIFEST] = AUTOMATED_MANIFEST_SHA256
+        wanted.update(manifest["files"])
+    unique_names(wanted)
     return wanted
 
 

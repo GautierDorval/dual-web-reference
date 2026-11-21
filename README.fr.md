@@ -4,6 +4,36 @@
 
 Ce dépôt étudie les fichiers de gouvernance, leurs relations documentaires et leurs accès HTTP enregistrés.
 
+<!-- dwr:begin current-edition -->
+## Mois 2 : accès automatisés, profil B
+
+`2026-10-15_2026-11-15-r1` · candidate locale ; référence non approuvée ; aucune évaluation scientifique indépendante documentée.
+
+**223 accès automatisés sélectionnés · 135 ressources distinctes site/chemin · 3 sites dans un même écosystème.**
+
+Du 15 octobre au 14 novembre 2026 inclus, UTC. Population documentaire principale, GET 200, niveau d’origine fournisseur enregistré, rôles d’entraînement et de recherche seulement.
+
+103 accès classés entraînement ; 120 classés recherche. Ces étiquettes ne démontrent ni entraînement effectif, ni compréhension, ni citation, ni effet causal.
+
+Couverture : 27 dates archivées sur 31, dont 27 à couverture partielle déclarée. Dates indisponibles : 2026-10-17, 2026-10-25, 2026-10-26, 2026-10-27. Les dates absentes ne valent pas zéro ; un zéro observé signifie aucune ligne sélectionnée consignée sous cette couverture.
+
+Les accès à la demande restent retenus (U0, compte null, initiative inconnue). Le classificateur n’est pas attesté et les époques de mesure ne sont pas résolues. La croissance M1/M2 n’est pas qualifiée et reste null. Aucun graphe source M2 n’est qualifié.
+
+Le profil B expose des détails mensuels par ressource et acteur, avec des marges quotidiennes par site et rôle. Les familles documentaires sont uniquement mensuelles. De petits groupes et des informations auxiliaires peuvent encore révéler des cellules automatisées : ce profil n’est pas une anonymisation ni une garantie universelle de non-reconstruction.
+
+[Lire M2 et sa méthode](docs/fr/edition-automatisee.md) · [Catalogue](data/editions/2026-10-15_2026-11-15-r1/catalog.json) · [Ressources](data/editions/2026-10-15_2026-11-15-r1/resource-summary.csv) · [Accès](data/editions/2026-10-15_2026-11-15-r1/consultations.csv) · [Couverture](data/editions/2026-10-15_2026-11-15-r1/coverage.csv) · [Index des éditions](data/index.json).
+
+La candidate la plus récente est M2. `data/latest.json` indique séparément la dernière référence approuvée ; elle reste null sans reçu d’approbation correspondant. Disponibilité, revue technique et évaluation scientifique indépendante sont distinctes.
+
+<picture><source media="(max-width: 640px)" srcset="data/editions/2026-10-15_2026-11-15-r1/figures/G02.fr.compact.svg"><img src="data/editions/2026-10-15_2026-11-15-r1/figures/G02.fr.svg" alt="Accès mensuels par rôle enregistré d’entraînement et de recherche ; couverture partielle." width="960"></picture>
+
+[Comptes mensuels exacts par rôle (CSV)](data/editions/2026-10-15_2026-11-15-r1/figures/G02.csv) · [Accès sélectionnés par date](data/editions/2026-10-15_2026-11-15-r1/figures/G01.fr.svg).
+<!-- dwr:end current-edition -->
+
+## Archive du mois 1 : instantané documentaire et accès consignés
+
+Les sections qui suivent décrivent uniquement M1. M2 utilise le contrat distinct des accès automatisés ci-dessus ; ces comptes ne doivent pas être comparés comme une croissance.
+
 <!-- dwr:begin edition-state -->
 Édition r2 : accessible publiquement ; référence non approuvée ; aucune évaluation scientifique indépendante documentée. r1 reste accessible comme édition historique figée et non approuvée.
 <!-- dwr:end edition-state -->

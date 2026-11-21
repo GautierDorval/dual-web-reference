@@ -2,6 +2,8 @@
 
 [English](../en/privacy.md) · [Accueil du dépôt](../../README.fr.md)
 
+Cette page décrit le contrat de diffusion M1 r1/r2. M2 utilise le contrat distinct du [profil B automatisé](edition-automatisee.md), sans marges quotidiennes par famille ni comptes à la demande. Sa disponibilité et ses décisions de revue courantes figurent au registre commun des éditions.
+
 La [politique actuelle](../../config/small-cell-policy.json) est la **version 2.0.0** ; sa revue de diffusion figure au registre externe des éditions. Elle décrit des protections d’agrégats testées, pas une anonymisation universelle ni l’impossibilité de toute inférence. r1 et ses [règles originales](../../config/history/2026-09-15_2026-10-15-r1/small-cell-policy.json) restent des pièces historiques immuables.
 
 ## Ce qui change
