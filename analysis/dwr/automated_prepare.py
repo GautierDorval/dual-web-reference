@@ -106,21 +106,33 @@ def _verify_private_evidence(target, actual, document, diagnostics):
 
 def prepare(value, now=None, *, contract=automated.CONTRACT):
     private = private_workspace(value, contract)
-    folder = checked_path(private, private / workspace_folder(contract))
-    folder.mkdir(exist_ok=True)
-    # Repeat the cross-version check after claiming the namespace. Two different
-    # commands racing after their initial check must not both prepare one root.
-    private_workspace(private, contract)
-    lock = checked_path(private, folder / "preparation.lock")
+    # All current contract entry points reserve the same root before creating a
+    # namespace. A losing version must not strand an empty directory that would
+    # make the winner's already sealed candidate unreadable on its next replay.
+    reservation = checked_path(private, private / ".automated-preparation.lock")
     try:
-        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        fd = os.open(reservation, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
     except FileExistsError as error:
         raise DwrError("automated_preparation_busy") from error
     os.close(fd)
     try:
-        return _prepare(private, now or datetime.now(timezone.utc), contract)
+        # An earlier check can be stale after a competing preparation completes.
+        private_workspace(private, contract)
+        folder = checked_path(private, private / workspace_folder(contract))
+        folder.mkdir(exist_ok=True)
+        # Retain the existing namespace lock and its busy/refusal semantics.
+        lock = checked_path(private, folder / "preparation.lock")
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        except FileExistsError as error:
+            raise DwrError("automated_preparation_busy") from error
+        os.close(fd)
+        try:
+            return _prepare(private, now or datetime.now(timezone.utc), contract)
+        finally:
+            lock.unlink()
     finally:
-        lock.unlink()
+        reservation.unlink()
 
 
 def _prepare(private, now, contract=automated.CONTRACT):
