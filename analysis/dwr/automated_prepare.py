@@ -14,7 +14,12 @@ from .maintenance import atomic_json, projection_inputs, retry_sharing_violation
 from .write_guard import checked_path, fingerprint
 
 
-def private_workspace(value):
+def workspace_folder(contract=automated.CONTRACT):
+    automated.contract_fields(contract)
+    return "automated" if contract == automated.CONTRACT else "automated-profile-b"
+
+
+def private_workspace(value, contract=automated.CONTRACT):
     private = Path(value).absolute()
     for part in (private, *private.parents):
         if part.is_symlink() or (hasattr(part, "is_junction") and part.is_junction()):
@@ -25,6 +30,9 @@ def private_workspace(value):
         raise DwrError("private_root_unavailable")
     if (private / "preparation/candidates").exists():
         raise DwrError("automated_requires_separate_private_workspace")
+    other = "automated-profile-b" if workspace_folder(contract) == "automated" else "automated"
+    if (private / other).exists():
+        raise DwrError("automated_requires_separate_contract_workspace")
     return private
 
 
@@ -41,10 +49,10 @@ def input_manifest(private):
     return result
 
 
-def _receipt_metadata(receipt, edition, period, delay):
+def _receipt_metadata(receipt, edition, period, delay, contract=automated.CONTRACT):
     fields = {"contract", "edition_id", "input_digest", "input_manifest", "files", "preparation_status", "state",
               "distribution_authorized", "public_mutation", "planning_activated", "legacy_cursor_changed", "prepared_at"}
-    if (type(receipt) is not dict or set(receipt) != fields or receipt["contract"] != automated.CONTRACT
+    if (type(receipt) is not dict or set(receipt) != fields or receipt["contract"] != contract
             or receipt["edition_id"] != edition or receipt["preparation_status"] != "complete_private"
             or receipt["state"] != "distribution_blocked_pending_release_review"):
         raise DwrError("automated_receipt_metadata_invalid")
@@ -70,7 +78,7 @@ def _diagnostics(normalized, qualified, document, verification):
     measured = measurement.qualify(admitted["joint_rows"], normalized["archive_inventory"]["days"],
                                    normalized.get("measurement_provenance", {}))
     history = disclosure.inventory()
-    return {"source-exclusions.private.json": excluded,
+    result = {"source-exclusions.private.json": excluded,
             "measurement-report.private.json": {k: v for k, v in measured.items() if k != "rows"},
             "disclosure-report.private.json": {**automated.validate(document),
                 "historical_inventory_status": history["status"], "historical_releases_considered": len(history.get("releases", [])),
@@ -78,6 +86,10 @@ def _diagnostics(normalized, qualified, document, verification):
                 "prior_policy_unchanged": True, "projection_verification": verification},
             "delta-report.private.json": {**document["comparison"],
                 "reasons": ["different_population_contract", "source_comparability_not_qualified"], "is_growth": False}}
+    if document["contract"] == automated.PROFILE_B_CONTRACT:
+        from .automated_inference import assess
+        result["profile-b-inference.private.json"] = assess(document)
+    return result
 
 
 def _verify_private_evidence(target, actual, document, diagnostics):
@@ -92,10 +104,13 @@ def _verify_private_evidence(target, actual, document, diagnostics):
         raise DwrError("automated_private_evidence_or_surfaces_changed")
 
 
-def prepare(value, now=None):
-    private = private_workspace(value)
-    folder = checked_path(private, private / "automated")
+def prepare(value, now=None, *, contract=automated.CONTRACT):
+    private = private_workspace(value, contract)
+    folder = checked_path(private, private / workspace_folder(contract))
     folder.mkdir(exist_ok=True)
+    # Repeat the cross-version check after claiming the namespace. Two different
+    # commands racing after their initial check must not both prepare one root.
+    private_workspace(private, contract)
     lock = checked_path(private, folder / "preparation.lock")
     try:
         fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -103,14 +118,15 @@ def prepare(value, now=None):
         raise DwrError("automated_preparation_busy") from error
     os.close(fd)
     try:
-        return _prepare(private, now or datetime.now(timezone.utc))
+        return _prepare(private, now or datetime.now(timezone.utc), contract)
     finally:
         lock.unlink()
 
 
-def _prepare(private, now):
+def _prepare(private, now, contract=automated.CONTRACT):
     if now.tzinfo is None:
         raise DwrError("naive_datetime_refused")
+    folder = checked_path(private, private / workspace_folder(contract))
     period = next_inputs.window(private)
     calendar = load_json(REPO_ROOT / "config/edition-calendar.json")
     if not dates.consolidation_ready(period, now, calendar["consolidation_delay_hours"]):
@@ -130,17 +146,17 @@ def _prepare(private, now):
         raise DwrError("automated_inputs_changed_during_admission")
     evidence = automated.coverage_evidence(normalized["archive_inventory"]["days"], period)
     document = automated.project(normalized["joint_rows"], qualified["resources"], window=period,
-                                 evidence=evidence, provenance=normalized.get("measurement_provenance", {}))
-    digest = sha256_bytes(canonical_json({"contract": automated.CONTRACT, "files": manifest}).encode("utf-8"))
-    parent = checked_path(private, private / "automated/candidates")
+                                 evidence=evidence, provenance=normalized.get("measurement_provenance", {}), contract=contract)
+    digest = sha256_bytes(canonical_json({"contract": contract, "files": manifest}).encode("utf-8"))
+    parent = checked_path(private, folder / "candidates")
     target = checked_path(private, parent / edition)
     receipt_path = checked_path(private, target / "preparation-receipt.json")
     if target.exists():
         if not receipt_path.is_file():
             raise DwrError("incomplete_candidate_requires_inspection")
         receipt = load_json(receipt_path)
-        _receipt_metadata(receipt, edition, period, calendar["consolidation_delay_hours"])
-        if (receipt.get("contract") != automated.CONTRACT or receipt.get("input_digest") != digest
+        _receipt_metadata(receipt, edition, period, calendar["consolidation_delay_hours"], contract)
+        if (receipt.get("contract") != contract or receipt.get("input_digest") != digest
                 or receipt.get("input_manifest") != manifest):
             raise DwrError("existing_candidate_changed_inputs_requires_revision")
         actual = fingerprint(target)
@@ -153,11 +169,11 @@ def _prepare(private, now):
         _verify_private_evidence(target, actual, document, _diagnostics(normalized, qualified, document, verification))
         if input_manifest(private) != manifest:
             raise DwrError("automated_inputs_changed_during_preparation")
-        state_path = checked_path(private, private / "automated/status.json")
-        state = _result(edition, "new_private_candidate")
+        state_path = checked_path(private, folder / "status.json")
+        state = _result(edition, "new_private_candidate", contract)
         if not state_path.is_file() or load_json(state_path) != state:
             atomic_json(state_path, state)
-        return _result(edition, "unchanged")
+        return _result(edition, "unchanged", contract)
     parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=".staging-", dir=parent))
     installed = False
@@ -179,15 +195,15 @@ def _prepare(private, now):
             raise DwrError("automated_inputs_changed_during_preparation")
         files = fingerprint(stage)
         write_json(stage / "preparation-receipt.json", {
-            "contract": automated.CONTRACT, "edition_id": edition, "input_digest": digest, "input_manifest": manifest,
+            "contract": contract, "edition_id": edition, "input_digest": digest, "input_manifest": manifest,
             "files": files, "preparation_status": "complete_private", "state": "distribution_blocked_pending_release_review",
             "distribution_authorized": False, "public_mutation": False, "planning_activated": False,
             "legacy_cursor_changed": False, "prepared_at": now.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")})
         retry_sharing_violation(os.rename, stage, target)
         installed = True
         # State is separate from preparation/status.json, leaving its cursor intact.
-        atomic_json(private / "automated/status.json", _result(edition, "new_private_candidate"))
-        return _result(edition, "new_private_candidate")
+        atomic_json(folder / "status.json", _result(edition, "new_private_candidate", contract))
+        return _result(edition, "new_private_candidate", contract)
     finally:
         if not installed and stage.exists():
             checked_path(private, stage)
@@ -196,8 +212,8 @@ def _prepare(private, now):
             retry_sharing_violation(shutil.rmtree, stage)
 
 
-def _result(edition, outcome):
-    return {"contract": automated.CONTRACT, "edition_id": edition, "outcome": outcome,
+def _result(edition, outcome, contract=automated.CONTRACT):
+    return {"contract": contract, "edition_id": edition, "outcome": outcome,
             "preparation_status": "complete_private", "state": "distribution_blocked_pending_release_review",
             "public_mutation": False, "distribution_authorized": False, "planning_activated": False,
             "legacy_cursor_changed": False}
