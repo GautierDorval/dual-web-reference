@@ -148,14 +148,25 @@ class AutomatedPublicTests(unittest.TestCase):
         before=snapshot(self.target)
         private=Path(self.temp.name)/'private'
         private.mkdir()
-        for command in ('normalize','qualify','project-public','acquire-readonly','prepare-edition'):
-            args=[command]
-            if command!='prepare-edition':args+=['--private-root',str(private)]
-            result=cli(self.root,*args)
-            self.assertNotEqual(result.returncode,0)
-            self.assertIn('automated_edition_requires_its_own_contract',result.stderr)
-            self.assertEqual(before,snapshot(self.target))
-            self.assertEqual(list(private.iterdir()),[])
+        registry=self.root/'config/editions.json'
+        config=load_json(registry)
+        entry=next(e for e in config['editions'] if e['edition_id']==public.EDITION)
+        for availability in ('local_candidate','publicly_accessible'):
+            entry['availability_status']=availability
+            registry.write_text(canonical_json(config),encoding='utf-8')
+            for command in ('normalize','qualify','project-public','acquire-readonly','prepare-edition'):
+                with self.subTest(availability=availability,command=command):
+                    args=[command]
+                    if command!='prepare-edition':args+=['--private-root',str(private)]
+                    result=cli(self.root,*args)
+                    self.assertNotEqual(result.returncode,0)
+                    # The public projection CLI first protects every exposed edition.
+                    expected=('public_or_historical_edition_immutable'
+                              if command=='project-public' and availability=='publicly_accessible'
+                              else 'automated_edition_requires_its_own_contract')
+                    self.assertIn(expected,result.stderr)
+                    self.assertEqual(before,snapshot(self.target))
+                    self.assertEqual(list(private.iterdir()),[])
 
 
 if __name__=='__main__': unittest.main()
