@@ -15,11 +15,27 @@ from .common import DwrError, REPO_ROOT, SITE_IDS, load_json, sha256_file, write
 from .write_guard import checked_path
 
 
+def preparation_base():
+    """The display candidate cannot silently advance the private source cursor."""
+    registry = pipeline.editions_config()
+    return pipeline.edition_entry(registry.get("preparation_anchor", registry["candidate"]))
+
+
+def initial_state(private):
+    state_path = checked_path(private, private / "preparation/status.json")
+    if state_path.is_file():
+        return load_json(state_path)
+    state = load_json(REPO_ROOT / "data/status.json")
+    base = preparation_base()
+    catalog = load_json(REPO_ROOT / "data/editions" / base["edition_id"] / "catalog.json")
+    return {**state, "candidate_edition": base["edition_id"],
+            "latest_available_data_date": catalog["dates"]["latest_available_data_date"]}
+
+
 def window(private):
     """Use the same pending cursor as prepare-next; never skip an old window."""
-    state_path = checked_path(private, private / "preparation/status.json")
-    state = load_json(state_path) if state_path.is_file() else load_json(REPO_ROOT / "data/status.json")
-    base = pipeline.edition_entry(None)
+    state = initial_state(private)
+    base = preparation_base()
     start = (state.get("pending_window_start") or state.get("last_processed_window_end_exclusive")
              or base["period_end_exclusive"])
     calendar = load_json(REPO_ROOT / "config/edition-calendar.json")

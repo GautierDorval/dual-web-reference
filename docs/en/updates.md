@@ -2,6 +2,8 @@
 
 [Français](../fr/mises-a-jour.md) · [Repository home](../../README.md)
 
+M2 is now registered as a local profile B candidate; see its [method and limits](automated-edition.md). The M1 state and synthetic-preparation history below remain explicitly historical. `latest_candidate_edition` and `latest_published_edition` are separate fields; the latter still requires a matching reference-approval receipt. The private `preparation_anchor` remains M1 r2, so displaying M2 does not advance acquisition or a private cursor.
+
 <!-- dwr:begin edition-state -->
 Edition r2: publicly accessible; reference not approved; no independent scientific review documented. r1 remains accessible as a byte-frozen, unapproved historical edition.
 <!-- dwr:end edition-state -->

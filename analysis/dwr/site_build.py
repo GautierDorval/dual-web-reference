@@ -20,16 +20,16 @@ from contextvars import ContextVar
 import re
 from pathlib import Path
 
-from . import mdlite, typo, edition_rules, distribution
+from . import mdlite, typo, edition_rules, distribution, automated_public, automated_site
 from .common import REPO_ROOT, SITE_IDS, load_json, read_csv, DwrError
 from .i18n import number, t
 
 DIST = REPO_ROOT / "site" / "dist"
 DOC_PAGES = {
     "en": ["model", "file-roles", "discovery-and-linking", "methodology", "scope", "attribution", "quality-and-coverage",
-           "privacy", "updates", "reproduction", "limits", "llms-txt-studies", "glossary"],
+           "privacy", "updates", "reproduction", "limits", "llms-txt-studies", "glossary", "automated-edition"],
     "fr": ["modele", "roles-des-fichiers", "decouverte-et-maillage", "methode", "perimetre", "attribution",
-           "qualite-et-couverture", "confidentialite", "mises-a-jour", "reproduction", "limites", "etudes-llms-txt", "glossaire"],
+           "qualite-et-couverture", "confidentialite", "mises-a-jour", "reproduction", "limites", "etudes-llms-txt", "glossaire", "edition-automatisee"],
 }
 RAW_FILES = ("CHANGELOG.md", "CITATION.cff", "NOTICE.md", "SECURITY.md", "CONTRIBUTING.md")
 
@@ -83,13 +83,15 @@ def rewriter(source_rel: str, page: str):
 
 def layout(page: str, lang: str, title: str, body: str, counterpart: str | None, edition_id: str) -> str:
     root = relative(page, "index.html").rsplit("index.html", 1)[0]
+    current_entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
+    method = ("automated-edition" if lang == "en" else "edition-automatisee") if automated_public.is_automated(current_entry) else ("methodology" if lang == "en" else "methode")
     nav = [
         (t(lang, "Home", "Accueil"), f"{lang}/index.html"),
         (t(lang, "Understand", "Comprendre"), f"{lang}/docs/{'file-roles' if lang == 'en' else 'roles-des-fichiers'}.html"),
         (t(lang, "Explorer", "Explorateur"), f"{lang}/explorer.html"),
         (t(lang, "Figures", "Figures"), f"{lang}/figures.html"),
         (t(lang, "Cases", "Cas"), f"{lang}/cases.html"),
-        (t(lang, "Method", "Méthode"), f"{lang}/docs/{'methodology' if lang == 'en' else 'methode'}.html"),
+        (t(lang, "Method", "Méthode"), f"{lang}/docs/{method}.html"),
         (t(lang, "Editions", "Éditions"), f"{lang}/editions.html"),
     ]
     current = ' aria-current="page"'
@@ -101,7 +103,7 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
     entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
     home = page == f"{lang}/index.html"
     banner = edition_id + t(lang, ": ", " : ") + edition_rules.status_label(entry, lang, scientific=home) + "."
-    if home:
+    if home and not automated_public.is_automated(entry):
         banner += t(lang, " r1 remains accessible as an unapproved historical edition.",
                     " r1 reste accessible comme édition historique non approuvée.")
     if lang == "fr":
@@ -150,9 +152,9 @@ def select(name, label, values, lang) -> str:
     return f'<label>{esc(label)} <select disabled data-filter="{esc(name)}">{options}</select></label>'
 
 
-def explorer_page(edition_id: str, lang: str) -> None:
+def explorer_page(edition_id: str, lang: str, page=None) -> None:
     edition = REPO_ROOT / "data" / "editions" / edition_id
-    page = f"{lang}/explorer.html"
+    page = page or f"{lang}/explorer.html"
     resources = read_csv(edition / "resources.csv")
     summary = {r["resource_id"]: r for r in read_csv(edition / "resource-summary.csv")}
     rows = []
@@ -220,11 +222,11 @@ def explorer_page(edition_id: str, lang: str) -> None:
     if lang == "fr":
         body = typo.fr(body)
     emit_text(DIST / page, layout(page, lang, t(lang, "Explorer", "Explorateur"), body,
-                                   f"{'fr' if lang == 'en' else 'en'}/explorer.html", edition_id))
+                                   f"{'fr' if lang == 'en' else 'en'}/{page.split('/', 1)[1]}", edition_id))
 
 
-def figures_page(edition_id: str, lang: str) -> None:
-    page = f"{lang}/figures.html"
+def figures_page(edition_id: str, lang: str, page=None) -> None:
+    page = page or f"{lang}/figures.html"
     document = load_json(REPO_ROOT / "data" / "editions" / edition_id / "figures.json")
     parts = [f"<h1>{esc(t(lang, 'Figures', 'Figures'))}</h1>",
              f"<p>{esc(t(lang, 'Each figure carries its period, population, unit, extraction date, edition and coverage. The table under each figure holds exactly the plotted values.', 'Chaque figure porte sa période, sa population, son unité, sa date d’extraction, son édition et sa couverture. Le tableau sous chaque figure contient exactement les valeurs tracées.'))}</p>"]
@@ -244,7 +246,7 @@ def figures_page(edition_id: str, lang: str) -> None:
     body = "".join(parts)
     if lang == "fr":
         body = typo.fr(body)
-    emit_text(DIST / page, layout(page, lang, "Figures", body, f"{'fr' if lang == 'en' else 'en'}/figures.html", edition_id))
+    emit_text(DIST / page, layout(page, lang, "Figures", body, f"{'fr' if lang == 'en' else 'en'}/{page.split('/', 1)[1]}", edition_id))
 
 
 def cases_index(edition_id: str, lang: str) -> None:
@@ -276,7 +278,7 @@ def editions_page(edition_id: str, lang: str) -> None:
     rows = []
     for e in entries:
         effective = edition_rules.reference_state(e)
-        rows.append({"edition": e["edition_id"], "type": t(lang, "Monthly reference", "Référence mensuelle") if e["edition_type"] == "monthly_reference" else e["edition_type"],
+        rows.append({"edition": e["edition_id"], "type": t(lang, "Monthly reference", "Référence mensuelle") if e["edition_type"] == "monthly_reference" else t(lang, "Monthly automated observation", "Observation mensuelle automatisée"),
                      "status": availability.get(e["availability_status"], ("unknown", "inconnue"))[lang == "fr"],
                      "reference": reference_labels[effective][lang == "fr"], "review": edition_rules.review_label(e, lang),
                      "start": e["period_start_inclusive"], "end": e["period_end_exclusive"], "revision": e["revision"],
@@ -292,9 +294,14 @@ def editions_page(edition_id: str, lang: str) -> None:
             f"<p>{esc(status['automation']['label_' + lang])} "
             f"{esc(t(lang, 'Last review: ', 'Dernière revue : '))}<code>{esc(status['last_review']['date'])}</code> ({esc(review_state)}). "
             f"{esc(t(lang, 'Latest available data date: ', 'Dernière date de données disponible : '))}<code>{esc(status['latest_available_data_date'])}</code>.</p>"
-            + f"<p>{esc(t(lang, 'Private preparation has been tested on synthetic inputs. Future distribution remains blocked pending contract qualification and owner approval; scheduling is inactive.', 'La préparation privée a été testée sur des entrées synthétiques. La diffusion future reste bloquée en attente de qualification du contrat et de décision propriétaire ; la planification est inactive.'))}</p>"
+            + f"<p>{esc(t(lang, 'The registry records each edition separately. A local candidate is not a publication. Scheduling remains inactive; reference approval requires a matching receipt.', 'Le registre décrit chaque édition séparément. Une candidate locale ne constitue pas une publication. La planification reste inactive ; l’approbation de référence exige un reçu correspondant.'))}</p>"
             + table_html(columns, rows, table_id="editions", label=t(lang, "Editions", "Éditions"))
-            + f"<p>{esc(t(lang, 'One observed window, two revisions. r1 remains publicly accessible with its original bytes; r2 is a privacy revision; its current state appears above. No trend between periods is computed.', 'Une fenêtre observée, deux révisions. r1 reste accessible publiquement avec ses octets d’origine ; r2 est une révision de confidentialité ; son état courant figure ci-dessus. Aucune tendance entre périodes n’est calculée.'))}</p>")
+            + f"<p>{esc(t(lang, 'M1 retains two revisions: r1 is frozen and r2 is a privacy revision. M2 uses a separate automated-only population and profile B contract. No trend between M1 and M2 is qualified.', 'M1 conserve deux révisions : r1 est figée et r2 est une révision de confidentialité. M2 utilise une population distincte d’accès automatisés et le contrat du profil B. Aucune tendance entre M1 et M2 n’est qualifiée.'))}</p>")
+    catalogs = "".join(f'<li><a href="{esc(relative(page, e["catalog"]))}">{esc(e["edition_id"])}</a></li>' for e in index["editions"])
+    body += f'<h2>{esc(t(lang, "Edition catalogs", "Catalogues des éditions"))}</h2><ul>{catalogs}</ul>'
+    if any(e["edition_id"] == automated_public.EDITION for e in entries):
+        method = "automated-edition" if lang == "en" else "edition-automatisee"
+        body += f'<p><a href="docs/{method}.html">{esc(t(lang, "Read M2 and its limits", "Lire M2 et ses limites"))}</a> · <a href="m1-explorer.html">M1</a></p>'
     if lang == "fr":
         body = typo.fr(body)
     emit_text(DIST / page, layout(page, lang, t(lang, "Editions", "Éditions"), body, f"{'fr' if lang == 'en' else 'en'}/editions.html", edition_id))
@@ -315,19 +322,29 @@ def emit_text(path, text):
 
 
 def render_pages(edition_id):
+    import sys
+    automated = edition_id == automated_public.EDITION
+    historical_id = automated_public.HISTORICAL if automated else edition_id
     markdown_page("README.md", "en/index.html", "en", "fr/index.html", edition_id)
     markdown_page("README.fr.md", "fr/index.html", "fr", "en/index.html", edition_id)
     for lang in ("en", "fr"):
         other = "fr" if lang == "en" else "en"
         for position, name in enumerate(DOC_PAGES[lang]):
             source = f"docs/{lang}/{name}.md"
-            markdown_page(source, f"{lang}/docs/{name}.html", lang, f"{other}/docs/{DOC_PAGES[other][position]}.html", edition_id)
+            markdown_page(source, f"{lang}/docs/{name}.html", lang, f"{other}/docs/{DOC_PAGES[other][position]}.html",
+                          edition_id if name in ("automated-edition", "edition-automatisee") else historical_id)
         for case in load_json(REPO_ROOT / "config" / "cases.json")["cases"]:
             source = f"cases/{case['slug']}/{'README.md' if lang == 'en' else 'README.fr.md'}"
-            markdown_page(source, f"{lang}/cases/{case['slug']}.html", lang, f"{other}/cases/{case['slug']}.html", edition_id)
-        explorer_page(edition_id, lang)
-        figures_page(edition_id, lang)
-        cases_index(edition_id, lang)
+            markdown_page(source, f"{lang}/cases/{case['slug']}.html", lang, f"{other}/cases/{case['slug']}.html", historical_id)
+        if automated:
+            automated_site.explorer(sys.modules[__name__], edition_id, lang)
+            automated_site.figures(sys.modules[__name__], edition_id, lang)
+        else:
+            explorer_page(edition_id, lang)
+            figures_page(edition_id, lang)
+        explorer_page(historical_id, lang, f"{lang}/m1-explorer.html")
+        figures_page(historical_id, lang, f"{lang}/m1-figures.html")
+        cases_index(historical_id, lang)
         editions_page(edition_id, lang)
     landing = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
                '<meta name="robots" content="noindex"><title>Dual Web Reference</title><link rel="stylesheet" href="assets/style.css"></head>'
@@ -338,7 +355,7 @@ def render_pages(edition_id):
 
 
 def page_contract():
-    pages = {"index.html", "en/index.html", "fr/index.html"}
+    pages = {"index.html", "en/index.html", "fr/index.html", "en/m1-explorer.html", "fr/m1-explorer.html", "en/m1-figures.html", "fr/m1-figures.html"}
     cases = load_json(REPO_ROOT / "config/cases.json")["cases"]
     slugs = [c["slug"] for c in cases]
     if len(slugs) != len(set(slugs)) or set(slugs) != set(SITE_IDS):
@@ -365,7 +382,10 @@ def source_inputs():
 def output_plan(edition_id):
     inputs = source_inputs()
     inventory = distribution.json_object(inputs["config/publication-inventory.json"])
-    if edition_id not in {r["edition_id"] for r in inventory["releases"] if r["accessible"]}:
+    admitted = {r["edition_id"] for r in inventory["releases"] if r["accessible"]}
+    if distribution.AUTOMATED_MANIFEST in inputs:
+        admitted.add(automated_public.EDITION)
+    if edition_id not in admitted:
         distribution.fail("edition_not_admitted")
     expected_pages = page_contract()
     generated = {}

@@ -1,5 +1,5 @@
 {
-  "candidate": "2026-09-15_2026-10-15-r2",
+  "candidate": "2026-10-15_2026-11-15-r1",
   "editions": [
     {
       "approval_receipt": null,
@@ -77,7 +77,47 @@
       "status": "candidate_not_reviewed",
       "superseded_by": null,
       "supersedes": "2026-09-15_2026-10-15-r1"
+    },
+    {
+      "approval_receipt": null,
+      "approved_release_at": null,
+      "availability_status": "publicly_accessible",
+      "comparison_with_previous_window": {
+        "comparable": false,
+        "growth": null,
+        "reason": "different_population_and_unqualified_measurement_epochs"
+      },
+      "data_contract": "dwr-automated/2.0.0",
+      "disclosure_profile": "profile_b",
+      "edition_id": "2026-10-15_2026-11-15-r1",
+      "edition_type": "monthly_automated_observation",
+      "generated_at": "2026-11-21",
+      "historical_payload_frozen": false,
+      "note": "Profile B candidate derived offline from qualified existing inputs. M1 is retained; publication and reference approval are separate decisions.",
+      "period_end_exclusive": "2026-11-15",
+      "period_start_inclusive": "2026-10-15",
+      "public_availability_evidence": {
+        "earliest_bound_utc": "2026-11-22T00:48:52.9236984Z",
+        "evidence": "Owner-authorized candidate branch push and anonymous GitHub readback of the complete tree and registry; receipts retained privately. Commit time is not used as publication time.",
+        "latest_bound_utc": "2026-11-22T00:48:57.811160Z",
+        "precision": "bounded_interval_exact_time_unknown"
+      },
+      "published_at": null,
+      "reference_release_status": "not_approved",
+      "review_status": {
+        "distribution": "awaiting_review",
+        "editorial": "awaiting_review",
+        "evidence": [],
+        "technical": "awaiting_review"
+      },
+      "revised_at": null,
+      "revision": 1,
+      "scientific_review_status": "no_independent_scientific_review_documented",
+      "status": "candidate_not_reviewed",
+      "superseded_by": null,
+      "supersedes": null
     }
   ],
+  "preparation_anchor": "2026-09-15_2026-10-15-r2",
   "schema_version": "dwr-editions/2.0.0"
 }

@@ -1,0 +1,559 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "availability_status": {
+      "const": "local_release_candidate"
+    },
+    "comparison": {
+      "const": {
+        "comparable": false,
+        "growth": null,
+        "reason": "automated_baseline_not_qualified"
+      }
+    },
+    "contract": {
+      "const": "dwr-automated/2.0.0"
+    },
+    "disclosure_profile": {
+      "const": {
+        "daily_dimensions": [
+          "site_id",
+          "actor_role"
+        ],
+        "id": "profile_b",
+        "monthly_dimensions": [
+          "site_id",
+          "path",
+          "family",
+          "actor_family",
+          "actor_name",
+          "actor_role"
+        ]
+      }
+    },
+    "graphs": {
+      "const": [
+        {
+          "reason": "source_graph_not_qualified_for_contract",
+          "site_id": "gautierdorval.com",
+          "status": "not_available"
+        },
+        {
+          "reason": "source_graph_not_qualified_for_contract",
+          "site_id": "pagup.com",
+          "status": "not_available"
+        },
+        {
+          "reason": "source_graph_not_qualified_for_contract",
+          "site_id": "better-robots.com",
+          "status": "not_available"
+        }
+      ]
+    },
+    "measurement": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution_assessment": {
+          "const": "recorded_classification_reliability_under_review"
+        },
+        "classifier_status": {
+          "enum": [
+            "unknown",
+            "attested_in_provenance"
+          ]
+        },
+        "epoch_resolution": {
+          "enum": [
+            "unknown",
+            "mixed_epoch_unresolved",
+            "single_epoch_resolved",
+            "multiple_epochs_resolved"
+          ]
+        },
+        "time_grain": {
+          "const": "edition_without_epoch_partitions"
+        }
+      },
+      "required": [
+        "epoch_resolution",
+        "classifier_status",
+        "attribution_assessment",
+        "time_grain"
+      ],
+      "type": "object"
+    },
+    "metrics": {
+      "additionalProperties": false,
+      "properties": {
+        "by_role": {
+          "additionalProperties": false,
+          "properties": {
+            "ai_search": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "ai_training": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "ai_training",
+            "ai_search"
+          ],
+          "type": "object"
+        },
+        "by_site": {
+          "additionalProperties": false,
+          "properties": {
+            "better-robots.com": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "gautierdorval.com": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pagup.com": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "gautierdorval.com",
+            "pagup.com",
+            "better-robots.com"
+          ],
+          "type": "object"
+        },
+        "selected_distinct_resources": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "selected_distinct_software_actors": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "selected_requests": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "selected_requests",
+        "selected_distinct_resources",
+        "selected_distinct_software_actors",
+        "by_role",
+        "by_site"
+      ],
+      "type": "object"
+    },
+    "nature": {
+      "const": "observed_aggregates_unapproved"
+    },
+    "on_demand": {
+      "const": {
+        "initiation_provenance": "unknown",
+        "option": "U0",
+        "request_count": null,
+        "suppression_status": "withheld_not_zero"
+      }
+    },
+    "public_output_approved": {
+      "const": false
+    },
+    "residual_cases": {
+      "const": [
+        "Daily site/role and monthly detail margins can still determine automated cells in small groups.",
+        "A sole selected automated actor can be inferred from its role.",
+        "Historical releases and unknown auxiliary data remain accessible.",
+        "No universal non-reconstruction or person-anonymity guarantee."
+      ]
+    },
+    "selection": {
+      "const": {
+        "actor_roles": [
+          "ai_training",
+          "ai_search"
+        ],
+        "http_method": "GET",
+        "http_status": 200,
+        "population": "main_documentary",
+        "stored_identity_tier": "provider_origin_verified_actor"
+      }
+    },
+    "tables": {
+      "additionalProperties": false,
+      "properties": {
+        "actors": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "actor_family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "actor_name": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "actor_role": {
+                "enum": [
+                  "ai_training",
+                  "ai_search"
+                ]
+              },
+              "request_count": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "site_id": {
+                "enum": [
+                  "gautierdorval.com",
+                  "pagup.com",
+                  "better-robots.com"
+                ]
+              }
+            },
+            "required": [
+              "site_id",
+              "actor_family",
+              "actor_name",
+              "actor_role",
+              "request_count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "consultations": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "actor_family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "actor_name": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "actor_role": {
+                "enum": [
+                  "ai_training",
+                  "ai_search"
+                ]
+              },
+              "family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "path": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "request_count": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "site_id": {
+                "enum": [
+                  "gautierdorval.com",
+                  "pagup.com",
+                  "better-robots.com"
+                ]
+              }
+            },
+            "required": [
+              "site_id",
+              "path",
+              "family",
+              "actor_family",
+              "actor_name",
+              "actor_role",
+              "request_count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "coverage": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "archive_status": {
+                "enum": [
+                  "archived",
+                  "observation_unavailable"
+                ]
+              },
+              "coverage_status": {
+                "enum": [
+                  "partial_declared",
+                  "complete_declared",
+                  "coverage_unknown",
+                  "observation_unavailable"
+                ]
+              },
+              "date_utc": {
+                "format": "date",
+                "type": "string"
+              },
+              "evidence_status": {
+                "enum": [
+                  "declared",
+                  "not_established"
+                ]
+              },
+              "observation_status": {
+                "enum": [
+                  "observed",
+                  "observation_unavailable"
+                ]
+              },
+              "request_count": {
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "source_qualification": {
+                "enum": [
+                  "qualified",
+                  "not_qualified"
+                ]
+              },
+              "suppression_status": {
+                "enum": [
+                  "not_suppressed",
+                  "observation_unavailable"
+                ]
+              }
+            },
+            "required": [
+              "date_utc",
+              "archive_status",
+              "observation_status",
+              "source_qualification",
+              "coverage_status",
+              "evidence_status",
+              "request_count",
+              "suppression_status"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "daily": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "actor_role": {
+                "enum": [
+                  "ai_training",
+                  "ai_search"
+                ]
+              },
+              "coverage_status": {
+                "enum": [
+                  "partial_declared",
+                  "complete_declared",
+                  "coverage_unknown",
+                  "observation_unavailable"
+                ]
+              },
+              "date_utc": {
+                "format": "date",
+                "type": "string"
+              },
+              "observation_status": {
+                "enum": [
+                  "observed",
+                  "observation_unavailable"
+                ]
+              },
+              "request_count": {
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "site_id": {
+                "enum": [
+                  "gautierdorval.com",
+                  "pagup.com",
+                  "better-robots.com"
+                ]
+              }
+            },
+            "required": [
+              "date_utc",
+              "site_id",
+              "actor_role",
+              "request_count",
+              "observation_status",
+              "coverage_status"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "families": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "actor_role": {
+                "enum": [
+                  "ai_training",
+                  "ai_search"
+                ]
+              },
+              "family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "request_count": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "family",
+              "actor_role",
+              "request_count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "resource_summary": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "path": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "request_count": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "site_id": {
+                "enum": [
+                  "gautierdorval.com",
+                  "pagup.com",
+                  "better-robots.com"
+                ]
+              }
+            },
+            "required": [
+              "site_id",
+              "path",
+              "family",
+              "request_count"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "resources": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "family": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "path": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "site_id": {
+                "enum": [
+                  "gautierdorval.com",
+                  "pagup.com",
+                  "better-robots.com"
+                ]
+              }
+            },
+            "required": [
+              "site_id",
+              "path",
+              "family"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "consultations",
+        "resources",
+        "resource_summary",
+        "actors",
+        "families",
+        "daily",
+        "coverage"
+      ],
+      "type": "object"
+    },
+    "window": {
+      "additionalProperties": false,
+      "properties": {
+        "end_exclusive": {
+          "format": "date",
+          "type": "string"
+        },
+        "start_inclusive": {
+          "format": "date",
+          "type": "string"
+        },
+        "timezone": {
+          "const": "UTC"
+        }
+      },
+      "required": [
+        "start_inclusive",
+        "end_exclusive",
+        "timezone"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "contract",
+    "nature",
+    "availability_status",
+    "public_output_approved",
+    "disclosure_profile",
+    "window",
+    "selection",
+    "on_demand",
+    "measurement",
+    "comparison",
+    "graphs",
+    "tables",
+    "metrics",
+    "residual_cases"
+  ],
+  "title": "dwr-automated/2.0.0",
+  "type": "object"
+}

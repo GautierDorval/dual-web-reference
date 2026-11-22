@@ -4,6 +4,36 @@
 
 This repository studies governance files, their documentary relations and recorded HTTP accesses.
 
+<!-- dwr:begin current-edition -->
+## Month 2: automated accesses, profile B
+
+`2026-10-15_2026-11-15-r1` · publicly accessible; reference not approved; no independent scientific review documented.
+
+**223 selected automated accesses · 135 distinct site/path resources · 3 sites in one ecosystem.**
+
+October 15 to November 14, 2026 inclusive, UTC. Main documentary population, GET 200, recorded provider-origin tier, training and search roles only.
+
+103 accesses classified as training; 120 as search. These labels do not establish actual training, understanding, citations or a causal effect.
+
+Coverage: 27 archived dates out of 31, including 27 with declared partial coverage. Unavailable: 2026-10-17, 2026-10-25, 2026-10-26, 2026-10-27. Missing dates are not zeros; an observed zero means no selected row recorded under that coverage.
+
+On-demand accesses remain withheld (U0, count null, initiation unknown). The classifier is unattested and measurement epochs are unresolved. M1/M2 growth is not qualified and stays null. No M2 source graph is qualified.
+
+Profile B releases monthly resource/actor details and daily site/role margins. Documentary family totals are monthly only. Small groups and auxiliary information can still reveal automated cells: this is not anonymization or a universal non-reconstruction guarantee.
+
+[Read M2 and its method](docs/en/automated-edition.md) · [Catalog](data/editions/2026-10-15_2026-11-15-r1/catalog.json) · [Resources](data/editions/2026-10-15_2026-11-15-r1/resource-summary.csv) · [Accesses](data/editions/2026-10-15_2026-11-15-r1/consultations.csv) · [Coverage](data/editions/2026-10-15_2026-11-15-r1/coverage.csv) · [Edition index](data/index.json).
+
+The latest candidate is M2. `data/latest.json` separately records the latest approved reference; it stays null without a matching approval receipt. Availability, technical review and independent scientific review are distinct.
+
+<picture><source media="(max-width: 640px)" srcset="data/editions/2026-10-15_2026-11-15-r1/figures/G02.en.compact.svg"><img src="data/editions/2026-10-15_2026-11-15-r1/figures/G02.en.svg" alt="Monthly accesses by recorded training and search role; partial coverage." width="960"></picture>
+
+[Exact monthly role counts (CSV)](data/editions/2026-10-15_2026-11-15-r1/figures/G02.csv) · [Daily selected accesses](data/editions/2026-10-15_2026-11-15-r1/figures/G01.en.svg).
+<!-- dwr:end current-edition -->
+
+## Month 1 archive: documentary snapshot and recorded accesses
+
+The sections below describe M1 only. M2 uses the separate automated-only contract above; these counts must not be compared as growth.
+
 <!-- dwr:begin edition-state -->
 Edition r2: publicly accessible; reference not approved; no independent scientific review documented. r1 remains accessible as a byte-frozen, unapproved historical edition.
 <!-- dwr:end edition-state -->

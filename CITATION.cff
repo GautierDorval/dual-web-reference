@@ -11,7 +11,7 @@ type: dataset
 authors:
   - family-names: Dorval
     given-names: Gautier
-version: "2026-09-15_2026-10-15-r2"
+version: "2026-10-15_2026-11-15-r1"
 repository-code: "https://github.com/GautierDorval/dual-web-reference"
 url: "https://github.com/GautierDorval/dual-web-reference"
 keywords:

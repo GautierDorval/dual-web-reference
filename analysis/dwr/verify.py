@@ -458,6 +458,25 @@ def cmd(edition_id: str, private_lock: Path | None = None) -> dict:
         report.add("distribution_closed_contract", False, "distribution_contract_unreadable")
         return report.result()
     edition_dir = REPO_ROOT / "data" / "editions" / edition_id
+    from . import automated_public
+    entries = load_json(REPO_ROOT / "config/editions.json")["editions"]
+    entry = next(e for e in entries if e["edition_id"] == edition_id)
+    if automated_public.is_automated(entry):
+        try:
+            automated_public.verify_payload(REPO_ROOT, edition_id)
+            report.add("profile_b_public_reproduction_exact", True)
+            latest = load_json(REPO_ROOT / "data/latest.json")
+            report.add("candidate_pointer_matches_registry", latest.get("latest_candidate_edition") ==
+                       load_json(REPO_ROOT / "config/editions.json")["candidate"])
+            for lang, name in (("en", "README.md"), ("fr", "README.fr.md")):
+                report.add("profile_b_current_block_" + lang,
+                           automated_public.current_block(REPO_ROOT, lang) in (REPO_ROOT / name).read_text(encoding="utf-8"))
+            for check in (lambda: check_french(report), lambda: check_privacy(report, private_lock),
+                          lambda: check_maintenance(report), lambda: check_code(report), lambda: check_site(report)):
+                check()
+        except Exception as error:
+            report.add("profile_b_check_failed", False, type(error).__name__)
+        return report.result()
     for check in (lambda: check_catalog(report, edition_dir), lambda: check_tables(report, edition_dir),
                   lambda: check_semantics(report, edition_dir), lambda: check_metrics(report, edition_dir),
                   lambda: check_rendering(report, edition_id), lambda: check_french(report),

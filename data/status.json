@@ -6,23 +6,23 @@
     "monthly_edition": "template_not_activated",
     "weekly_preparation": "template_not_activated"
   },
-  "candidate_edition": "2026-09-15_2026-10-15-r2",
+  "candidate_edition": "2026-10-15_2026-11-15-r1",
   "candidate_state": "awaiting_review",
   "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
   "last_review": {
-    "date": "2026-10-19",
-    "kind": "public_branch_review_preparation",
+    "date": "2026-11-22",
+    "kind": "public_candidate_availability",
     "state": "awaiting_review"
   },
-  "latest_available_data_date": "2026-10-14",
+  "latest_available_data_date": "2026-11-14",
   "latest_published_edition": null,
   "next_review_target": {
-    "earliest_monthly_preparation": "2026-11-17T00:00:00Z",
+    "earliest_monthly_preparation": "2026-12-17T00:00:00Z",
     "guarantee": "none; inactive planning template",
     "next_monthly_window": {
-      "days": 31,
-      "end_exclusive": "2026-11-15",
-      "start_inclusive": "2026-10-15"
+      "days": 30,
+      "end_exclusive": "2026-12-15",
+      "start_inclusive": "2026-11-15"
     },
     "weekly_review": null,
     "weekly_review_template": {
@@ -34,14 +34,14 @@
   },
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "private_prepare_next_synthetic_qualification_only",
-    "command": "prepare-next",
-    "future_distribution": "blocked_pending_contract_and_policy_approval",
+    "code_ready_scope": "profile_b_public_integration_technically_reviewed_reference_unapproved",
+    "command": "prepare-automated-profile-b",
+    "future_distribution": "public_candidate_awaiting_reference_review",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
-    "real_next_window": "not_available",
-    "source_qualification": "real_next_window_not_available"
+    "real_next_window": "qualified_profile_b_public_candidate",
+    "source_qualification": "existing_native_receipts_admitted_offline"
   },
   "realtime": false,
   "reference_approval_state": "not_approved",

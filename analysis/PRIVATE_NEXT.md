@@ -2,6 +2,8 @@
 
 ## English
 
+The separate automated-only private contract is documented in [AUTOMATED_PRIVATE.md](AUTOMATED_PRIVATE.md). It reuses this source admission in a new private workspace, without changing `prepare-next`, the historical policy or public editions.
+
 This manual workflow prepares the calendar cursor's next edition outside the public repository. It does not register an edition, update public data, activate scheduling, approve distribution or publish anything. `prepare-next` remains offline. Only `acquire-next --execute` contacts the producer, using a closed list of SELECT statements for the three configured sites. It never requests the measured origins.
 
 ### Private workspace and inputs
@@ -47,6 +49,8 @@ The candidate receipt seals its input manifest and generated files. `complete_pr
 Temporary Windows sharing locks during installation, state replacement or staging cleanup receive a bounded retry (under four seconds of waiting). Other filesystem errors are not retried. A persistent cleanup lock is reported as `cleanup_status: pending` with the exact staging-directory name; it does not replace the original preparation failure or advance the cursor. Inspect that owned staging directory before removing it. Qualified inputs remain available for an offline retry without another acquisition.
 
 ## Français
+
+Le contrat privé distinct limité aux accès automatisés est décrit dans [AUTOMATED_PRIVATE.md](AUTOMATED_PRIVATE.md). Il réutilise cette admission des sources dans un nouvel espace privé, sans modifier `prepare-next`, la politique historique ou les éditions publiques.
 
 Ce parcours manuel prépare la fenêtre désignée par le curseur dans un espace privé distinct. Il ne modifie ni les données publiques ni le registre des éditions. Il n’active aucune planification et n’autorise aucune diffusion. `prepare-next` fonctionne hors ligne. Seule l’exécution explicite de `acquire-next`, avec confirmation exacte de la période, lit la base du producteur au moyen de requêtes SELECT bornées aux trois sites. Aucun site mesuré n’est appelé.
 

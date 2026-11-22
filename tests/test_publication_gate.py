@@ -315,6 +315,89 @@ class PublicationGateTests(unittest.TestCase):
             gate.check_ref(self.repo(files), "HEAD", SECRETS, pins=PINS)
 
 
+class HistoricalMergeAdmissionTests(unittest.TestCase):
+    repo = PublicationGateTests.repo
+    # Real Git fixtures; only the seal is replaced to admit their synthetic identities.
+    # The shipped seal continues to bind the single owner-authorized public record.
+    def fixture_git(self, directory, *args, data=None):
+        return subprocess.run(["git", "-c", "core.autocrlf=false", "-c", "commit.gpgsign=false",
+                               "-c", "user.name=Test", "-c", "user.email=test@example.invalid", *args],
+                              cwd=directory, input=data, capture_output=True, check=True).stdout.decode().strip()
+
+    def admitted_fixture(self, *, reverse_parents=False, second_root=False, remove_side=False):
+        directory=self.repo(base_files(), "named_root" if second_root else "named_root_then_merge")
+        git=lambda *args: self.fixture_git(directory,*args)
+        if second_root:
+            tree=git("rev-parse", "HEAD^{tree}")
+            alien=git("commit-tree",tree,"-m","Unrelated root")
+            merged=git("commit-tree",tree,"-p",git("rev-parse","HEAD"),"-p",alien,"-m","Join roots")
+            git("update-ref","HEAD",merged)
+        merged,*parents=git("rev-list","--parents","-n","1","HEAD").split()
+        policy=load_json(directory/'config/publication-gate.json')
+        pair="GautierDorval/dual-web-reference@"
+        records=[{"commit":pair+merged,"parents":[pair+p for p in (parents[::-1] if reverse_parents else parents)]}]
+        policy['admitted_historical_merges']=records
+        (directory/'config/publication-gate.json').write_text(canonical_json(policy),encoding='utf-8')
+        if remove_side: git('rm','side.md')
+        git('add','config/publication-gate.json');git('commit','-q','-m','Record reviewed exception')
+        pins=PINS | {policy['published_root']} | {pair+p for p in (merged,*parents)}
+        seal=gate.sha256_bytes(canonical_json(records).encode('utf-8'))
+        return directory,records,pins,seal
+
+    def checked_fixture(self, directory, pins, seal, secrets=SECRETS):
+        with mock.patch.object(gate,'REVIEWED_HISTORICAL_MERGES_SHA256',seal):
+            return gate.check_ref(directory,'HEAD',secrets,pins=pins)
+
+    def test_exact_reviewed_merge_keeps_full_history_scan(self):
+        directory,records,pins,seal=self.admitted_fixture()
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertTrue(result['passed'],result['findings'])
+        self.assertEqual(result['reviewed_historical_merges_checked'],1)
+        self.assertEqual(result['commits'],5)
+
+    def test_reviewed_merge_cannot_admit_another_merge(self):
+        directory,records,pins,seal=self.admitted_fixture()
+        git=lambda *args:self.fixture_git(directory,*args)
+        head=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
+        side=git('commit-tree',tree,'-p',head,'-m','Later branch')
+        merged=git('commit-tree',tree,'-p',head,'-p',side,'-m','Later merge')
+        git('update-ref','HEAD',merged)
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertIn('history_not_from_published_root',{r['category'] for r in result['findings']})
+
+    def test_reviewed_merge_requires_the_exact_parent_order(self):
+        directory,records,pins,seal=self.admitted_fixture(reverse_parents=True)
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertIn('history_not_from_published_root',{r['category'] for r in result['findings']})
+        self.assertEqual(result['reviewed_historical_merges_checked'],0)
+
+    def test_even_a_sealed_merge_cannot_introduce_a_second_root(self):
+        directory,records,pins,seal=self.admitted_fixture(second_root=True)
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertEqual(result['reviewed_historical_merges_checked'],1)
+        self.assertEqual({'history_not_from_published_root'},{r['category'] for r in result['findings']})
+
+    def test_reviewed_parent_leak_removed_from_head_is_still_detected(self):
+        directory,records,pins,seal=self.admitted_fixture(remove_side=True)
+        self.assertFalse((directory/'side.md').exists())
+        result=self.checked_fixture(directory,pins,seal,gate.Secrets(terms=['side']))
+        self.assertNotIn('history_not_from_published_root',{r['category'] for r in result['findings']})
+        self.assertIn('private_term',{r['category'] for r in result['findings']})
+        self.assertEqual(result['reviewed_historical_merges_checked'],1)
+
+    def test_registry_cannot_learn_or_substitute_merge_admissions(self):
+        policy=load_json(gate.PIN_CONFIG)
+        records=policy['admitted_historical_merges']
+        self.assertEqual(len(gate.reviewed_historical_merges(policy)),1)
+        changed=json.loads(json.dumps(records));changed[0]['parents'].reverse()
+        substituted=json.loads(json.dumps(records));substituted[0]['commit']=substituted[0]['parents'][0]
+        for invalid in (records+records,changed,substituted,{},None):
+            with self.subTest(invalid=type(invalid).__name__):
+                with self.assertRaises(gate.DwrError):
+                    gate.reviewed_historical_merges({'admitted_historical_merges':invalid})
+        self.assertEqual(gate.reviewed_historical_merges({}),{})
+
+
 class CleanupTests(unittest.TestCase):
     def test_remove_tree_deletes_read_only_files(self):
         directory = Path(tempfile.mkdtemp(prefix="dwr-gate-"))
@@ -368,8 +451,20 @@ class GateSourceTests(unittest.TestCase):
                 for m in gate.PIN.finditer(path.read_text(encoding="utf-8"))}
         self.assertTrue(pins)
         self.assertEqual(pins, set(gate.action_pins()))
+        policy=load_json(gate.PIN_CONFIG)
+        history_pins={value for row in policy.get("admitted_historical_merges", [])
+                      for value in (row["commit"], *row["parents"])}
         self.assertEqual(set(gate.admitted_pins()) - set(gate.action_pins()),
-                         {load_json(gate.PIN_CONFIG)[key] for key in ("published_root", "distribution_baseline")})
+                         {policy[key] for key in ("published_root", "distribution_baseline")} | history_pins)
+
+    def test_generated_gate_documentation_matches_current_coverage(self):
+        from dwr import render, typo
+        for lang in ('en','fr'):
+            text=(REPO_ROOT/f'docs/{lang}/reproduction.md').read_text(encoding='utf-8')
+            block=text.split('<!-- dwr:begin publication-gate -->',1)[1].split('<!-- dwr:end publication-gate -->',1)[0].strip()
+            expected=render.gate_coverage(lang)
+            if lang=='fr':expected=typo.fr(expected)
+            with self.subTest(language=lang):self.assertEqual(block,expected)
 
     def test_png_of_the_edition_have_the_admitted_structure(self):
         pngs = sorted((REPO_ROOT / "figures").rglob("*.png"))

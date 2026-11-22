@@ -6,8 +6,9 @@ every tree, trees included, and every blob as raw bytes, binary files included. 
 is excluded. Each file must be of an admitted type; a PNG must have exactly the
 structure IHDR, IDAT..., IEND with an empty IEND and image data of exactly the size its
 header announces. A 40-character identifier is admitted only as an action pin or as the
-published root or distribution baseline listed in config/publication-gate.json, written owner/repository@<commit>.
-The history must run linearly from that published root; before the first publication,
+published root, distribution baseline or reviewed historical merge pins listed in config/publication-gate.json,
+written owner/repository@<commit>. The history must run linearly from that published root, except
+for the single historical merge sealed with its exact parents; both histories are scanned. Before the first publication,
 when no root is named, it must be a single commit. JSON files are also
 checked after decoding their strings, and text after decoding percent escapes. Local
 paths are checked against the actual local roots of the machine that runs the gate
@@ -37,16 +38,16 @@ import zlib
 from pathlib import Path
 from urllib.parse import unquote
 
-from .common import DwrError, load_json
+from .common import DwrError, canonical_json, load_json, sha256_bytes
 
 # (category, what is detected EN, FR, ((counterexample id, EN, FR), ...))
 COVERAGE = (
     ("history_not_from_published_root",
-     "a history that does not run linearly from the published root named in `config/publication-gate.json` (more than one commit while no root is named, another root, or a merge commit, which any second root requires)",
-     "un historique qui ne part pas linéairement de la racine publiée nommée dans `config/publication-gate.json` (plus d’un commit tant qu’aucune racine n’est nommée, une autre racine, ou un commit de fusion, qu’exige toute seconde racine)",
+     "a history outside the named published root or linear chain, except the historical merge sealed with its exact parents (no unnamed root or other merge is admitted)",
+     "un historique hors de la racine publiée nommée ou de la chaîne linéaire, sauf la fusion historique scellée avec ses parents exacts (aucune autre racine ou fusion admise)",
      (("second_commit_without_root", "a second commit while no root is named", "un second commit alors qu’aucune racine n’est nommée"),
       ("other_root", "a root other than the named one", "une racine autre que celle qui est nommée"),
-      ("merge_commit", "a merge commit after the named root", "un commit de fusion après la racine nommée"))),
+      ("merge_commit", "an unreviewed merge commit after the named root", "un commit de fusion non admis après la racine nommée"))),
     ("unsupported_entry", "a symbolic link or a submodule in a tree", "un lien symbolique ou un sous-module dans un arbre",
      (("symlink", "a symbolic link", "un lien symbolique"), ("submodule", "a submodule entry", "une entrée de sous-module"))),
     ("file_type_not_admitted", "a file whose type is not in the admitted list",
@@ -108,8 +109,8 @@ COVERAGE = (
      (("lowercase", "in lower case in code", "en minuscules dans du code"),
       ("uppercase", "in upper case in code", "en majuscules dans du code"),
       ("in_path", "in a file name", "dans un nom de fichier"))),
-    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin or the published root/distribution baseline listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
-     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée/référence de diffusion listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>`",
+    ("identifier_40", "a 40-character hexadecimal identifier, in either case, except an action pin or the published root, distribution baseline or sealed historical merge pins listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>`",
+     "un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou les épinglages de racine publiée, de référence de diffusion ou de fusion historique scellée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>`",
      (("workflow_comment", "in a comment of a workflow template", "dans un commentaire d’un modèle de workflow"),
       ("pin_value_repeated_bare", "an admitted pin value repeated without its `owner/repository@` prefix",
        "la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@`"),
@@ -276,13 +277,44 @@ def action_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
     return frozenset(load_json(config)["admitted_action_pins"])
 
 
+# Owner-authorized exception for the already-public documentation merge only.
+# Sealing the full record prevents learning arbitrary merges from a changed registry.
+REVIEWED_HISTORICAL_MERGES_SHA256 = "bbb3aca414c25a136fc91b8fc1e2afdfde2bf1ed5e21266e2910840b1d69a75c"
+
+
+def reviewed_historical_merges(document: dict) -> dict[str, tuple[str, str]]:
+    records = document.get("admitted_historical_merges", [])
+    if records == []:
+        return {}
+    if (not isinstance(records, list)
+            or sha256_bytes(canonical_json(records).encode("utf-8")) != REVIEWED_HISTORICAL_MERGES_SHA256):
+        raise DwrError("historical_merge_admission_invalid")
+    admitted = {}
+    for row in records:
+        if (not isinstance(row, dict) or set(row) != {"commit", "parents"}
+                or not isinstance(row["parents"], list) or len(row["parents"]) != 2):
+            raise DwrError("historical_merge_admission_invalid")
+        matches = [PIN.fullmatch(value) if isinstance(value, str) else None
+                   for value in (row["commit"], *row["parents"])]
+        if any(m is None or m.group("pair") != "GautierDorval/dual-web-reference" for m in matches):
+            raise DwrError("historical_merge_admission_invalid")
+        commit, first, second = (m.group("sha").lower() for m in matches)
+        if commit in admitted or first == second or commit in (first, second):
+            raise DwrError("historical_merge_admission_invalid")
+        admitted[commit] = (first, second)
+    return admitted
+
+
 def admitted_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
-    """The action pins and the published root (owner/repository@<commit>) listed in config/publication-gate.json."""
+    """Only action, root, baseline and sealed historical-merge pins in the policy."""
     if not config.is_file():
         return frozenset()
     document = load_json(config)
     roots = (document.get("published_root"), document.get("distribution_baseline"))
-    return action_pins(config) | {root for root in roots if root}
+    merges = reviewed_historical_merges(document)
+    merge_pins = {f"GautierDorval/dual-web-reference@{value}"
+                  for commit, parents in merges.items() for value in (commit, *parents)}
+    return action_pins(config) | {root for root in roots if root} | merge_pins
 
 
 def pattern_findings(path: str, text: str, pins: frozenset[str] | None = None) -> list[str]:
@@ -422,21 +454,25 @@ def _read_objects(repo: Path, shas: list[str]) -> dict[str, bytes]:
     return objects
 
 
-def published_root(repo: Path, commit: str) -> str | None:
-    """The published root named in config/publication-gate.json of the commit to publish. None only when the file is
-    established as absent from that commit or names no root (before the first publication, the history must then be a
-    single commit); a listing or reading error, or an entry that is not a file, stops the gate."""
+def publication_config(repo: Path, commit: str) -> dict:
+    """Read policy from the candidate's Git blob, never an uncommitted worktree file."""
     listing = _git(repo, "ls-tree", "-z", commit, "--", "config/publication-gate.json")
     if not listing:
-        return None
+        return {}
     mode, kind, obj = listing.split(b"\t", 1)[0].decode().split()
     if kind != "blob" or mode in ("120000", "160000"):
         raise DwrError("publication_gate_config_unreadable", "not a regular file")
-    data = _read_objects(repo, [obj])[obj]
     try:
-        value = json.loads(data.decode("utf-8").lstrip("\ufeff")).get("published_root")
-    except (ValueError, AttributeError) as error:
+        document = json.loads(_read_objects(repo, [obj])[obj].decode("utf-8").lstrip("\ufeff"))
+        if not isinstance(document, dict):
+            raise ValueError("not an object")
+        return document
+    except ValueError as error:
         raise DwrError("publication_gate_config_unreadable", type(error).__name__) from error
+
+
+def published_root(repo: Path, commit: str) -> str | None:
+    value = publication_config(repo, commit).get("published_root")
     if value is None:
         return None
     match = PIN.fullmatch(value) if isinstance(value, str) else None
@@ -451,11 +487,14 @@ def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | 
     history = [line.split() for line in lines if line.strip()]
     raw = []
     root = published_root(repo, commit)
+    reviewed_merges = reviewed_historical_merges(publication_config(repo, commit))
     roots = [line[0] for line in history if len(line) == 1]
     if root is None:
         from_root = len(history) == 1 and len(history[0]) == 1
     else:
-        from_root = all(len(line) <= 2 for line in history) and roots == [root]
+        from_root = roots == [root] and all(
+            len(line) <= 2 or (len(line) == 3 and reviewed_merges.get(line[0]) == tuple(line[1:]))
+            for line in history)
     if not from_root:
         raw.append(("history_not_from_published_root", None))
     for sha, content in _read_objects(repo, [h[0] for h in history]).items():
@@ -540,6 +579,7 @@ def check_ref(repo: Path, ref: str, secrets: Secrets, *, pins: frozenset[str] | 
     files = sum(1 for _, (mode, kind) in ordered if kind != "tree")
     return {"commit": commit, "commits": len(history), "files": files, "trees": len(ordered) - files,
             "blobs": len(blobs), "passed": not printed,
+            "reviewed_historical_merges_checked": sum(len(h) == 3 and reviewed_merges.get(h[0]) == tuple(h[1:]) for h in history),
             "distribution_trees_checked": len(checked_distribution),
             "distribution_historical_ancestors_pinned": len(historical_distribution),
             "findings": [{"category": c, "path": p} for c, p in sorted(printed)], "coverage": list(CATEGORY_IDS)}

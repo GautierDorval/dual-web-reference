@@ -2,6 +2,13 @@
 
 Editions (data) and code are versioned separately. An edition identifier names its window and revision; a correction creates a new revision and never rewrites the previous one.
 
+## M2 profile B local distribution candidate (2026-11-21)
+
+- Register the October 15 to November 14 observation as a local candidate under the separate automated-only profile B contract: 223 selected accesses, 135 site/path resources, 27 partially covered archive dates and four unavailable dates. Preserve U0 withholding, unattested classification, unresolved measurement epochs and null M1/M2 growth.
+- Derive a closed 54-file distribution payload from the sealed preparation, without private reports, diagnostics or receipts. Pin its file manifest separately from the unchanged historical inventory. Keep preparation metadata immutable and current availability/review states in the edition registry.
+- Add bilingual M2 entry content, method, resource/actor explorer, figures and downloads. Retain explicit M1 explorer and figure routes and the original M1 payloads. Extend latest schema 2 with a separate candidate pointer; the approved-reference pointer still requires a valid receipt.
+- Preserve the private preparation anchor independently of the display candidate. Refuse legacy M1 writers on the profile B edition. No new source acquisition, external publication, reference approval, scientific review or schedule activation is implied.
+
 ## Distribution closure (2026-10-20)
 
 - Close the admitted file sets for data, figures, configuration and schemas using the existing, byte-pinned publication and historical inventories. Reject extras, missing or changed historical files, unknown directories, links, ambiguous paths and manifest relearning. Both omitted r2 catalog entries remain admitted through the existing publication inventory.
