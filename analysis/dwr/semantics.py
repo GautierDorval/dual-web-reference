@@ -31,17 +31,39 @@ def daily_contract(edition, lang):
         prefix = f"`daily-summary.csv` contient {n(b)} lignes et {n(after)} requêtes dans `{edition.id}`. "
     else:
         prefix = f"`daily-summary.csv` contains {n(b)} rows and {n(after)} requests in `{edition.id}`. "
+    collector = edition.metrics["collector.requests"]
+    collector_source = collector["source_files"][0]
+    metrics_version = edition.catalog["metrics_version"]
+    if collector_source == "consultations.csv":
+        rows = len(read_csv(edition.dir / collector_source))
+        collector_contract = (
+            f"Avec `{metrics_version}`, `collector.requests` lit la projection d’édition `consultations.csv` "
+            f"({n(rows)} lignes et {n(collector['value'])} requêtes). Les {n(after)} requêtes de "
+            "`daily-summary.csv` appartiennent à la série quotidienne minimisée. Ces deux populations publiées "
+            "sont distinctes et restent sous couverture historique partielle."
+            if lang == "fr" else
+            f"With `{metrics_version}`, `collector.requests` reads the edition projection `consultations.csv` "
+            f"({n(rows)} rows and {n(collector['value'])} requests). The {n(after)} requests in "
+            "`daily-summary.csv` belong to the minimized daily series. These are distinct published populations "
+            "under partial historical coverage.")
+    else:
+        collector_contract = (
+            f"Pour cette version historique, `collector.requests` lit `daily-summary.csv` "
+            f"({n(b)} lignes et {n(collector['value'])} requêtes), sous la couverture déclarée."
+            if lang == "fr" else
+            f"For this historical version, `collector.requests` reads `daily-summary.csv` "
+            f"({n(b)} rows and {n(collector['value'])} requests), under the declared coverage.")
     if lang == "fr":
         return (prefix + "Les lignes protégées sont retenues, pas transformées en zéros. "
                 "Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. "
-                "`collector.requests` somme les lignes encore publiées, pas le trafic total du collecteur.\n\n"
+                + collector_contract + "\n\n"
                 "Zéro explicite : aucune ligne enregistrée pour la cellule autorisée, sous la couverture déclarée. "
                 "Null : valeur non calculable ou indisponible. Retenue : valeur retirée de la diffusion, y compris "
                 "les marges `aggregate_count`, `v3_count` et `aggregate_minus_v3`. Source indisponible : aucune observation de remplacement. "
                 "La couverture partielle n’est jamais requalifiée en couverture complète.")
     return (prefix + "Protected rows are withheld, not converted to zeros. "
             "An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. "
-            "`collector.requests` sums the remaining published rows, not all collector traffic.\n\n"
+            + collector_contract + "\n\n"
             "Explicit zero: no recorded row for the allowed cell, under the declared coverage. "
             "Null: unavailable or not calculable. Withheld: removed from distribution, including "
             "`aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. "

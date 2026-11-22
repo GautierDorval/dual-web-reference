@@ -2,6 +2,8 @@
 
 [Français](../fr/methode.md) · [Repository home](../../README.md)
 
+This methodology describes the historical M1 r2 edition and distinguishes its calculation from M1 r1. The current M2 edition follows the [automated profile B contract](automated-edition.md).
+
 This page describes how the numbers of an edition are produced, exactly as implemented in `analysis/dwr/`. The method is descriptive: it counts HTTP requests recorded to documentary files of three sites. It does not measure answers produced by any system, adoption, indexing, compliance or any effect of linking. See [model](model.md) for what the documentary layer is and [limits](limits.md) for what the results cannot support.
 
 ## A four-stage chain
@@ -19,7 +21,7 @@ For this edition, stage 1 ran in two steps. First, `import-existing` checked the
 
 ## Populations
 
-- **Collector perimeter**: every path recorded by the private collector on the three sites, all methods, statuses and actors (all rows of `daily-summary.csv`, whose populations are `main_documentary`, `other_documentary`, `robots_control` and `undeclared_bucket`; metric `collector.requests`).
+- **Collector perimeter**: the paths represented in the public edition projection on the three sites, across all recorded methods, statuses and actors. For `dwr-metrics/2.0.0`, `collector.requests` sums `consultations.csv`; the earlier historical mode sums `daily-summary.csv`. The minimized daily series describes a distinct published population. These counts remain bounded by partial historical coverage.
 - **Initial report scope** (`historical_report_scope`): every path except `/robots.txt`, `/.well-known/__undeclared__` and the producer category `well-known-probe`. It repeats the scope of the initial internal report and is used for reconciliation only.
 - **Main documentary population**: site-path pairs of scope classes `core_governance` and `discovery_index` (see [scope](scope.md)).
 - **Extended documentary layer**: the main population plus `supporting_documentation`. It is a secondary reading, never the headline.
@@ -57,7 +59,7 @@ Each entry of `metrics.json` carries `metric_id`, `value`, `unit`, `status`, `nu
 | `main.scope_delta.provider_ai_get200_excluded` | provider-origin AI `GET 200` of the initial report scope minus `main.get200` | requests |
 | `historical.*` | the same quantities on the initial report scope, per role, and `GET 200` per stored tier, from `consultations.csv` | requests, pairs, ratio |
 | `coverage.*` | day counts and archived sums from `coverage.csv`, including the days whose joint total equals the archived aggregate count | days, requests |
-| `collector.requests` | sum of published daily rows only; after withholding, not the full collector total | requests |
+| `collector.requests` | sum of `consultations.csv` rows for `dwr-metrics/2.0.0`; sum of `daily-summary.csv` for the earlier historical mode, as recorded in `source_files` in `metrics.json` | requests |
 
 ```text
 other_share = other_get200 / total_get200
@@ -86,7 +88,7 @@ Before the joint acquisition, the split of each path by method and status had be
 - `daily-family-summary.csv`: day × documentary family × role, for the main population, the provider-origin tier, `GET 200` and the roles `ai_training` and `ai_search` only; the small-cell policy leaves user-initiated fetches out.
 
 <!-- dwr:begin daily-contract -->
-`daily-summary.csv` changes from 970 rows and 24,815 requests in `2026-09-15_2026-10-15-r1` to 136 rows and 1,653 requests in `2026-09-15_2026-10-15-r2`. Of the 834 removed rows, 285 were already grouped under `protected_strata` and 549 belong to other strata now protected by this revision's policy. Protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. `collector.requests` sums the remaining published rows, not all collector traffic.
+`daily-summary.csv` changes from 970 rows and 24,815 requests in `2026-09-15_2026-10-15-r1` to 136 rows and 1,653 requests in `2026-09-15_2026-10-15-r2`. Of the 834 removed rows, 285 were already grouped under `protected_strata` and 549 belong to other strata now protected by this revision's policy. Protected rows are withheld, not converted to zeros. An absent row can therefore be withheld by the distribution policy; it does not prove absence of a request. With `dwr-metrics/2.0.0`, `collector.requests` reads the edition projection `consultations.csv` (2,049 rows and 24,815 requests). The 1,653 requests in `daily-summary.csv` belong to the minimized daily series. These are distinct published populations under partial historical coverage.
 
 Explicit zero: no recorded row for the allowed cell, under the declared coverage. Null: unavailable or not calculable. Withheld: removed from distribution, including `aggregate_count`, `v3_count` and `aggregate_minus_v3` margins. Source unavailable: no replacement observation. Partial coverage is never upgraded to complete coverage.
 <!-- dwr:end daily-contract -->

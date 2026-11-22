@@ -2,6 +2,8 @@
 
 [English](../en/methodology.md) · [Accueil du dépôt](../../README.fr.md)
 
+Cette méthode décrit l’édition historique M1 r2 et distingue son calcul de celui de M1 r1. L’édition courante M2 suit le [contrat automatisé profil B](edition-automatisee.md).
+
 Cette page décrit la production des chiffres d’une édition, telle qu’elle est implémentée dans `analysis/dwr/`. La méthode est descriptive : elle compte des requêtes HTTP enregistrées vers des fichiers documentaires de trois sites. Elle ne mesure ni les réponses produites par un système, ni l’adoption, l’indexation, la conformité ou un effet quelconque du maillage. Voir le [modèle](modele.md) pour la nature de la couche documentaire et les [limites](limites.md) pour ce que les résultats ne permettent pas d’affirmer.
 
 ## Une chaîne en quatre étapes
@@ -19,7 +21,7 @@ Pour cette édition, l’étape 1 s’est déroulée en deux temps. D’abord, `
 
 ## Populations
 
-- **Périmètre du collecteur** : tous les chemins enregistrés par le collecteur privé sur les trois sites, toutes méthodes, tous statuts et tous acteurs confondus (l’ensemble des lignes de `daily-summary.csv`, dont les populations sont `main_documentary`, `other_documentary`, `robots_control` et `undeclared_bucket` ; indicateur `collector.requests`).
+- **Périmètre du collecteur** : les chemins représentés dans la projection publique d’édition sur les trois sites, toutes méthodes, tous statuts et tous acteurs enregistrés confondus. Pour `dwr-metrics/2.0.0`, `collector.requests` somme `consultations.csv` ; le mode historique antérieur somme `daily-summary.csv`. La série quotidienne minimisée décrit une population publiée distincte. Ces comptes restent bornés par la couverture historique partielle.
 - **Périmètre du relevé initial** (`historical_report_scope`) : tous les chemins sauf `/robots.txt`, `/.well-known/__undeclared__` et la catégorie de producteur `well-known-probe`. Il reprend le périmètre du relevé interne initial et ne sert qu’au rapprochement.
 - **Population documentaire principale** : couples site-chemin des classes `core_governance` et `discovery_index` (voir [périmètre](perimetre.md)).
 - **Couche documentaire élargie** : la population principale plus `supporting_documentation`. C’est une lecture secondaire, jamais le résultat mis en avant.
@@ -57,7 +59,7 @@ Chaque entrée de `metrics.json` porte `metric_id`, `value`, `unit`, `status`, `
 | `main.scope_delta.provider_ai_get200_excluded` | GET 200 IA à origine fournisseur du périmètre du relevé initial, moins `main.get200` | requêtes |
 | `historical.*` | les mêmes quantités sur le périmètre du relevé initial, par rôle, et les `GET 200` par niveau enregistré, tirés de `consultations.csv` | requêtes, couples, ratio |
 | `coverage.*` | nombres de jours et sommes archivées tirés de `coverage.csv`, y compris les jours dont le total conjoint égale le compte agrégé archivé | jours, requêtes |
-| `collector.requests` | somme des seules lignes quotidiennes publiées ; après retrait, ce n’est pas le total du collecteur | requêtes |
+| `collector.requests` | somme des lignes de `consultations.csv` pour `dwr-metrics/2.0.0` ; somme de `daily-summary.csv` pour le mode historique antérieur, selon `source_files` dans `metrics.json` | requêtes |
 
 ```text
 other_share = other_get200 / total_get200
@@ -86,7 +88,7 @@ Avant l’acquisition conjointe, la ventilation de chaque chemin par méthode et
 - `daily-family-summary.csv` : jour × famille documentaire × rôle, pour la population principale, le niveau à origine fournisseur, les `GET 200` et les seuls rôles `ai_training` et `ai_search` ; la politique des petites cellules en écarte les récupérations à la demande.
 
 <!-- dwr:begin daily-contract -->
-`daily-summary.csv` passe de 970 lignes et 24 815 requêtes dans `2026-09-15_2026-10-15-r1` à 136 lignes et 1 653 requêtes dans `2026-09-15_2026-10-15-r2`. Parmi les 834 lignes retirées, 285 étaient déjà regroupées sous `protected_strata` et 549 relèvent des autres strates désormais protégées par la politique de cette révision. Les lignes protégées sont retenues, pas transformées en zéros. Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. `collector.requests` somme les lignes encore publiées, pas le trafic total du collecteur.
+`daily-summary.csv` passe de 970 lignes et 24 815 requêtes dans `2026-09-15_2026-10-15-r1` à 136 lignes et 1 653 requêtes dans `2026-09-15_2026-10-15-r2`. Parmi les 834 lignes retirées, 285 étaient déjà regroupées sous `protected_strata` et 549 relèvent des autres strates désormais protégées par la politique de cette révision. Les lignes protégées sont retenues, pas transformées en zéros. Une ligne absente peut donc être retenue par la politique de diffusion ; elle ne prouve pas une absence de requête. Avec `dwr-metrics/2.0.0`, `collector.requests` lit la projection d’édition `consultations.csv` (2 049 lignes et 24 815 requêtes). Les 1 653 requêtes de `daily-summary.csv` appartiennent à la série quotidienne minimisée. Ces deux populations publiées sont distinctes et restent sous couverture historique partielle.
 
 Zéro explicite : aucune ligne enregistrée pour la cellule autorisée, sous la couverture déclarée. Null : valeur non calculable ou indisponible. Retenue : valeur retirée de la diffusion, y compris les marges `aggregate_count`, `v3_count` et `aggregate_minus_v3`. Source indisponible : aucune observation de remplacement. La couverture partielle n’est jamais requalifiée en couverture complète.
 <!-- dwr:end daily-contract -->
