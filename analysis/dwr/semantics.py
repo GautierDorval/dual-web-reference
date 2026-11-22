@@ -33,15 +33,16 @@ def daily_contract(edition, lang):
         prefix = f"`daily-summary.csv` contains {n(b)} rows and {n(after)} requests in `{edition.id}`. "
     collector = edition.metrics["collector.requests"]
     collector_source = collector["source_files"][0]
+    metrics_version = edition.catalog["metrics_version"]
     if collector_source == "consultations.csv":
         rows = len(read_csv(edition.dir / collector_source))
         collector_contract = (
-            f"Avec `dwr-metrics/2.0.0`, `collector.requests` lit la projection d’édition `consultations.csv` "
+            f"Avec `{metrics_version}`, `collector.requests` lit la projection d’édition `consultations.csv` "
             f"({n(rows)} lignes et {n(collector['value'])} requêtes). Les {n(after)} requêtes de "
             "`daily-summary.csv` appartiennent à la série quotidienne minimisée. Ces deux populations publiées "
             "sont distinctes et restent sous couverture historique partielle."
             if lang == "fr" else
-            f"With `dwr-metrics/2.0.0`, `collector.requests` reads the edition projection `consultations.csv` "
+            f"With `{metrics_version}`, `collector.requests` reads the edition projection `consultations.csv` "
             f"({n(rows)} rows and {n(collector['value'])} requests). The {n(after)} requests in "
             "`daily-summary.csv` belong to the minimized daily series. These are distinct published populations "
             "under partial historical coverage.")
