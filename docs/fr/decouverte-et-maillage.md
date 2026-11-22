@@ -43,6 +43,8 @@ Ce que links.csv ne consigne pas :
 - **Parcours exécuté** : la suite de requêtes qu’un client donné a réellement faites. L’établir exige une trace d’exécution qualifiée pour ce client. Aucune ne fait partie de cette édition, et aucune n’est reconstituée à partir des comptes.
 - **Accès agrégés** : des totaux par URL sur la fenêtre, des totaux quotidiens par site et par population, et des totaux quotidiens par famille documentaire pour les rôles automatisés à origine fournisseur. On ne peut pas les enchaîner en parcours : que deux fichiers liés aient tous deux été demandés au cours du même mois ne montre pas que l’un a mené à l’autre.
 
+Même un parcours exécuté s’arrêterait à l’accès. La récupération par un système qui répond et la restitution d’un fichier dans une réponse sont des étapes ultérieures que cette édition n’observe pas ; voir la limite 11 dans [les limites de l’observation](limites.md).
+
 ## Un parcours qui part du HTML : pagup.com
 
 Le [cas pagup.com](../../cases/pagup.com/README.fr.md) part de la page de politique IA, une page HTML ordinaire liée depuis la page d’accueil. De là, des références écrites mènent à l’index canonique, au fichier d’identité, au contexte du site, aux déclarations de périmètre et au fichier de préséance des sources, sans passer par llms.txt. Le cas montre qu’on peut entrer dans la couche depuis des pages ordinaires. Il ne montre pas qu’un client a emprunté ce chemin.

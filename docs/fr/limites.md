@@ -87,3 +87,13 @@ Restreint : le niveau de détail publié.
 - **Établi** : r1 conserve ses grains historiques ; r2 applique une révision de confidentialité définie après les résultats, documentée dans [small-cell-policy.json](../../config/small-cell-policy.json). Aucune adresse IP, aucun agent utilisateur, témoin (cookie), identifiant de session ou d’appareil, jeton, référent libre, chaîne de requête, transcription, ni date de premier ou de dernier accès par cellule ou par chemin. Les sorties quotidiennes ne portent jamais de chemin ni de nom d’acteur.
 - **Non établi** : une non-reconstruction universelle. Le croisement de marges ou de révisions peut révéler du détail agrégé. La politique historique a été approuvée le 2026-10-17 ; la revue de diffusion de la politique corrigée figure au registre externe des éditions.
 - **Ne permet pas de nier** : des régularités qui n’apparaîtraient qu’à un grain plus fin. Voir [confidentialite.md](confidentialite.md).
+
+## 11. Accès, récupération et restitution dans une réponse
+
+Restreint : ce qu’un accès permet de dire d’une réponse.
+
+- **Établi** : les accès enregistrés par le collecteur, avec leur méthode, leur statut, leur acteur et leur niveau, agrégés par ressource sur la fenêtre.
+- **Non établi** : la récupération, c’est-à-dire la réception des octets attendus par un client qui les met à la disposition d’un système produisant des réponses ; et la restitution, c’est-à-dire ce qu’une réponse énonce à partir de cette ressource. Aucune réponse n’est collectée dans ce dépôt : la fidélité d’une restitution ne peut donc pas être évaluée à partir de ces tables.
+- **Ne permet ni de nier ni d’affirmer** qu’un fichier consulté a été récupéré par un système qui répond, utilisé dans une réponse ou fidèlement restitué dans l’une d’elles.
+
+La fidélité d’une restitution est définie comme [fidélité interprétative](https://gautierdorval.com/definitions/fidelite-interpretative/), dont la fidélité de reconstruction est l’expression d’accès dans le contexte des réponses produites par une IA. Le [guide sur la fidélité de reconstruction](https://gautierdorval.com/fidelite-de-reconstruction/) explique comment l’évaluer sur une réponse conservée, par rapport à ses sources et à une tâche, et la [carte des termes de fidélité](https://github.com/GautierDorval/interpretive-governance-manifest/blob/main/concepts/carte-des-termes-fidelite.md) distingue preuve de récupération, vérification d’intégrité et évaluation de fidélité.

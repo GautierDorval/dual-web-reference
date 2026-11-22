@@ -43,6 +43,8 @@ What links.csv does not record:
 - **Executed path**: the sequence of requests that a given client actually made. Establishing it needs a qualified execution trace for that client. None is part of this edition, and none is reconstructed from counts.
 - **Aggregated accesses**: totals per URL over the window, daily totals per site and population, and daily totals per documentary family for automated provider-origin roles. They cannot be chained into a path: two linked files both requested during the same month does not show that one led to the other.
 
+Even an executed path would end at access. Retrieval by an answering system and the reconstruction of a file in an answer are later steps that this edition does not observe; see limitation 11 in [the observation limits](limits.md).
+
 ## An HTML-first path: pagup.com
 
 The [pagup.com case](../../cases/pagup.com/README.md) starts from the AI policy page, an ordinary HTML page linked from the home page. From there, written references lead to the canonical index, the identity file, the site context, the scope declarations and the source precedence file, without going through llms.txt. The case shows that the layer can be entered from ordinary pages. It does not show that any client took this route.

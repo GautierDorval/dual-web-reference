@@ -78,6 +78,8 @@ These presentations connect DWR with the Dual Web concept and the ecosystem. The
 
 Three sites in one ecosystem are not three independent replications. Coverage is partial, discovery paths are not established, and provider origin remains a producer classification. A GET 200 does not prove semantic reading, adoption, better answers or SEO effects. Private collection evidence cannot be rerun from this repository. [Detailed limits](docs/en/limits.md).
 
+Access, retrieval and reconstruction in an answer are distinct: an access shows neither that a system retrieved the file nor what an answer reconstructs from it. The fidelity of such a reconstruction is defined as [interpretive fidelity](https://gautierdorval.com/en/definitions/interpretive-fidelity/) and requires answers, which this repository does not collect (limitation 11).
+
 ## Dates, editions and maintenance
 
 <!-- dwr:begin dates -->
