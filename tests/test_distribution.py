@@ -265,7 +265,7 @@ site_build.cmd("2026-09-15_2026-10-15-r2")
             self.assertEqual(historical['review_lifecycle'],'historical_frozen_no_approval_recorded')
             self.assertTrue(all(historical['review_status'][k]=='not_approved' for k in ('technical','editorial','distribution')))
             status=json.loads((self.root/'data/status.json').read_bytes())
-            self.assertEqual(status['preparation']['code_ready_scope'],'profile_b_real_inputs_qualified_privately_public_integration_awaiting_review')
+            self.assertEqual(status['preparation']['code_ready_scope'],'profile_b_public_integration_technically_reviewed_reference_unapproved')
             self.assertFalse(status['preparation']['planning_activated'])
             self.assertIsNone(json.loads((self.root/'data/latest.json').read_bytes())['latest_published_edition'])
             for lang,words in (('fr',['Éditions','Une candidate locale ne constitue pas une publication','La planification reste inactive']),
