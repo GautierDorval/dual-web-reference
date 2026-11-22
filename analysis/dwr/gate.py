@@ -8,7 +8,7 @@ structure IHDR, IDAT..., IEND with an empty IEND and image data of exactly the s
 header announces. A 40-character identifier is admitted only as an action pin or as the
 published root, distribution baseline or reviewed historical merge pins listed in config/publication-gate.json,
 written owner/repository@<commit>. The history must run linearly from that published root, except
-for the single historical merge sealed with its exact parents; both histories are scanned. Before the first publication,
+for the reviewed historical merges sealed with their exact parents; all parent histories are scanned. Before the first publication,
 when no root is named, it must be a single commit. JSON files are also
 checked after decoding their strings, and text after decoding percent escapes. Local
 paths are checked against the actual local roots of the machine that runs the gate
@@ -43,8 +43,8 @@ from .common import DwrError, canonical_json, load_json, sha256_bytes
 # (category, what is detected EN, FR, ((counterexample id, EN, FR), ...))
 COVERAGE = (
     ("history_not_from_published_root",
-     "a history outside the named published root or linear chain, except the historical merge sealed with its exact parents (no unnamed root or other merge is admitted)",
-     "un historique hors de la racine publiée nommée ou de la chaîne linéaire, sauf la fusion historique scellée avec ses parents exacts (aucune autre racine ou fusion admise)",
+     "a history outside the named published root or linear chain, except the historical merges sealed with their exact parents (no unnamed root or other merge is admitted)",
+     "un historique hors de la racine publiée nommée ou de la chaîne linéaire, sauf les fusions historiques scellées avec leurs parents exacts (aucune autre racine ou fusion admise)",
      (("second_commit_without_root", "a second commit while no root is named", "un second commit alors qu’aucune racine n’est nommée"),
       ("other_root", "a root other than the named one", "une racine autre que celle qui est nommée"),
       ("merge_commit", "an unreviewed merge commit after the named root", "un commit de fusion non admis après la racine nommée"))),
@@ -277,9 +277,9 @@ def action_pins(config: Path = PIN_CONFIG) -> frozenset[str]:
     return frozenset(load_json(config)["admitted_action_pins"])
 
 
-# Owner-authorized exception for the already-public documentation merge only.
-# Sealing the full record prevents learning arbitrary merges from a changed registry.
-REVIEWED_HISTORICAL_MERGES_SHA256 = "bbb3aca414c25a136fc91b8fc1e2afdfde2bf1ed5e21266e2910840b1d69a75c"
+# Exact exceptions for reviewed already-public integration merges.
+# Sealing the full records prevents learning arbitrary merges from a changed registry.
+REVIEWED_HISTORICAL_MERGES_SHA256 = "ce0fd7841b0e1479826170cc975f56367bcfdb069dc6f8d31e08ca11bddaddab"
 
 
 def reviewed_historical_merges(document: dict) -> dict[str, tuple[str, str]]:

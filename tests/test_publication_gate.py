@@ -318,7 +318,7 @@ class PublicationGateTests(unittest.TestCase):
 class HistoricalMergeAdmissionTests(unittest.TestCase):
     repo = PublicationGateTests.repo
     # Real Git fixtures; only the seal is replaced to admit their synthetic identities.
-    # The shipped seal continues to bind the single owner-authorized public record.
+    # The shipped seal continues to bind the exact reviewed public records.
     def fixture_git(self, directory, *args, data=None):
         return subprocess.run(["git", "-c", "core.autocrlf=false", "-c", "commit.gpgsign=false",
                                "-c", "user.name=Test", "-c", "user.email=test@example.invalid", *args],
@@ -365,6 +365,33 @@ class HistoricalMergeAdmissionTests(unittest.TestCase):
         result=self.checked_fixture(directory,pins,seal)
         self.assertIn('history_not_from_published_root',{r['category'] for r in result['findings']})
 
+    def test_two_exact_merges_do_not_admit_a_third(self):
+        directory,records,pins,seal=self.admitted_fixture()
+        git=lambda *args:self.fixture_git(directory,*args)
+        head=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
+        side=git('commit-tree',tree,'-p',head,'-m','Second branch')
+        merged=git('commit-tree',tree,'-p',head,'-p',side,'-m','Second reviewed merge')
+        git('update-ref','HEAD',merged)
+        pair='GautierDorval/dual-web-reference@'
+        records.append({'commit':pair+merged,'parents':[pair+head,pair+side]})
+        policy=load_json(directory/'config/publication-gate.json')
+        policy['admitted_historical_merges']=records
+        (directory/'config/publication-gate.json').write_text(canonical_json(policy),encoding='utf-8')
+        git('add','config/publication-gate.json');git('commit','-q','-m','Record second reviewed exception')
+        pins=pins | {pair+value for value in (merged,head,side)}
+        seal=gate.sha256_bytes(canonical_json(records).encode('utf-8'))
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertTrue(result['passed'],result['findings'])
+        self.assertEqual(result['reviewed_historical_merges_checked'],2)
+        self.assertEqual(result['commits'],8)
+        head=git('rev-parse','HEAD');tree=git('rev-parse','HEAD^{tree}')
+        side=git('commit-tree',tree,'-p',head,'-m','Third branch')
+        merged=git('commit-tree',tree,'-p',head,'-p',side,'-m','Unreviewed third merge')
+        git('update-ref','HEAD',merged)
+        result=self.checked_fixture(directory,pins,seal)
+        self.assertEqual(result['reviewed_historical_merges_checked'],2)
+        self.assertIn('history_not_from_published_root',{row['category'] for row in result['findings']})
+
     def test_reviewed_merge_requires_the_exact_parent_order(self):
         directory,records,pins,seal=self.admitted_fixture(reverse_parents=True)
         result=self.checked_fixture(directory,pins,seal)
@@ -388,11 +415,18 @@ class HistoricalMergeAdmissionTests(unittest.TestCase):
     def test_registry_cannot_learn_or_substitute_merge_admissions(self):
         policy=load_json(gate.PIN_CONFIG)
         records=policy['admitted_historical_merges']
-        self.assertEqual(len(gate.reviewed_historical_merges(policy)),1)
-        changed=json.loads(json.dumps(records));changed[0]['parents'].reverse()
-        substituted=json.loads(json.dumps(records));substituted[0]['commit']=substituted[0]['parents'][0]
-        for invalid in (records+records,changed,substituted,{},None):
-            with self.subTest(invalid=type(invalid).__name__):
+        self.assertEqual(len(gate.reviewed_historical_merges(policy)),2)
+        invalid_records=[('duplicate',records+records),('wrong_type',{}),('null',None),
+                         ('reversed_list',records[::-1])]
+        for index in range(len(records)):
+            changed=json.loads(json.dumps(records));changed[index]['parents'].reverse()
+            substituted=json.loads(json.dumps(records))
+            substituted[index]['commit']=substituted[index]['parents'][0]
+            invalid_records.extend([(f'reversed_parents_{index}',changed),
+                                    (f'substituted_commit_{index}',substituted),
+                                    (f'removed_record_{index}',records[:index]+records[index+1:])])
+        for case,invalid in invalid_records:
+            with self.subTest(case=case):
                 with self.assertRaises(gate.DwrError):
                     gate.reviewed_historical_merges({'admitted_historical_merges':invalid})
         self.assertEqual(gate.reviewed_historical_merges({}),{})
