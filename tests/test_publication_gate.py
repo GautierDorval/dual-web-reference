@@ -457,6 +457,15 @@ class GateSourceTests(unittest.TestCase):
         self.assertEqual(set(gate.admitted_pins()) - set(gate.action_pins()),
                          {policy[key] for key in ("published_root", "distribution_baseline")} | history_pins)
 
+    def test_generated_gate_documentation_matches_current_coverage(self):
+        from dwr import render, typo
+        for lang in ('en','fr'):
+            text=(REPO_ROOT/f'docs/{lang}/reproduction.md').read_text(encoding='utf-8')
+            block=text.split('<!-- dwr:begin publication-gate -->',1)[1].split('<!-- dwr:end publication-gate -->',1)[0].strip()
+            expected=render.gate_coverage(lang)
+            if lang=='fr':expected=typo.fr(expected)
+            with self.subTest(language=lang):self.assertEqual(block,expected)
+
     def test_png_of_the_edition_have_the_admitted_structure(self):
         pngs = sorted((REPO_ROOT / "figures").rglob("*.png"))
         self.assertTrue(pngs)

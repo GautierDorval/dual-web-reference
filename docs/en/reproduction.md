@@ -62,7 +62,7 @@ Before any publication, `python -I scripts/dwr.py publication-gate --ref <branch
 <!-- dwr:begin publication-gate -->
 | Category | What the gate detects | Counterexamples tested |
 |---|---|---|
-| `history_not_from_published_root` | a history that does not run linearly from the published root named in `config/publication-gate.json` (more than one commit while no root is named, another root, or a merge commit, which any second root requires) | a second commit while no root is named; a root other than the named one; a merge commit after the named root |
+| `history_not_from_published_root` | a history outside the named published root or linear chain, except the historical merge sealed with its exact parents (no unnamed root or other merge is admitted) | a second commit while no root is named; a root other than the named one; an unreviewed merge commit after the named root |
 | `unsupported_entry` | a symbolic link or a submodule in a tree | a symbolic link; a submodule entry |
 | `file_type_not_admitted` | a file whose type is not in the admitted list | an executable file |
 | `text_not_utf8` | a text file that is not valid UTF-8 | a Latin-1 byte in Markdown |
@@ -75,7 +75,7 @@ Before any publication, `python -I scripts/dwr.py publication-gate --ref <branch
 | `ip_address` | an IPv4 address | in Markdown; in a file name |
 | `user_agent` | a browser user-agent string | in Markdown |
 | `identifier_32` | a 32-character hexadecimal identifier, in either case | in lower case in code; in upper case in code; in a file name |
-| `identifier_40` | a 40-character hexadecimal identifier, in either case, except an action pin or the published root/distribution baseline listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>` | in a comment of a workflow template; an admitted pin value repeated without its `owner/repository@` prefix; a pin that is not in the list, on a `uses:` step; a pin that is not in the list, inside a `run:` block scalar; a `tree` line inside the commit message |
+| `identifier_40` | a 40-character hexadecimal identifier, in either case, except an action pin or the published root, distribution baseline or sealed historical merge pins listed in `config/publication-gate.json` and written exactly `owner/repository@<commit>` | in a comment of a workflow template; an admitted pin value repeated without its `owner/repository@` prefix; a pin that is not in the list, on a `uses:` step; a pin that is not in the list, inside a `run:` block scalar; a `tree` line inside the commit message |
 | `short_commit` | a short commit reference (`commit` followed by 7 to 12 hexadecimal characters) | in Markdown |
 | `png_chunk_not_admitted` | a PNG chunk other than IHDR, IDAT and IEND | a text chunk; a palette chunk |
 | `png_malformed` | a PNG whose structure differs from one IHDR of 13 bytes, IDAT chunks, one empty IEND, or whose image data differs from the announced size | data after IEND; a non-empty IEND; a second IHDR; extra image data; a truncated file; a wrong checksum; dimensions beyond 16 384 pixels |

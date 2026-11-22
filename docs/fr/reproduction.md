@@ -62,7 +62,7 @@ Avant toute publication, `python -I scripts/dwr.py publication-gate --ref <branc
 <!-- dwr:begin publication-gate -->
 | Catégorie | Ce que la porte détecte | Contre-exemples testés |
 |---|---|---|
-| `history_not_from_published_root` | un historique qui ne part pas linéairement de la racine publiée nommée dans `config/publication-gate.json` (plus d’un commit tant qu’aucune racine n’est nommée, une autre racine, ou un commit de fusion, qu’exige toute seconde racine) | un second commit alors qu’aucune racine n’est nommée ; une racine autre que celle qui est nommée ; un commit de fusion après la racine nommée |
+| `history_not_from_published_root` | un historique hors de la racine publiée nommée ou de la chaîne linéaire, sauf la fusion historique scellée avec ses parents exacts (aucune autre racine ou fusion admise) | un second commit alors qu’aucune racine n’est nommée ; une racine autre que celle qui est nommée ; un commit de fusion non admis après la racine nommée |
 | `unsupported_entry` | un lien symbolique ou un sous-module dans un arbre | un lien symbolique ; une entrée de sous-module |
 | `file_type_not_admitted` | un fichier dont le type n’est pas dans la liste admise | un fichier exécutable |
 | `text_not_utf8` | un fichier texte qui n’est pas en UTF-8 valide | un octet Latin-1 dans un Markdown |
@@ -75,7 +75,7 @@ Avant toute publication, `python -I scripts/dwr.py publication-gate --ref <branc
 | `ip_address` | une adresse IPv4 | dans un Markdown ; dans un nom de fichier |
 | `user_agent` | une chaîne d’agent utilisateur de navigateur | dans un Markdown |
 | `identifier_32` | un identifiant hexadécimal de 32 caractères, dans l’une ou l’autre casse | en minuscules dans du code ; en majuscules dans du code ; dans un nom de fichier |
-| `identifier_40` | un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou la racine publiée/référence de diffusion listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>` | dans un commentaire d’un modèle de workflow ; la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@` ; un épinglage absent de la liste, sur une étape `uses:` ; un épinglage absent de la liste, dans le bloc scalaire d’une étape `run:` ; une ligne `tree` dans le message du commit |
+| `identifier_40` | un identifiant hexadécimal de 40 caractères, dans l’une ou l’autre casse, sauf un épinglage d’action ou les épinglages de racine publiée, de référence de diffusion ou de fusion historique scellée listés dans `config/publication-gate.json` et écrits exactement `propriétaire/dépôt@<commit>` | dans un commentaire d’un modèle de workflow ; la valeur d’un épinglage admis répétée sans son préfixe `propriétaire/dépôt@` ; un épinglage absent de la liste, sur une étape `uses:` ; un épinglage absent de la liste, dans le bloc scalaire d’une étape `run:` ; une ligne `tree` dans le message du commit |
 | `short_commit` | une référence courte de commit (`commit` suivi de 7 à 12 caractères hexadécimaux) | dans un Markdown |
 | `png_chunk_not_admitted` | un bloc PNG autre que IHDR, IDAT et IEND | un bloc texte ; un bloc de palette |
 | `png_malformed` | un PNG dont la structure diffère d’un IHDR unique de 13 octets, de blocs IDAT et d’un IEND unique et vide, ou dont les données d’image diffèrent de la taille annoncée | des données après IEND ; un IEND non vide ; un second IHDR ; des données d’image en trop ; un fichier tronqué ; une somme de contrôle fausse ; des dimensions au-delà de 16 384 pixels |
