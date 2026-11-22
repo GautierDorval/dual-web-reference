@@ -10,10 +10,17 @@
         "GautierDorval/dual-web-reference@a6bc5fe61b3418a59236a1723c60eb6803091698",
         "GautierDorval/dual-web-reference@a1ea886593e58213d1d2e5993bd3cc5ecfb9b0a2"
       ]
+    },
+    {
+      "commit": "GautierDorval/dual-web-reference@b12636edbe30073068c39aa631a72990fd2f67c4",
+      "parents": [
+        "GautierDorval/dual-web-reference@5db98287da775a6dcf05f4a0b1bebcaa954cb37a",
+        "GautierDorval/dual-web-reference@5e96ea3c3dd0b4dd573f061e53290dba9ca4d912"
+      ]
     }
   ],
   "distribution_baseline": "GautierDorval/dual-web-reference@daa8db690c385680a50660a745363ea2d7161196",
   "published_root": "GautierDorval/dual-web-reference@ca41bd6770a14a5ed719aed4d08b2fac80106b2a",
-  "purpose": "Public commits that pin the GitHub actions of the workflows, and the published root of this repository. A 40-character identifier is admitted by the publication gate only in the exact form owner/repository@<commit> listed here; the published history must run linearly from published_root except for the single reviewed historical merge and exact parents pinned here and sealed in code. All reachable objects, including both parent histories, remain checked; no other merge or additional root is admitted. distribution_baseline pins the already-public reviewed file inventory; its actual tree and every later reachable tree receive the shared exact-set check.",
+  "purpose": "Public commits that pin the GitHub actions of the workflows, and the published root of this repository. A 40-character identifier is admitted by the publication gate only in the exact form owner/repository@<commit> listed here; the published history must run linearly from published_root except for the reviewed historical merges and exact parents pinned here and sealed in code. All reachable objects, including both parent histories, remain checked; no other merge or additional root is admitted. distribution_baseline pins the already-public reviewed file inventory; its actual tree and every later reachable tree receive the shared exact-set check.",
   "schema_version": "dwr-publication-gate/1.2.0"
 }
