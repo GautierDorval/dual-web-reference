@@ -7,7 +7,7 @@ This repository studies governance files, their documentary relations and record
 <!-- dwr:begin current-edition -->
 ## Month 2: automated accesses, profile B
 
-`2026-10-15_2026-11-15-r1` · local candidate; reference not approved; no independent scientific review documented.
+`2026-10-15_2026-11-15-r1` · publicly accessible; reference not approved; no independent scientific review documented.
 
 **223 selected automated accesses · 135 distinct site/path resources · 3 sites in one ecosystem.**
 

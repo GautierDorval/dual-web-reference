@@ -10,8 +10,8 @@
   "candidate_state": "awaiting_review",
   "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
   "last_review": {
-    "date": "2026-11-21",
-    "kind": "local_profile_b_public_integration",
+    "date": "2026-11-22",
+    "kind": "public_candidate_availability",
     "state": "awaiting_review"
   },
   "latest_available_data_date": "2026-11-14",
@@ -34,13 +34,13 @@
   },
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "profile_b_real_inputs_qualified_privately_public_integration_awaiting_review",
+    "code_ready_scope": "profile_b_public_integration_technically_reviewed_reference_unapproved",
     "command": "prepare-automated-profile-b",
-    "future_distribution": "local_candidate_awaiting_review_and_owner_publication_authorization",
+    "future_distribution": "public_candidate_awaiting_reference_review",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
-    "real_next_window": "qualified_profile_b_local_candidate",
+    "real_next_window": "qualified_profile_b_public_candidate",
     "source_qualification": "existing_native_receipts_admitted_offline"
   },
   "realtime": false,

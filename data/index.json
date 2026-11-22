@@ -61,7 +61,7 @@
     },
     {
       "approved_release_at": null,
-      "availability_status": "local_candidate",
+      "availability_status": "publicly_accessible",
       "catalog": "data/editions/2026-10-15_2026-11-15-r1/catalog.json",
       "data_contract": "dwr-automated/2.0.0",
       "declared_reference_release_status": "not_approved",
@@ -69,7 +69,12 @@
       "edition_type": "monthly_automated_observation",
       "period_end_exclusive": "2026-11-15",
       "period_start_inclusive": "2026-10-15",
-      "public_availability_evidence": null,
+      "public_availability_evidence": {
+        "earliest_bound_utc": "2026-11-22T00:48:52.9236984Z",
+        "evidence": "Owner-authorized candidate branch push and anonymous GitHub readback of the complete tree and registry; receipts retained privately. Commit time is not used as publication time.",
+        "latest_bound_utc": "2026-11-22T00:48:57.811160Z",
+        "precision": "bounded_interval_exact_time_unknown"
+      },
       "published_at": null,
       "reference_release_status": "not_approved",
       "review_status": {

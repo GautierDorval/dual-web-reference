@@ -26,28 +26,38 @@
       "edition_id": "2026-09-15_2026-10-15-r2",
       "kind": "local_privacy_revision",
       "published": false
+    },
+    {
+      "causal_effect": "not_established",
+      "earliest": "2026-11-22T00:48:52.9236984Z",
+      "edition_id": "2026-10-15_2026-11-15-r1",
+      "kind": "public_candidate_branch",
+      "latest": "2026-11-22T00:48:57.811160Z",
+      "source": "Owner-authorized branch push and anonymous GitHub readback; receipts retained privately.",
+      "time_precision": "bounded"
     }
   ],
   "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "profile_b_real_inputs_qualified_privately_public_integration_awaiting_review",
+    "code_ready_scope": "profile_b_public_integration_technically_reviewed_reference_unapproved",
     "command": "prepare-automated-profile-b",
-    "future_distribution": "local_candidate_awaiting_review_and_owner_publication_authorization",
+    "future_distribution": "public_candidate_awaiting_reference_review",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
-    "real_next_window": "qualified_profile_b_local_candidate",
+    "real_next_window": "qualified_profile_b_public_candidate",
     "source_qualification": "existing_native_receipts_admitted_offline"
   },
   "publication_preparation": {
     "cadence_enabled": false,
-    "date": "2026-10-19",
-    "note": "Separate authorization after the local correction. Sharing for review does not approve a reference release.",
+    "date": "2026-11-22",
+    "note": "Owner authorized the M2 GitHub delivery after independent technical audit. Public branch availability is observed; a merge requires successful CI. No reference or scientific approval is implied.",
     "owner_authorized": [
-      "public_review_branch",
-      "draft_pull_request",
-      "offline_ci"
+      "public_candidate_branch",
+      "pull_request",
+      "offline_ci",
+      "conditional_squash_merge"
     ],
     "pages_enabled": false,
     "reference_approval": false
@@ -79,6 +89,13 @@
       "edition_id": "2026-10-15_2026-11-15-r1",
       "kind": "local_profile_b_public_integration",
       "note": "Existing M2 inputs qualified privately. Public integration prepared locally; no publication authorization, reference approval or independent scientific review implied.",
+      "state": "awaiting_review"
+    },
+    {
+      "date": "2026-11-22",
+      "edition_id": "2026-10-15_2026-11-15-r1",
+      "kind": "public_candidate_availability",
+      "note": "Independent technical audit completed with documented limits. Owner-authorized GitHub availability observed; reference review and independent scientific review remain separate and unapproved.",
       "state": "awaiting_review"
     }
   ],
