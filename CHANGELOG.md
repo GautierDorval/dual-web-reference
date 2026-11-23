@@ -2,6 +2,12 @@
 
 Editions (data) and code are versioned separately. An edition identifier names its window and revision; a correction creates a new revision and never rewrites the previous one.
 
+## M2 owner reference approval (2026-11-23)
+
+- Record Gautier Dorval's technical, editorial and distribution approval on the exact 54-file M2 payload digest. Keep independent scientific review undocumented and retain the partial-coverage, attribution and causal limits.
+- Update the canonical registry, current reference pointer, operation history and bilingual entry text. Preserve all historical edition and figure bytes and the immutable preparation state. No Zenodo publication or scheduling is activated.
+- Keep unapproved test fixtures explicit and verify that legacy writers also refuse the approved M2 payload before mutation.
+
 ## M2 profile B local distribution candidate (2026-11-21)
 
 - Register the October 15 to November 14 observation as a local candidate under the separate automated-only profile B contract: 223 selected accesses, 135 site/path resources, 27 partially covered archive dates and four unavailable dates. Preserve U0 withholding, unattested classification, unresolved measurement epochs and null M1/M2 growth.

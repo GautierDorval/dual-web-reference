@@ -146,6 +146,22 @@ class AutomatedPublicTests(unittest.TestCase):
             self.assertEqual(next_inputs.initial_state(private)['latest_available_data_date'],'2026-11-14')
 
     def test_legacy_writers_refuse_m2_before_mutation(self):
+        self._check_legacy_writers()
+
+    def test_legacy_writers_refuse_approved_m2_before_mutation(self):
+        registry=self.root/'config/editions.json'
+        config=load_json(registry)
+        entry=next(e for e in config['editions'] if e['edition_id']==public.EDITION)
+        entry.update(reference_release_status='approved', approved_release_at='2026-11-23',
+            approval_receipt={'edition_id':public.EDITION,'scope':'edition_payload_and_figures',
+                'reviewer':'synthetic reviewer','evidence':['synthetic approved fixture'],
+                'reviewed_at':'2026-11-23','decisions':{k:'approved' for k in ('technical','editorial','distribution')},
+                'content_digest':edition_rules.payload_manifest(public.EDITION,self.root)['digest']})
+        entry['review_status']=entry['approval_receipt']['decisions'].copy()
+        registry.write_text(canonical_json(config),encoding='utf-8')
+        self._check_legacy_writers(approved=True)
+
+    def _check_legacy_writers(self, approved=False):
         before=snapshot(self.target)
         private=Path(self.temp.name)/'private'
         private.mkdir()
@@ -163,7 +179,7 @@ class AutomatedPublicTests(unittest.TestCase):
                     self.assertNotEqual(result.returncode,0)
                     # The public projection CLI first protects every exposed edition.
                     expected=('public_or_historical_edition_immutable'
-                              if command=='project-public' and availability=='publicly_accessible'
+                              if command=='project-public' and (availability=='publicly_accessible' or approved)
                               else 'automated_edition_requires_its_own_contract')
                     self.assertIn(expected,result.stderr)
                     self.assertEqual(before,snapshot(self.target))
