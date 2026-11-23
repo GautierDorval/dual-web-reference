@@ -104,8 +104,8 @@ def current_block(root, lang):
              f"`{entry['edition_id']}` · {edition_rules.status_label(entry, lang)}.", *summary(doc, lang),
              t(lang, f"[Read M2 and its method]({method}) · [Catalog]({prefix}catalog.json) · [Resources]({prefix}resource-summary.csv) · [Accesses]({prefix}consultations.csv) · [Coverage]({prefix}coverage.csv) · [Edition index](data/index.json).",
                      f"[Lire M2 et sa méthode]({method}) · [Catalogue]({prefix}catalog.json) · [Ressources]({prefix}resource-summary.csv) · [Accès]({prefix}consultations.csv) · [Couverture]({prefix}coverage.csv) · [Index des éditions](data/index.json)."),
-             t(lang, "The latest candidate is M2. `data/latest.json` separately records the latest approved reference; it stays null without a matching approval receipt. Availability, technical review and independent scientific review are distinct.",
-                     "La candidate la plus récente est M2. `data/latest.json` indique séparément la dernière référence approuvée ; elle reste null sans reçu d’approbation correspondant. Disponibilité, revue technique et évaluation scientifique indépendante sont distinctes.")]
+             t(lang, "`data/latest.json` records the candidate and the approved reference separately. Reference approval requires a valid receipt covering the exact edition payload. Availability, owner review and independent scientific review remain distinct.",
+                     "`data/latest.json` consigne séparément la candidate et la référence approuvée. L’approbation exige un reçu valide couvrant le contenu exact de l’édition. Disponibilité, revue propriétaire et évaluation scientifique indépendante restent distinctes.")]
     alt = t(lang, "Monthly accesses by recorded training and search role; partial coverage.",
             "Accès mensuels par rôle enregistré d’entraînement et de recherche ; couverture partielle.")
     parts += [f'<picture><source media="(max-width: 640px)" srcset="{prefix}figures/G02.{lang}.compact.svg"><img src="{prefix}figures/G02.{lang}.svg" alt="{alt}" width="960"></picture>',

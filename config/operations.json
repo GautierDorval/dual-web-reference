@@ -40,9 +40,9 @@
   "note": "Record of real reviews and preparations. A run that finds no new data is recorded as unchanged and never advances the data date.",
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "profile_b_public_integration_technically_reviewed_reference_unapproved",
+    "code_ready_scope": "profile_b_public_integration_technically_reviewed",
     "command": "prepare-automated-profile-b",
-    "future_distribution": "public_candidate_awaiting_reference_review",
+    "future_distribution": "reference_approval_recorded_in_edition_registry",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
@@ -97,6 +97,13 @@
       "kind": "public_candidate_availability",
       "note": "Independent technical audit completed with documented limits. Owner-authorized GitHub availability observed; reference review and independent scientific review remain separate and unapproved.",
       "state": "awaiting_review"
+    },
+    {
+      "date": "2026-11-23",
+      "edition_id": "2026-10-15_2026-11-15-r1",
+      "kind": "owner_reference_approval",
+      "note": "Gautier Dorval approved the technical, editorial and distribution decisions for edition_payload_and_figures digest 28ffa14203510fba42befb0e71e54586ec7673904158b3818bf00c77e8b00afb. Canonical receipt: config/editions.json. No independent scientific review, Zenodo publication or schedule activation.",
+      "state": "approved"
     }
   ],
   "schema_version": "dwr-operations/1.0.0"

@@ -23,7 +23,7 @@ Le profil B expose des détails mensuels par ressource et acteur, avec des marge
 
 [Lire M2 et sa méthode](docs/fr/edition-automatisee.md) · [Catalogue](data/editions/2026-10-15_2026-11-15-r1/catalog.json) · [Ressources](data/editions/2026-10-15_2026-11-15-r1/resource-summary.csv) · [Accès](data/editions/2026-10-15_2026-11-15-r1/consultations.csv) · [Couverture](data/editions/2026-10-15_2026-11-15-r1/coverage.csv) · [Index des éditions](data/index.json).
 
-La candidate la plus récente est M2. `data/latest.json` indique séparément la dernière référence approuvée ; elle reste null sans reçu d’approbation correspondant. Disponibilité, revue technique et évaluation scientifique indépendante sont distinctes.
+`data/latest.json` consigne séparément la candidate et la référence approuvée. L’approbation exige un reçu valide couvrant le contenu exact de l’édition. Disponibilité, revue propriétaire et évaluation scientifique indépendante restent distinctes.
 
 <picture><source media="(max-width: 640px)" srcset="data/editions/2026-10-15_2026-11-15-r1/figures/G02.fr.compact.svg"><img src="data/editions/2026-10-15_2026-11-15-r1/figures/G02.fr.svg" alt="Accès mensuels par rôle enregistré d’entraînement et de recherche ; couverture partielle." width="960"></picture>
 

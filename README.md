@@ -23,7 +23,7 @@ Profile B releases monthly resource/actor details and daily site/role margins. D
 
 [Read M2 and its method](docs/en/automated-edition.md) · [Catalog](data/editions/2026-10-15_2026-11-15-r1/catalog.json) · [Resources](data/editions/2026-10-15_2026-11-15-r1/resource-summary.csv) · [Accesses](data/editions/2026-10-15_2026-11-15-r1/consultations.csv) · [Coverage](data/editions/2026-10-15_2026-11-15-r1/coverage.csv) · [Edition index](data/index.json).
 
-The latest candidate is M2. `data/latest.json` separately records the latest approved reference; it stays null without a matching approval receipt. Availability, technical review and independent scientific review are distinct.
+`data/latest.json` records the candidate and the approved reference separately. Reference approval requires a valid receipt covering the exact edition payload. Availability, owner review and independent scientific review remain distinct.
 
 <picture><source media="(max-width: 640px)" srcset="data/editions/2026-10-15_2026-11-15-r1/figures/G02.en.compact.svg"><img src="data/editions/2026-10-15_2026-11-15-r1/figures/G02.en.svg" alt="Monthly accesses by recorded training and search role; partial coverage." width="960"></picture>
 

@@ -34,9 +34,9 @@
   },
   "preparation": {
     "code_ready": true,
-    "code_ready_scope": "profile_b_public_integration_technically_reviewed_reference_unapproved",
+    "code_ready_scope": "profile_b_public_integration_technically_reviewed",
     "command": "prepare-automated-profile-b",
-    "future_distribution": "public_candidate_awaiting_reference_review",
+    "future_distribution": "reference_approval_recorded_in_edition_registry",
     "manual_synthetic_rehearsal": "passed",
     "planning_activated": false,
     "public_promotion": "not_implemented_by_preparation",
