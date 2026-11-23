@@ -75,6 +75,8 @@ class AuditFollowupTests(unittest.TestCase):
                     for page in ('index.html', 'editions.html'):
                         rendered=(root/'site/dist'/lang/page).read_text(encoding='utf-8')
                         self.assertIn('<p class="banner wrap">' + prefix, rendered)
+                        banner=rendered.split('<p class="banner wrap">',1)[1].split('</p>',1)[0]
+                        self.assertIn("no independent scientific review documented" if lang == "en" else "aucune évaluation scientifique indépendante documentée", banner)
                 self.assertNotIn('local candidate',(root/'CITATION.cff').read_text(encoding='utf-8'))
                 catalog=load_json(root/f'data/editions/{R2}/catalog.json')
                 self.assertFalse(set(catalog)&set(edition_rules.MUTABLE_CATALOG_FIELDS))
