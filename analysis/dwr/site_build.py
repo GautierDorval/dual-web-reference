@@ -102,7 +102,7 @@ def layout(page: str, lang: str, title: str, body: str, counterpart: str | None,
     from . import edition_rules
     entry = next(e for e in load_json(REPO_ROOT / "config/editions.json")["editions"] if e["edition_id"] == edition_id)
     home = page == f"{lang}/index.html"
-    banner = edition_id + t(lang, ": ", " : ") + edition_rules.status_label(entry, lang, scientific=home) + "."
+    banner = edition_id + t(lang, ": ", " : ") + edition_rules.status_label(entry, lang, scientific=True) + "."
     if home and not automated_public.is_automated(entry):
         banner += t(lang, " r1 remains accessible as an unapproved historical edition.",
                     " r1 reste accessible comme édition historique non approuvée.")
