@@ -79,8 +79,27 @@
       "supersedes": "2026-09-15_2026-10-15-r1"
     },
     {
-      "approval_receipt": null,
-      "approved_release_at": null,
+      "approval_receipt": {
+        "content_digest": "28ffa14203510fba42befb0e71e54586ec7673904158b3818bf00c77e8b00afb",
+        "decisions": {
+          "distribution": "approved",
+          "editorial": "approved",
+          "technical": "approved"
+        },
+        "edition_id": "2026-10-15_2026-11-15-r1",
+        "evidence": [
+          "Owner decision by Gautier Dorval on 2026-11-23, accepting the completed M2 corrective dossier and reference approval for the exact edition_payload_and_figures digest; original consent retained privately.",
+          "https://github.com/GautierDorval/dual-web-reference/pull/10",
+          "https://github.com/GautierDorval/dual-web-reference/pull/11",
+          "https://github.com/GautierDorval/dual-web-reference/pull/12",
+          "https://github.com/GautierDorval/dual-web-reference/actions/runs/45086326365",
+          "Private final corrective review and post-integration technical review retained; neither is an independent scientific review."
+        ],
+        "reviewed_at": "2026-11-23",
+        "reviewer": "Gautier Dorval",
+        "scope": "edition_payload_and_figures"
+      },
+      "approved_release_at": "2026-11-23",
       "availability_status": "publicly_accessible",
       "comparison_with_previous_window": {
         "comparable": false,
@@ -93,7 +112,7 @@
       "edition_type": "monthly_automated_observation",
       "generated_at": "2026-11-21",
       "historical_payload_frozen": false,
-      "note": "Profile B candidate derived offline from qualified existing inputs. M1 is retained; publication and reference approval are separate decisions.",
+      "note": "Profile B derived offline from qualified existing inputs. The owner approved this exact public payload as a descriptive reference on 2026-11-23. M1 and all payload observations are retained; no independent scientific review or Zenodo publication is asserted.",
       "period_end_exclusive": "2026-11-15",
       "period_start_inclusive": "2026-10-15",
       "public_availability_evidence": {
@@ -103,17 +122,24 @@
         "precision": "bounded_interval_exact_time_unknown"
       },
       "published_at": null,
-      "reference_release_status": "not_approved",
+      "reference_release_status": "approved",
       "review_status": {
-        "distribution": "awaiting_review",
-        "editorial": "awaiting_review",
-        "evidence": [],
-        "technical": "awaiting_review"
+        "distribution": "approved",
+        "editorial": "approved",
+        "evidence": [
+          "Owner decision by Gautier Dorval on 2026-11-23, accepting the completed M2 corrective dossier and reference approval for the exact edition_payload_and_figures digest; original consent retained privately.",
+          "https://github.com/GautierDorval/dual-web-reference/pull/10",
+          "https://github.com/GautierDorval/dual-web-reference/pull/11",
+          "https://github.com/GautierDorval/dual-web-reference/pull/12",
+          "https://github.com/GautierDorval/dual-web-reference/actions/runs/45086326365",
+          "Private final corrective review and post-integration technical review retained; neither is an independent scientific review."
+        ],
+        "technical": "approved"
       },
       "revised_at": null,
       "revision": 1,
       "scientific_review_status": "no_independent_scientific_review_documented",
-      "status": "candidate_not_reviewed",
+      "status": "approved_reference",
       "superseded_by": null,
       "supersedes": null
     }

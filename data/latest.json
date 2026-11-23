@@ -1,8 +1,8 @@
 {
   "candidate_rule": "latest candidate is discoverable separately; not publication or reference approval",
   "latest_candidate_edition": "2026-10-15_2026-11-15-r1",
-  "latest_published_edition": null,
-  "reason": "no publicly accessible edition has a matching approved reference receipt",
+  "latest_published_edition": "2026-10-15_2026-11-15-r1",
+  "reason": null,
   "rule": "shared latest_pointer selects an externally approved public payload with a matching receipt; never a candidate or a successful run",
   "schema_version": "dwr-latest/2.0.0"
 }

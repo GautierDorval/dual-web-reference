@@ -7,7 +7,7 @@ Ce dépôt étudie les fichiers de gouvernance, leurs relations documentaires et
 <!-- dwr:begin current-edition -->
 ## Mois 2 : accès automatisés, profil B
 
-`2026-10-15_2026-11-15-r1` · accessible publiquement ; référence non approuvée ; aucune évaluation scientifique indépendante documentée.
+`2026-10-15_2026-11-15-r1` · accessible publiquement ; référence approuvée ; aucune évaluation scientifique indépendante documentée.
 
 **223 accès automatisés sélectionnés · 135 ressources distinctes site/chemin · 3 sites dans un même écosystème.**
 

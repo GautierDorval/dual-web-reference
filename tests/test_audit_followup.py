@@ -22,10 +22,20 @@ def copy_candidate(root):
     for name in ('README.md','README.fr.md','CITATION.cff','CONTRIBUTING.md','SECURITY.md','NOTICE.md','CHANGELOG.md','LICENSE'):
         if (REPO_ROOT/name).is_file(): shutil.copy2(REPO_ROOT/name,root/name)
 
+def unreviewed_m2_fixture(root):
+    """Isolate review-transition scenarios from the real registry's later approvals."""
+    config=load_json(root/'config/editions.json')
+    entry=next(e for e in config['editions'] if e['edition_id']=='2026-10-15_2026-11-15-r1')
+    entry.update(reference_release_status='not_approved', approval_receipt=None,
+                 approved_release_at=None, status='candidate_not_reviewed',
+                 review_status={**{k:'awaiting_review' for k in ('technical','editorial','distribution')},'evidence':[]},
+                 note='Synthetic unreviewed fixture; not a change to the public reference.')
+    write_json(root/'config/editions.json',config)
+
 class AuditFollowupTests(unittest.TestCase):
     def test_approval_transition_renders_external_state_without_changing_payload(self):
         with tempfile.TemporaryDirectory() as temp:
-            root=Path(temp);copy_candidate(root)
+            root=Path(temp);copy_candidate(root);unreviewed_m2_fixture(root)
             with ExitStack() as stack:
                 for module in (common,frozen,pipeline,render,site_build,verify):stack.enter_context(patch.object(module,'REPO_ROOT',root))
                 stack.enter_context(patch.object(site_build,'DIST',root/'site/dist'))
