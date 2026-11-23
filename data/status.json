@@ -7,15 +7,15 @@
     "weekly_preparation": "template_not_activated"
   },
   "candidate_edition": "2026-10-15_2026-11-15-r1",
-  "candidate_state": "awaiting_review",
+  "candidate_state": "approved_reference",
   "freshness_rule": "the date of data never advances on an unchanged run or a failed source",
   "last_review": {
-    "date": "2026-11-22",
-    "kind": "public_candidate_availability",
-    "state": "awaiting_review"
+    "date": "2026-11-23",
+    "kind": "reference_approval",
+    "state": "approved"
   },
   "latest_available_data_date": "2026-11-14",
-  "latest_published_edition": null,
+  "latest_published_edition": "2026-10-15_2026-11-15-r1",
   "next_review_target": {
     "earliest_monthly_preparation": "2026-12-17T00:00:00Z",
     "guarantee": "none; inactive planning template",
@@ -44,6 +44,6 @@
     "source_qualification": "existing_native_receipts_admitted_offline"
   },
   "realtime": false,
-  "reference_approval_state": "not_approved",
+  "reference_approval_state": "approved",
   "schema_version": "dwr-status/1.0.0"
 }

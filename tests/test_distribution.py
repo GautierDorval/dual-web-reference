@@ -267,7 +267,9 @@ site_build.cmd("2026-09-15_2026-10-15-r2")
             status=json.loads((self.root/'data/status.json').read_bytes())
             self.assertEqual(status['preparation']['code_ready_scope'],'profile_b_public_integration_technically_reviewed_reference_unapproved')
             self.assertFalse(status['preparation']['planning_activated'])
-            self.assertIsNone(json.loads((self.root/'data/latest.json').read_bytes())['latest_published_edition'])
+            # Rendering historical R2 must preserve the current global reference pointer.
+            self.assertEqual(json.loads((self.root/'data/latest.json').read_bytes())['latest_published_edition'],
+                             json.loads((REPO_ROOT/'data/latest.json').read_bytes())['latest_published_edition'])
             for lang,words in (('fr',['Éditions','Une candidate locale ne constitue pas une publication','La planification reste inactive']),
                                ('en',['Editions','A local candidate is not a publication','Scheduling remains inactive'])):
                 text=(self.root/f'site/dist/{lang}/editions.html').read_text(encoding='utf-8')

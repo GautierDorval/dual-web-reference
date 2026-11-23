@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from tests import __init__
-from tests.test_audit_followup import copy_candidate, R1, R2
+from tests.test_audit_followup import copy_candidate, unreviewed_m2_fixture, R1, R2
 from tests.test_distribution import cli, snapshot
 from dwr import automated, automated_public as public, distribution, edition_rules
 from dwr.common import REPO_ROOT, DwrError, canonical_json, load_json
@@ -20,6 +20,7 @@ class AutomatedPublicTests(unittest.TestCase):
         self.root = Path(self.temp.name)/'candidate'
         self.root.mkdir()
         copy_candidate(self.root)
+        unreviewed_m2_fixture(self.root)
         for name in ('analysis', 'scripts', '.github'):
             shutil.copytree(REPO_ROOT/name, self.root/name, ignore=shutil.ignore_patterns('__pycache__'))
         self.target = self.root/'data/editions'/public.EDITION
